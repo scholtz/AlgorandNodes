@@ -1,0 +1,133 @@
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  name: relaynode-ss
+  namespace: algorand
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: relaynode-app-ss
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: relaynode-app-ss
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                  - key: "app"
+                    operator: In
+                    values:
+                    - relaynode-app-ss
+              topologyKey: "kubernetes.io/hostname"
+      containers:
+        - name: relaynode-pod
+          image: scholtz2/algorand-relay-mainnet:3.0.1-stable
+          command: ["/bin/bash"]  
+          args: ["-c", "./run.sh"]
+#          command:
+#            - /bin/bash
+#            - '-c'
+#            - '--'
+#          args:
+#            - while true; do sleep 30; done;
+          resources:
+            requests:
+              memory: "10000Mi"
+              cpu: "6000m"
+            limits:
+              memory: "12000Mi"
+              cpu: "8000m"
+          ports:
+            - containerPort: 4161
+              protocol: TCP
+          startupProbe:
+            tcpSocket:
+              port: 4161
+            initialDelaySeconds: 60
+            periodSeconds: 10   
+            failureThreshold: 100
+          readinessProbe:
+            tcpSocket:
+              port: 4161
+            initialDelaySeconds: 60
+            timeoutSeconds: 10   
+            failureThreshold: 100
+          livenessProbe:
+            tcpSocket:
+              port: 4161
+            initialDelaySeconds: 60
+            timeoutSeconds: 10        
+            failureThreshold: 6
+            terminationGracePeriodSeconds: 60
+          resources: {}
+          volumeMounts:
+            - name: relaynode-vol
+              mountPath: /app/data
+            - name: relaynode-vol-mainnet
+              mountPath: /app/data/mainnet-v1.0
+            - name: relaynode-vol-catchpoints
+              mountPath: /app/data/mainnet-v1.0/catchpoints
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      schedulerName: default-scheduler
+  volumeClaimTemplates:
+    - kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: relaynode-vol
+        namespace: algorand
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 20Gi
+        storageClassName: linode-block-storage-retain
+        volumeMode: Filesystem
+    - kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: relaynode-vol-mainnet
+        namespace: algorand
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 600Gi
+        storageClassName: linode-block-storage-retain
+        volumeMode: Filesystem
+    - kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: relaynode-vol-catchpoints
+        namespace: algorand
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 350Gi
+        storageClassName: linode-block-storage-retain
+        volumeMode: Filesystem
+  serviceName: algo-set-service-ss
+  podManagementPolicy: OrderedReady
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      partition: 0
