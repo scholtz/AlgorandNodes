@@ -28,7 +28,7 @@ spec:
               topologyKey: "kubernetes.io/hostname"
       containers:
         - name: relaynode-pod
-          image: scholtz2/algorand-relay-mainnet:3.2.1-stable
+          image: scholtz2/algorand-relay-mainnet:3.2.2-stable
           command: ["/bin/bash"]  
           args: ["-c", "./run.sh"]
 #          command:
@@ -131,18 +131,3 @@ spec:
     type: RollingUpdate
     rollingUpdate:
       partition: 0
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: algo-set-service
-  namespace: algorand
-spec:
-  type: LoadBalancer
-  selector:
-    app: relaynode-app
-  ports:
-    - name: algorelay
-      protocol: TCP
-      appProtocol: http
-      port: 4160

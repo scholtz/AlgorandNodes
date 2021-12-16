@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: algo-set-service
+  namespace: algorand
+spec:
+  type: LoadBalancer
+  selector:
+    app: relaynode-app-ss
+  ports:
+    - name: algorelay
+      protocol: TCP
+      appProtocol: http
+      port: 4160
+      targetPort: 4160
