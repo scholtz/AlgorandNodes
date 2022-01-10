@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: algorand-indexer
-  namespace: algorand-indexer
+  namespace: algorand-indexer-testnet
 spec:
   selector:
     matchLabels:
@@ -16,10 +16,11 @@ spec:
       containers:
       - name: algorand-indexer
         image: scholtz2/algorand-indexer:2.8.0-stable
-        env:
-        - name: PG_CONN_STR
-          value: "host=localhost port=5432 user=algo password=indexerDbPass dbname=ledgerdb sslmode=disable"
-        - name: ALGOD_HOST
-          value: "http://algo-set-service.algorand-testnet:4161"
-        - name: ALGOD_TOKEN
-          value: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        volumeMounts:
+            - name: algorand-indexer-conf
+              mountPath: /app/indexer.yaml
+              subPath: indexer.yaml
+      volumes:
+        - name: algorand-indexer-conf
+          configMap:
+            name: algorand-indexer-conf

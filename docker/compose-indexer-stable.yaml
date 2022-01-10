@@ -9,7 +9,7 @@ ARG INDEXER_VER
 ENV INDEXER_VER=$INDEXER_VER
 RUN echo "INDEXER_VER: $INDEXER_VER"
 RUN wget "https://github.com/algorand/indexer/releases/download/${INDEXER_VER}/algorand-indexer_${INDEXER_VER}_amd64.deb"
-RUN wget "https://github.com/algorand/indexer/releases/download/${INDEXER_VER}/algorand-indexer_${INDEXER_VER}_amd64.deb.sig"
+#RUN wget "https://github.com/algorand/indexer/releases/download/${INDEXER_VER}/algorand-indexer_${INDEXER_VER}_amd64.deb.sig"
 RUN dpkg -i "algorand-indexer_${INDEXER_VER}_amd64.deb"
 RUN mkdir /app
 WORKDIR /app
@@ -18,16 +18,9 @@ WORKDIR /app
 COPY . . 
 RUN useradd -ms /bin/bash algo
 RUN chown algo:algo /app -R
-
-ENV PG_CONN_STR="host=localhost port=5432 user=algo password=indexerDbPass dbname=ledgerdb sslmode=disable"
-ENV ALGOD_HOST="http://localhost:4161"
-ENV ALGOD_TOKEN="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-ENV ALGOD_DATA_DIR=""
-
 RUN algorand-indexer help
 
-#RUN chown algo:algo /node -R
-#USER algo
-CMD ["/bin/bash"]
+CMD ["/app/run.sh"]
+
 
 
