@@ -5,3 +5,5 @@ if [ "$result" = "$check" ]; then
 else
    echo "1"
 fi
+
+# curl http://algo-set-service.algorand-testnet:4161/v1/testnet-v1.0/block/0 --output x.tmp

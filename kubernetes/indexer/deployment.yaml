@@ -16,6 +16,8 @@ spec:
       containers:
       - name: algorand-indexer
         image: scholtz2/algorand-indexer:2.8.0-stable
+        command: [ "/bin/bash", "-c", "--" ]
+        args: [ "while true; do sleep 30; done;" ]
         volumeMounts:
             - name: algorand-indexer-conf
               mountPath: /app/indexer.yaml

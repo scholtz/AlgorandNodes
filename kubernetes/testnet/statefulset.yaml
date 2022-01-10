@@ -52,6 +52,8 @@ spec:
           ports:
             - containerPort: 4161
               protocol: TCP
+            - containerPort: 8080
+              protocol: TCP
           startupProbe:
             exec:
               command:
