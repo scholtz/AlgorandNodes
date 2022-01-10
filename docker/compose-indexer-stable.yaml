@@ -24,6 +24,7 @@ ENV ALGOD_HOST="http://localhost:4161"
 ENV ALGOD_TOKEN="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 ENV ALGOD_DATA_DIR=""
 
+RUN algorand-indexer help
 
 #RUN chown algo:algo /node -R
 #USER algo
