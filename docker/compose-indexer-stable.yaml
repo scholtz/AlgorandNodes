@@ -1,0 +1,32 @@
+FROM ubuntu
+USER root
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt update && apt dist-upgrade -y && apt install -y mc wget telnet git curl iotop atop vim && apt-get clean autoclean && apt-get autoremove --yes && rm -rf /var/lib/{apt,dpkg,cache,log}/
+
+RUN mkdir /install
+WORKDIR /install
+ARG INDEXER_VER
+ENV INDEXER_VER=$INDEXER_VER
+RUN echo "INDEXER_VER: $INDEXER_VER"
+RUN wget "https://github.com/algorand/indexer/releases/download/${INDEXER_VER}/algorand-indexer_${INDEXER_VER}_amd64.deb"
+RUN wget "https://github.com/algorand/indexer/releases/download/${INDEXER_VER}/algorand-indexer_${INDEXER_VER}_amd64.deb.sig"
+RUN dpkg -i "algorand-indexer_${INDEXER_VER}_amd64.deb"
+RUN mkdir /app
+WORKDIR /app
+
+#RUN gpg --verify algorand-indexer_2.6.5_amd64.deb.sig algorand-indexer_2.6.5_amd64.deb
+COPY . . 
+RUN useradd -ms /bin/bash algo
+RUN chown algo:algo /app -R
+
+ENV PG_CONN_STR="host=localhost port=5432 user=algo password=indexerDbPass dbname=ledgerdb sslmode=disable"
+ENV ALGOD_HOST="http://localhost:4161"
+ENV ALGOD_TOKEN="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+ENV ALGOD_DATA_DIR=""
+
+
+#RUN chown algo:algo /node -R
+#USER algo
+CMD ["/bin/bash"]
+
+
