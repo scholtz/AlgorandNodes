@@ -1,5 +1,6 @@
 {
     "Version": 15,
     "Archival": true,
-    "NetAddress": ":4160"
+    "NetAddress": ":4160",
+	"EndpointAddress": "0.0.0.0:8080"
 }

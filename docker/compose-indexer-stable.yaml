@@ -20,6 +20,8 @@ RUN useradd -ms /bin/bash algo
 RUN chown algo:algo /app -R
 RUN algorand-indexer help
 
+RUN chmod 0700 /app/run.sh
+
 CMD ["/app/run.sh"]
 
 
