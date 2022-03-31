@@ -1,0 +1,229 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: algo-relay-mainnet
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: relaynode-1
+  namespace: algo-relay-mainnet
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: algo-relay-mainnet
+  template:
+    metadata:
+      labels:
+        app: algo-relay-mainnet
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - sch-g-01
+            topologyKey: "kubernetes.io/hostname"
+      containers:
+        - name: algo-relay-mainnet
+          image: scholtz2/algorand-relay-mainnet:3.5.1-stable
+          imagePullPolicy: Always
+          ports:
+          resources:
+            requests:
+              memory: "10000Mi"
+              cpu: "16000m"
+            limits:
+              memory: "20000Mi"
+              cpu: "32000m"
+          command:
+            - /bin/bash
+            - /app/run.sh
+          ports:
+            - containerPort: 4160
+              protocol: TCP
+
+            - containerPort: 8080
+              protocol: TCP
+
+          startupProbe:
+            exec:
+              command:
+              - /bin/bash
+              - /app/health.sh
+            initialDelaySeconds: 10
+            periodSeconds: 10   
+            failureThreshold: 1000
+          readinessProbe:
+            tcpSocket:
+              port: 4160
+            initialDelaySeconds: 10
+            timeoutSeconds: 10   
+            failureThreshold: 100
+          livenessProbe:
+            tcpSocket:
+              port: 4160
+            initialDelaySeconds: 10
+            timeoutSeconds: 10        
+            failureThreshold: 6
+            terminationGracePeriodSeconds: 60
+#          readinessProbe:
+#            exec:
+#              command:
+#              - /bin/bash
+#              - /app/health.sh
+#            initialDelaySeconds: 180
+#            periodSeconds: 10   
+#            failureThreshold: 1000
+#          startupProbe:
+#            exec:
+#              command:
+#              - /bin/bash
+#              - /app/health.sh
+#            initialDelaySeconds: 180
+#            periodSeconds: 10   
+#            failureThreshold: 1000
+#          readinessProbe:
+#            tcpSocket:
+#              port: 4160
+#            initialDelaySeconds: 60
+#            timeoutSeconds: 10   
+#            failureThreshold: 100
+#          livenessProbe:
+#            tcpSocket:
+#              port: 4160
+#            initialDelaySeconds: 60
+#            timeoutSeconds: 10        
+#            failureThreshold: 6
+#            terminationGracePeriodSeconds: 60
+          resources: {}
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+          volumeMounts:
+            - name: algo-mainnet-vol-root-1
+              mountPath: /app/data
+            - name: algo-mainnet-vol-net-1
+              mountPath: /app/data/mainnet-v1.0
+            - name: algo-mainnet-vol-catchpoints-1
+              mountPath: /app/data/mainnet-v1.0/catchpoints
+      volumes:
+        - name: algo-mainnet-vol-root-1
+          persistentVolumeClaim:
+            claimName: algo-mainnet-vol-root-1
+        - name: algo-mainnet-vol-net-1
+          persistentVolumeClaim:
+            claimName: algo-mainnet-vol-net-1
+        - name: algo-mainnet-vol-catchpoints-1
+          persistentVolumeClaim:
+            claimName: algo-mainnet-vol-catchpoints-1
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: algo-mainnet-vol-root-1
+  namespace: algo-relay-mainnet
+spec:
+  storageClassName: algo-mainnet-root-1
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: algo-mainnet-vol-net-1
+  namespace: algo-relay-mainnet
+spec:
+  storageClassName: algo-mainnet-net-1
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: algo-mainnet-vol-catchpoints-1
+  namespace: algo-relay-mainnet
+spec:
+  storageClassName: algo-mainnet-catchpoints-1
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1500Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: algo-mainnet-root-1
+spec:
+  storageClassName: algo-mainnet-root-1
+  capacity:
+    storage: 20Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/nvme1/algo/mainnet/root"
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - sch-g-01
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: algo-mainnet-net-1
+spec:
+  storageClassName: algo-mainnet-net-1
+  capacity:
+    storage: 500Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/nvme1/algo/mainnet/net"
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - sch-g-01
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: algo-mainnet-catchpoints-1
+spec:
+  storageClassName: algo-mainnet-catchpoints-1
+  capacity:
+    storage: 1500Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/nvme1/algo/mainnet/catchpoints"
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - sch-g-01
