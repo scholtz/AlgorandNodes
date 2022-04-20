@@ -7,4 +7,4 @@ diagcfg metric enable
 #./goal node status -d ~/node/datafastcatchup -w 1000
 
 
-while true; do echo "hello algorand" `date`; sleep 600;done
+while true; do echo `date`; goal node status; sleep 600;done
