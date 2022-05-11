@@ -32,7 +32,7 @@ spec:
             topologyKey: "kubernetes.io/hostname"
       containers:
         - name: algo-relay-mainnet
-          image: scholtz2/algorand-relay-mainnet:3.5.1-stable
+          image: scholtz2/algorand-relay-mainnet:3.6.2-stable
           imagePullPolicy: Always
           ports:
           resources:
@@ -48,60 +48,33 @@ spec:
           ports:
             - containerPort: 4160
               protocol: TCP
-
             - containerPort: 8080
               protocol: TCP
-
           startupProbe:
             exec:
               command:
               - /bin/bash
               - /app/health.sh
-            initialDelaySeconds: 3600
+            initialDelaySeconds: 10
             periodSeconds: 10   
             failureThreshold: 1000
           readinessProbe:
-            tcpSocket:
-              port: 4160
-            initialDelaySeconds: 3600
+            exec:
+              command:
+              - /bin/bash
+              - /app/health.sh
+            initialDelaySeconds: 10
             timeoutSeconds: 10   
             failureThreshold: 100
           livenessProbe:
-            tcpSocket:
-              port: 4160
+            exec:
+              command:
+              - /bin/bash
+              - /app/health.sh
             initialDelaySeconds: 10
             timeoutSeconds: 10        
             failureThreshold: 6
             terminationGracePeriodSeconds: 60
-#          readinessProbe:
-#            exec:
-#              command:
-#              - /bin/bash
-#              - /app/health.sh
-#            initialDelaySeconds: 180
-#            periodSeconds: 10   
-#            failureThreshold: 1000
-#          startupProbe:
-#            exec:
-#              command:
-#              - /bin/bash
-#              - /app/health.sh
-#            initialDelaySeconds: 180
-#            periodSeconds: 10   
-#            failureThreshold: 1000
-#          readinessProbe:
-#            tcpSocket:
-#              port: 4160
-#            initialDelaySeconds: 60
-#            timeoutSeconds: 10   
-#            failureThreshold: 100
-#          livenessProbe:
-#            tcpSocket:
-#              port: 4160
-#            initialDelaySeconds: 60
-#            timeoutSeconds: 10        
-#            failureThreshold: 6
-#            terminationGracePeriodSeconds: 60
           resources: {}
           securityContext:
             runAsUser: 1000

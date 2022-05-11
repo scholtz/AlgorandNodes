@@ -32,7 +32,7 @@ spec:
             topologyKey: "kubernetes.io/hostname"
       containers:
         - name: algo-relay-mainnet
-          image: scholtz2/algorand-relay-mainnet:3.5.1-stable
+          image: scholtz2/algorand-relay-mainnet:3.6.2-stable
           imagePullPolicy: IfNotPresent
           ports:
           resources:
@@ -57,14 +57,18 @@ spec:
             periodSeconds: 10   
             failureThreshold: 1000
           readinessProbe:
-            tcpSocket:
-              port: 4160
+            exec:
+              command:
+              - /bin/bash
+              - /app/health.sh
             initialDelaySeconds: 10
             timeoutSeconds: 10   
             failureThreshold: 100
           livenessProbe:
-            tcpSocket:
-              port: 4160
+            exec:
+              command:
+              - /bin/bash
+              - /app/health.sh
             initialDelaySeconds: 10
             timeoutSeconds: 10        
             failureThreshold: 6
