@@ -28,7 +28,7 @@ spec:
               topologyKey: "kubernetes.io/hostname"
       containers:
         - name: relaynode-pod
-          image: scholtz2/algorand-relay-mainnet:3.4.2-stable
+          image: scholtz2/algorand-relay-mainnet:3.6.2-stable
           command: ["/bin/bash"]  
           args: ["-c", "./run.sh"]
 #          command:
@@ -52,19 +52,23 @@ spec:
               command:
               - /bin/bash
               - /app/health.sh
-            initialDelaySeconds: 180
+            initialDelaySeconds: 10
             periodSeconds: 10   
             failureThreshold: 1000
           readinessProbe:
-            tcpSocket:
-              port: 4160
-            initialDelaySeconds: 60
+            exec:
+              command:
+              - /bin/bash
+              - /app/health.sh
+            initialDelaySeconds: 10
             timeoutSeconds: 10   
             failureThreshold: 100
           livenessProbe:
-            tcpSocket:
-              port: 4160
-            initialDelaySeconds: 60
+            exec:
+              command:
+              - /bin/bash
+              - /app/health.sh
+            initialDelaySeconds: 10
             timeoutSeconds: 10        
             failureThreshold: 6
             terminationGracePeriodSeconds: 60
