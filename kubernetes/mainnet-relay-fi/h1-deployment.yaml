@@ -20,19 +20,10 @@ spec:
       labels:
         app: algo-relay-mainnet
     spec:
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchExpressions:
-              - key: app
-                operator: In
-                values:
-                - sch-h-01
-            topologyKey: "kubernetes.io/hostname"
+      nodeName: sch-h-01
       containers:
         - name: algo-relay-mainnet
-          image: scholtz2/algorand-relay-mainnet:3.6.2-stable
+          image: scholtz2/algorand-relay-mainnet:3.7.2-stable
           imagePullPolicy: Always
           ports:
           resources:
