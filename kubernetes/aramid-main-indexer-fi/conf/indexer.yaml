@@ -1,0 +1,6 @@
+postgres-connection-string: "host=mydb.mycloud.com user=postgres password=password dbname=mainnet"
+algod-address: "http://algo-set-service.algorand-testnet:4161"
+algod-token: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+genesis: /app/genesis/testnet/genesis.json
+api-token: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+metrics-mode: true

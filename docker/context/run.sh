@@ -1,5 +1,18 @@
 #apt update && apt dist-upgrade -y 
-cp mainnet/* data/ -R
+
+
+{
+	"Version": 22,
+	"Archival": true,
+	"EnableMetricReporting": true,
+	"EnableLedgerService": true,
+	"EnableBlockService": true,
+	"DNSSecurityFlags": 0,
+    "DNSBootstrapID": "aramidmain.a-wallet.net",
+	"NetAddress": ":14260",
+	"EndpointAddress": "0.0.0.0:18080",
+    "FallbackDNSResolverAddress": "aramidmain.a-wallet.net"
+}
 goal node start 
 diagcfg telemetry enable
 diagcfg metric enable

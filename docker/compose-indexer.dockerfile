@@ -1,7 +1,6 @@
 FROM ubuntu:latest as build
 USER root
 ENV ARCH=amd64
-ARG ALGO_VER
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt update && apt dist-upgrade -y && apt install -y mc wget telnet git iotop atop vim make  gcc build-essential aptly awscli binutils build-essential curl gnupg2 libboost-all-dev sqlite3 autoconf jq bsdmainutils shellcheck && apt-get clean autoclean && apt-get autoremove --yes &&  rm -rf /var/lib/{apt,dpkg,cache,log}/
 ENV GOPATH=/usr/local/algo
@@ -9,15 +8,15 @@ ENV GOROOT=/usr/local/go
 ENV PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 ENV GOPROXY=https://proxy.golang.org,https://pkg.go.dev,https://goproxy.io,direct
 RUN wget https://golang.org/dl/go1.17.11.linux-amd64.tar.gz && rm -rf $GOPATH && tar -C /usr/local -xzf go1.17.11.linux-amd64.tar.gz && go version
-RUN git clone https://github.com/algorand/go-algorand.git && cd go-algorand && git checkout $ALGO_VER
+RUN git clone https://github.com/algorand/go-algorand.git /go-algorand && cd /go-algorand
 WORKDIR /go-algorand
-
-
-# ARAMID - allow more than 1024 bytes in note field
-RUN sed "~s/MaxTxnNoteBytes:     1024/MaxTxnNoteBytes:     131072/g" config/consensus.go && cat config/consensus.go | grep MaxTxnNoteBytes
-
 RUN ./scripts/configure_dev.sh
 RUN ./scripts/buildtools/install_buildtools.sh
+
+RUN echo 5
+RUN git clone https://github.com/scholtz/indexer.git /indexer && cd /indexer
+WORKDIR /indexer
+
 RUN ls -lA
 RUN make
 #RUN make test
@@ -33,12 +32,11 @@ USER root
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt update && apt dist-upgrade -y && apt install -y mc wget telnet git curl iotop atop vim dnsutils && apt-get clean autoclean && apt-get autoremove --yes && rm -rf /var/lib/{apt,dpkg,cache,log}/
 COPY --from=build /usr/local/algo/bin /usr/local/algo/bin
+COPY --from=build /indexer /indexer
+COPY --from=build /indexer/cmd/algorand-indexer/algorand-indexer /usr/local/algo/bin/algorand-indexer
 ENV GOPATH=/usr/local/algo
 ENV ALGORAND_DATA=/app/data
 RUN mkdir /app
-RUN mkdir /app/data
-RUN mkdir /app/mainnet
-COPY --from=build /go-algorand/installer/genesis/mainnet/genesis.json /app/mainnet/genesis.json
 ENV PATH=$GOPATH/bin:$PATH
 WORKDIR /app
 RUN echo 3
@@ -46,6 +44,9 @@ COPY . .
 RUN useradd -ms /bin/bash algo
 RUN chown algo:algo /app -R
 USER algo
-CMD ["/bin/bash"]
+
+RUN chmod 0700 /app/run.sh
+
+CMD ["/app/run.sh"]
 
 
