@@ -23,7 +23,7 @@ spec:
       nodeName: sch-h-02
       containers:
         - name: algo-relay-mainnet
-          image: scholtz2/algorand-relay-mainnet:3.7.2-stable
+          image: scholtz2/algorand-relay-mainnet:3.8.1-stable
           imagePullPolicy: IfNotPresent
           ports:
           resources:
