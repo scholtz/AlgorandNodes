@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: algo-kmd-service-data
+  namespace: algo-kmd-mainnet
+spec:
+  type: ClusterIP
+  selector:
+    app: algo-kmd-mainnet
+  ports:
+    - name: algoclient
+      protocol: TCP
+      appProtocol: http
+      port: 8080
+      targetPort: 8080
