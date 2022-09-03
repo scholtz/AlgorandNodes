@@ -36,7 +36,6 @@ spec:
       labels:
         app: algo-kmd-mainnet
     spec:
-      nodeName: sch-h-02
       containers:
         - name: algo-kmd-mainnet
           image: docker.io/scholtz2/algorand-kmd-mainnet:3.8.1-stable
@@ -80,9 +79,9 @@ spec:
 #            timeoutSeconds: 10        
 #            failureThreshold: 6
 #            terminationGracePeriodSeconds: 60
-#          securityContext:
-#            runAsUser: 1000
-#            runAsGroup: 1000
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
           volumeMounts:
             - name: algo-mainnet-kmd-pvc
               mountPath: /app/data
@@ -105,20 +104,15 @@ spec:
     requests:
       storage: 5Gi
 ---
+apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: algo-mainnet-kmd-pv
 spec:
+  storageClassName: algo-mainnet-kmd-pv
+  capacity:
+    storage: 5Gi
   accessModes:
     - ReadWriteOnce
-  storageClassName: algo-mainnet-kmd-pv
-  local:
-    path: /run/desktop/mnt/host/c/algo
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - docker-desktop
+  hostPath:
+    path: "/mnt/kmd1"
