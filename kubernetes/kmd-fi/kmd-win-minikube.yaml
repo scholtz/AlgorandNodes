@@ -115,4 +115,4 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/c/kmd1"
+    path: "/run/desktop/mnt/host/c/kmd1"
