@@ -80,7 +80,6 @@ spec:
 #            timeoutSeconds: 10        
 #            failureThreshold: 6
 #            terminationGracePeriodSeconds: 60
-          resources: {}
 #          securityContext:
 #            runAsUser: 1000
 #            runAsGroup: 1000
