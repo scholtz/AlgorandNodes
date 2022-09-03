@@ -129,7 +129,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 500Gi
+      storage: 30Gi
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -142,7 +142,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 1500Gi
+      storage: 30Gi
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -155,15 +155,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/k8s/algo/mainnet-kmd/root"
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - sch-h-02
+    path: "/mnt/algo-kmd-root"
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -172,19 +164,11 @@ metadata:
 spec:
   storageClassName: algo-mainnet-kmd-net-2
   capacity:
-    storage: 500Gi
+    storage: 30Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/k8s/algo/mainnet-kmd/net"
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - sch-h-02
+    path: "/mnt/algo-kmd-net"
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -193,16 +177,8 @@ metadata:
 spec:
   storageClassName: algo-mainnet-kmd-catchpoints-2
   capacity:
-    storage: 1500Gi
+    storage: 30Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/k8s/algo/mainnet-kmd/catchpoints"
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - sch-h-02
+    path: "/mnt/algo-kmd-catchpoints"
