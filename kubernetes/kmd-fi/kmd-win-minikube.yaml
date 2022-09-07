@@ -36,18 +36,17 @@ spec:
       labels:
         app: algo-kmd-mainnet
     spec:
-      nodeName: sch-h-02
       containers:
         - name: algo-kmd-mainnet
           image: docker.io/scholtz2/algorand-kmd-mainnet:3.8.1-stable
           imagePullPolicy: Always
-          resources:
-            requests:
-              memory: "10000Mi"
-              cpu: "16000m"
-            limits:
-              memory: "20000Mi"
-              cpu: "32000m"
+#           resources:
+#            requests:
+#              memory: "10000Mi"
+#              cpu: "16000m"
+#            limits:
+#              memory: "20000Mi"
+#              cpu: "32000m"
 #          command: ["/bin/sh", "-ec", "while :; do date; sleep 60 ; done"]
           command:
             - /bin/bash
@@ -81,102 +80,39 @@ spec:
 #            failureThreshold: 6
 #            terminationGracePeriodSeconds: 60
           securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
+            runAsUser: 0
+            runAsGroup: 0
           volumeMounts:
-            - name: algo-mainnet-kmd-vol-root-2
+            - name: algo-mainnet-kmd-pvc
               mountPath: /app/data
-            - name: algo-mainnet-kmd-vol-net-2
-              mountPath: /app/data/mainnet-v1.0
-            - name: algo-mainnet-kmd-vol-catchpoints-2
-              mountPath: /app/data/mainnet-v1.0/catchpoints
       volumes:
-        - name: algo-mainnet-kmd-vol-root-2
+        - name: algo-mainnet-kmd-pvc
           persistentVolumeClaim:
-            claimName: algo-mainnet-kmd-vol-root-2
-        - name: algo-mainnet-kmd-vol-net-2
-          persistentVolumeClaim:
-            claimName: algo-mainnet-kmd-vol-net-2
-        - name: algo-mainnet-kmd-vol-catchpoints-2
-          persistentVolumeClaim:
-            claimName: algo-mainnet-kmd-vol-catchpoints-2
+            claimName: algo-mainnet-kmd-pvc
 
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: algo-mainnet-kmd-vol-root-2
+  name: algo-mainnet-kmd-pvc
   namespace: algo-kmd-mainnet
 spec:
-  storageClassName: algo-mainnet-kmd-root-2
+  storageClassName: algo-mainnet-kmd-pv
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 20Gi
-
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: algo-mainnet-kmd-vol-net-2
-  namespace: algo-kmd-mainnet
-spec:
-  storageClassName: algo-mainnet-kmd-net-2
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 30Gi
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: algo-mainnet-kmd-vol-catchpoints-2
-  namespace: algo-kmd-mainnet
-spec:
-  storageClassName: algo-mainnet-kmd-catchpoints-2
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 30Gi
+      storage: 40Gi
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: algo-mainnet-kmd-root-2
+  name: algo-mainnet-kmd-pv
 spec:
-  storageClassName: algo-mainnet-kmd-root-2
+  storageClassName: algo-mainnet-kmd-pv
   capacity:
-    storage: 20Gi
+    storage: 40Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/algo-kmd-root"
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: algo-mainnet-kmd-net-2
-spec:
-  storageClassName: algo-mainnet-kmd-net-2
-  capacity:
-    storage: 30Gi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: "/mnt/algo-kmd-net"
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: algo-mainnet-kmd-catchpoints-2
-spec:
-  storageClassName: algo-mainnet-kmd-catchpoints-2
-  capacity:
-    storage: 30Gi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: "/mnt/algo-kmd-catchpoints"
+    path: "/run/desktop/mnt/host/c/kmd1"

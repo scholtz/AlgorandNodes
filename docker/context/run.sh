@@ -1,6 +1,7 @@
 #apt update && apt dist-upgrade -y 
 
 
+cp mainnet/* data/ -R
 goal node start 
 diagcfg telemetry enable
 diagcfg metric enable
