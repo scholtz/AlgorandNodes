@@ -1,0 +1,26 @@
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: testnet-indexer-ingress
+  namespace: algorand-indexer-testnet
+  annotations: 
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    cert-manager.io/cluster-issuer: letsencrypt
+spec:
+  tls:
+  - hosts:
+    - testnet-indexer.k8s.aramid.finance
+    secretName: tls-aramid-indexer
+  rules:
+  - host: testnet-indexer.k8s.aramid.finance
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: algo-indexer-service
+            port:
+              number: 8980
