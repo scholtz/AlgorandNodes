@@ -28,7 +28,7 @@ spec:
               topologyKey: "kubernetes.io/hostname"
       containers:
         - name: relaynode-pod
-          image: scholtz2/algorand-relay-mainnet:3.8.1-stable
+          image: scholtz2/algorand-relay-mainnet:3.9.2-stable
           command: ["/bin/bash"]  
           args: ["-c", "./run.sh"]
 #          command:
@@ -72,7 +72,6 @@ spec:
             timeoutSeconds: 10        
             failureThreshold: 6
             terminationGracePeriodSeconds: 60
-          resources: {}
           volumeMounts:
             - name: relaynode-vol
               mountPath: /app/data
