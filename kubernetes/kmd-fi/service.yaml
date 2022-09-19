@@ -13,3 +13,19 @@ spec:
       appProtocol: http
       port: 8080
       targetPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: algo-kmd-service-18888-data
+  namespace: algo-kmd-mainnet
+spec:
+  type: ClusterIP
+  selector:
+    app: algo-kmd-mainnet
+  ports:
+    - name: kmdclient
+      protocol: TCP
+      appProtocol: http
+      port: 18888
+      targetPort: 18888

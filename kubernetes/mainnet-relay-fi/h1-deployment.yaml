@@ -23,9 +23,8 @@ spec:
       nodeName: sch-h-01
       containers:
         - name: algo-relay-mainnet
-          image: scholtz2/algorand-relay-mainnet:3.8.1-stable
+          image: scholtz2/algorand-relay-mainnet:3.9.4-stable
           imagePullPolicy: Always
-          ports:
           resources:
             requests:
               memory: "10000Mi"
@@ -66,7 +65,6 @@ spec:
             timeoutSeconds: 10        
             failureThreshold: 6
             terminationGracePeriodSeconds: 60
-          resources: {}
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000

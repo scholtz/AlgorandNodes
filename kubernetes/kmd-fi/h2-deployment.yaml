@@ -39,21 +39,23 @@ spec:
       nodeName: sch-h-02
       containers:
         - name: algo-kmd-mainnet
-          image: docker.io/scholtz2/algorand-kmd-mainnet:3.8.1-stable
+          image: docker.io/scholtz2/algorand-kmd-mainnet-extended:3.9.2-stable
           imagePullPolicy: Always
           resources:
             requests:
               memory: "10000Mi"
-              cpu: "16000m"
+              cpu: "3000m"
             limits:
               memory: "20000Mi"
               cpu: "32000m"
 #          command: ["/bin/sh", "-ec", "while :; do date; sleep 60 ; done"]
-          command:
-            - /bin/bash
-            - /app/run-kmd.sh
+          command: ["/bin/bash", "/app/run-kmd.sh"]
+#            - /bin/bash
+#            - /app/run-kmd.sh
           ports:
             - containerPort: 8080
+              protocol: TCP
+            - containerPort: 18888
               protocol: TCP
 #          startupProbe:
 #            exec:

@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kmd-algod-ingress
+  namespace: algo-kmd-mainnet
+  annotations: 
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    cert-manager.io/cluster-issuer: letsencrypt
+spec:
+  tls:
+  - hosts:
+    - kmd.h2.a-wallet.net
+    secretName: tls-kmd-algod
+  rules:
+  - host: kmd.h2.a-wallet.net
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: algo-kmd-service-18888-data
+            port:
+              number: 18888
