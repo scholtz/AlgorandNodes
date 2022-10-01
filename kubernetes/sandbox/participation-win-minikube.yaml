@@ -1,0 +1,118 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: algo-participation-sandbox
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: algo-participation-service-data
+  namespace: algo-participation-sandbox
+spec:
+  type: ClusterIP
+  selector:
+    app: algo-participation-sandbox
+  ports:
+    - name: algoclient
+      protocol: TCP
+      appProtocol: http
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: participation-node-2
+  namespace: algo-participation-sandbox
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: algo-participation-sandbox
+  template:
+    metadata:
+      labels:
+        app: algo-participation-sandbox
+    spec:
+      containers:
+        - name: algo-participation-sandbox
+          image: docker.io/scholtz2/algorand-participation-sandbox:3.8.4-stable
+          imagePullPolicy: Always
+#           resources:
+#            requests:
+#              memory: "10000Mi"
+#              cpu: "16000m"
+#            limits:
+#              memory: "20000Mi"
+#              cpu: "32000m"
+#          command: ["/bin/sh", "-ec", "while :; do date; sleep 60 ; done"]
+          command:
+            - /bin/bash
+            - /app/run-participation.sh
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+#          startupProbe:
+#            exec:
+#              command:
+#              - /bin/bash
+#              - /app/health.sh
+#            initialDelaySeconds: 10
+#            periodSeconds: 10   
+#            failureThreshold: 1000
+#          readinessProbe:
+#            exec:
+#              command:
+#              - /bin/bash
+#              - /app/health.sh
+#            initialDelaySeconds: 10
+#            timeoutSeconds: 10   
+#            failureThreshold: 100
+#          livenessProbe:
+#            exec:
+#              command:
+#              - /bin/bash
+#              - /app/health.sh
+#            initialDelaySeconds: 10
+#            timeoutSeconds: 10        
+#            failureThreshold: 6
+#            terminationGracePeriodSeconds: 60
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+          volumeMounts:
+            - name: algo-mainnet-participation-pvc
+              mountPath: /app/data
+      volumes:
+        - name: algo-mainnet-participation-pvc
+          persistentVolumeClaim:
+            claimName: algo-mainnet-participation-pvc
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: algo-mainnet-participation-pvc
+  namespace: algo-participation-mainnet
+spec:
+  storageClassName: algo-mainnet-participation-pv
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 40Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: algo-mainnet-participation-pv
+spec:
+  storageClassName: algo-mainnet-participation-pv
+  capacity:
+    storage: 40Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/run/desktop/mnt/host/c/algo/participation-sandbox"

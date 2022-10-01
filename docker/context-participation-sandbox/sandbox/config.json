@@ -1,0 +1,4 @@
+{
+    "NetAddress": ":4001",
+    "EndpointAddress": "0.0.0.0:8080"
+}

@@ -1,0 +1,9 @@
+ARG ALGO_VER
+
+FROM scholtz2/algorand-participation-mainnet:$ALGO_VER-stable
+COPY . . 
+
+RUN wget https://raw.githubusercontent.com/algorand/sandbox/master/images/algod/setup.py
+RUN chmod 0700 setup.py
+
+RUN ./setup.py --data-dir "/app/data"  --algod-port "4001" --kmd-port "4002"
