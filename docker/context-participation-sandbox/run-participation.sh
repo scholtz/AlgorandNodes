@@ -1,13 +1,18 @@
-if test -f "/app/data/genesis.json"; then
-	goal kmd start
-	goal node start
-else
-	cp sandbox/* data/ -rf
-
-	
-	
-	goal kmd start
-	goal node start
+echo "goal kmd start"
+goal kmd start || error_code=$?
+if [ $error_code -ne 0 ]; then
+    echo "goal kmd start failed";
+	exit 1;
 fi
+echo "goal node start"
+goal node start || error_code=$?
+if [ $error_code -ne 0 ]; then
+    echo "goal node start failed";
+	exit 1;
+fi
+
+algodtoken=$(cat /app/data/algod.token)
+sed -i s~aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa~$algodtoken~g /kmd/appsettings.json
+cd /kmd/ && nohup dotnet AlgorandKMDServer.dll &
 
 while true; do date; goal node status; sleep 600;done

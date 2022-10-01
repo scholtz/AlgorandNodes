@@ -2,8 +2,15 @@ ARG ALGO_VER
 
 FROM scholtz2/algorand-participation-mainnet:$ALGO_VER-stable
 COPY . . 
+USER root
+RUN chown algo:algo /app -R
+USER algo
 
 RUN wget https://raw.githubusercontent.com/algorand/sandbox/master/images/algod/setup.py
 RUN chmod 0700 setup.py
-
-RUN ./setup.py --data-dir "/app/data"  --algod-port "4001" --kmd-port "4002"
+RUN mkdir /app/net
+RUN ls -la /app
+RUN ./setup.py  --bin-dir /node --data-dir "/app/net/data"  --algod-port "4001" --kmd-port "4002" --start-script /app/run-participation.sh --network-template "/app/sandbox/template.json" --network-token "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" --network-dir "/app/net"  --bootstrap-url "" --genesis-file ""
+RUN cp /app/net/data /app/data -rf
+RUN chmod 0700 /app/run-participation.sh
+CMD ["/app/run-participation.sh"]

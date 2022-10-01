@@ -1,7 +1,6 @@
-#apt update && apt dist-upgrade -y 
-
-#diagcfg telemetry enable
-#diagcfg metric enable
+algodtoken=$(cat /app/data/algod.token)
+sed -i s~aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa~$algodtoken~g /kmd/appsettings.json
+cd /kmd/ && nohup dotnet AlgorandKMDServer.dll &
 
 if test -f "/app/data/genesis.json"; then
 
