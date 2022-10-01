@@ -1,0 +1,341 @@
+# Run algorand sandbox in docker desktop kubernetes
+#
+# Requires k8s setup with ability to open ports 4001,4002,8980 and 18888
+# 
+# https://stackoverflow.com/questions/64758012/location-of-kubernetes-config-directory-with-docker-desktop-on-windows
+# docker run -it --privileged --pid=host debian nsenter -t 1 -m -u -n -i sh
+# vi /etc/kubernetes/manifests/kube-apiserver.yaml
+# add     - --service-node-port-range=80-62767
+#
+# kubectl apply -f https://raw.githubusercontent.com/scholtz/AlgorandNodes/main/kubernetes/sandbox/sandbox.yaml
+# 
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: algo-sandbox
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: participation-node-2
+  namespace: algo-sandbox
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: algo-participation-sandbox
+  template:
+    metadata:
+      labels:
+        app: algo-participation-sandbox
+    spec:
+      containers:
+        - name: algo-participation-sandbox
+          image: scholtz2/algorand-participation-sandbox:3.9.4-stable
+          imagePullPolicy: Always
+#           resources:
+#            requests:
+#              memory: "10000Mi"
+#              cpu: "16000m"
+#            limits:
+#              memory: "20000Mi"
+#              cpu: "32000m"
+#          command: ["/bin/bash", "-ec", "while :; do date; sleep 60 ; done"]
+          command: ["/bin/bash", "/app/run-participation.sh"]
+          ports:
+            - containerPort: 4001
+              protocol: TCP
+            - containerPort: 4002
+              protocol: TCP
+            - containerPort: 18888
+              protocol: TCP
+          startupProbe:
+            exec:
+              command:
+              - /bin/bash
+              - /app/health.sh
+            initialDelaySeconds: 10
+            periodSeconds: 10   
+            failureThreshold: 1000
+#          readinessProbe:
+#            exec:
+#              command:
+#              - /bin/bash
+#              - /app/health.sh
+#            initialDelaySeconds: 10
+#            timeoutSeconds: 10   
+#            failureThreshold: 100
+#          livenessProbe:
+#            exec:
+#              command:
+#              - /bin/bash
+#              - /app/health.sh
+#            initialDelaySeconds: 10
+#            timeoutSeconds: 10        
+#            failureThreshold: 6
+#            terminationGracePeriodSeconds: 60
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+          volumeMounts:
+            - name: algo-sandbox-participation-pvc
+              mountPath: /app/data
+      volumes:
+        - name: algo-sandbox-participation-pvc
+          persistentVolumeClaim:
+            claimName: algo-sandbox-participation-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: algo-participation-algod-sandbox
+  namespace: algo-sandbox
+spec:
+  type: NodePort
+  selector:
+    app: algo-participation-sandbox
+  ports:
+    - name: algoclient
+      protocol: TCP
+      appProtocol: http
+      port: 4001
+      targetPort: 4001
+      nodePort: 4001
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: algo-participation-kmd-wallet-sandbox
+  namespace: algo-sandbox
+spec:
+  type: NodePort
+  selector:
+    app: algo-participation-sandbox
+  ports:
+    - name: algoclient
+      protocol: TCP
+      appProtocol: http
+      port: 4002
+      targetPort: 4002
+      nodePort: 4002
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: algo-participation-kmd-partkeyapi-sandbox
+  namespace: algo-sandbox
+spec:
+  type: NodePort
+  selector:
+    app: algo-participation-sandbox
+  ports:
+    - name: algoclient
+      protocol: TCP
+      appProtocol: http
+      port: 18888
+      targetPort: 18888
+      nodePort: 18888
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: algo-sandbox-participation-pvc
+  namespace: algo-sandbox
+spec:
+  storageClassName: algo-sandbox-participation-pv
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 40Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: algo-sandbox-participation-pv
+spec:
+  storageClassName: algo-sandbox-participation-pv
+  capacity:
+    storage: 40Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/run/desktop/mnt/host/c/algo/participation-sandbox"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: indexerdb-sandbox-service
+  namespace: algo-sandbox
+spec:
+  type: ClusterIP
+  selector:
+    app: indexerdb-sandbox
+  ports:
+    - name: algoclient
+      protocol: TCP
+      appProtocol: http
+      port: 5432
+      targetPort: 5432
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: indexerdb-sandbox-deployment
+  namespace: algo-sandbox
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: indexerdb-sandbox
+  template:
+    metadata:
+      labels:
+        app: indexerdb-sandbox
+    spec:
+      containers:
+        - name: indexerdb-sandbox
+          image: postgres:14.4
+          imagePullPolicy: IfNotPresent
+          #command: ["/bin/sh", "-ec", "while :; do date; sleep 60 ; done"]
+          #resources:
+          #  requests:
+          #    memory: "10000Mi"
+          #    cpu: "1000m"
+          #  limits:
+          #    memory: "20000Mi"
+          #    cpu: "8000m"
+          env:
+            - name: POSTGRES_USER
+              value: "indexerdb"
+            - name: POSTGRES_PASSWORD
+              value: algorand
+            - name: POSTGRES_DB
+              value: indexerdb
+          ports:
+          -
+            containerPort: 5432
+            protocol: "TCP"  
+          readinessProbe:
+              tcpSocket:
+                port: 5432
+              initialDelaySeconds: 5
+              periodSeconds: 10
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sleep","10"]
+          volumeMounts:
+            - name: indexerdb-pvc
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: indexerdb-pvc
+          persistentVolumeClaim:
+            claimName: indexerdb-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: indexerdb-pvc
+  namespace: algo-sandbox
+spec:
+  storageClassName: indexerdb-pv
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: indexerdb-pv
+spec:
+  storageClassName: indexerdb-pv
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/run/desktop/mnt/host/c/algo/participation-indexerdb"
+---
+---
+apiVersion: apps/v1 
+kind: Deployment
+metadata:
+  name: indexer-sandbox
+  namespace: algo-sandbox
+spec:
+  selector:
+    matchLabels:
+      app: indexer-sandbox
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: indexer-sandbox
+    spec:
+      containers:
+      - name: indexer-sandbox
+        image: scholtz2/algorand-indexer:2.14.0-stable
+        imagePullPolicy: Always
+        command: ["/bin/bash"]  
+        args: ["-c", "./run.sh" ]   
+        ports:
+            - containerPort: 8980
+              protocol: TCP
+        readinessProbe:
+            tcpSocket:
+              port: 8980
+            initialDelaySeconds: 10
+            timeoutSeconds: 5  
+            failureThreshold: 2
+        livenessProbe:
+            tcpSocket:
+              port: 8980
+            initialDelaySeconds: 20
+            timeoutSeconds: 5  
+            failureThreshold: 2
+            terminationGracePeriodSeconds: 1
+        env:
+        - name: INDEXER_POSTGRES_CONNECTION_STRING
+          value: "host=indexerdb-sandbox-service.algo-sandbox port=5432 user=indexerdb password=algorand dbname=indexerdb sslmode=disable"
+        - name: INDEXER_ALGOD_ADDRESS
+          value: "algo-participation-algod-sandbox.algo-sandbox:4001"
+        - name: INDEXER_ALGOD_TOKEN
+          value: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        - name: INDEXER_API_TOKEN
+          value: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        - name: INDEXER_DEV_MODE
+          value: "1"
+        - name: INDEXER_METRICS_MODE
+          value: "1"
+        - name: INDEXER_ENABLE_ALL_PARAMETERS
+          value: "1"
+        - name: INDEXER_DATA
+          value: "/app/data"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: indexer-sandbox-service
+  namespace: algo-sandbox
+spec:
+  type: NodePort
+  selector:
+    app: indexer-sandbox
+  ports:
+    - name: algoclient
+      protocol: TCP
+      appProtocol: http
+      port: 8980
+      targetPort: 8980
+      nodePort: 8980

@@ -1,0 +1,98 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: indexerdb-sandbox-service
+  namespace: algo-sandbox
+spec:
+  type: ClusterIP
+  selector:
+    app: indexerdb-sandbox
+  ports:
+    - name: algoclient
+      protocol: TCP
+      appProtocol: http
+      port: 5432
+      targetPort: 5432
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: indexerdb-sandbox-deployment
+  namespace: algo-sandbox
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: indexerdb-sandbox
+  template:
+    metadata:
+      labels:
+        app: indexerdb-sandbox
+    spec:
+      containers:
+        - name: indexerdb-sandbox
+          image: postgres:14.4
+          imagePullPolicy: IfNotPresent
+          #command: ["/bin/sh", "-ec", "while :; do date; sleep 60 ; done"]
+          #resources:
+          #  requests:
+          #    memory: "10000Mi"
+          #    cpu: "1000m"
+          #  limits:
+          #    memory: "20000Mi"
+          #    cpu: "8000m"
+          env:
+            - name: POSTGRES_USER
+              value: "indexerdb"
+            - name: POSTGRES_PASSWORD
+              value: algorand
+            - name: POSTGRES_DB
+              value: indexerdb
+          ports:
+          -
+            containerPort: 5432
+            protocol: "TCP"  
+          readinessProbe:
+              tcpSocket:
+                port: 5432
+              initialDelaySeconds: 5
+              periodSeconds: 10
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sleep","10"]
+          volumeMounts:
+            - name: indexerdb-pvc
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: indexerdb-pvc
+          persistentVolumeClaim:
+            claimName: indexerdb-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: indexerdb-pvc
+  namespace: algo-sandbox
+spec:
+  storageClassName: indexerdb-pv
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: indexerdb-pv
+spec:
+  storageClassName: indexerdb-pv
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/run/desktop/mnt/host/c/algo/participation-indexerdb"

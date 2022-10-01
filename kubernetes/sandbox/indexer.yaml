@@ -1,0 +1,74 @@
+---
+apiVersion: apps/v1 
+kind: Deployment
+metadata:
+  name: indexer-sandbox
+  namespace: algo-sandbox
+spec:
+  selector:
+    matchLabels:
+      app: indexer-sandbox
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: indexer-sandbox
+    spec:
+      containers:
+      - name: indexer-sandbox
+        image: scholtz2/algorand-indexer:2.14.0-stable
+        imagePullPolicy: Always
+        command: ["/bin/bash"]  
+        args: ["-c", "./run.sh" ]   
+        ports:
+            - containerPort: 8980
+              protocol: TCP
+        readinessProbe:
+            tcpSocket:
+              port: 8980
+            initialDelaySeconds: 10
+            timeoutSeconds: 5  
+            failureThreshold: 2
+        livenessProbe:
+            tcpSocket:
+              port: 8980
+            initialDelaySeconds: 20
+            timeoutSeconds: 5  
+            failureThreshold: 2
+            terminationGracePeriodSeconds: 1
+        env:
+        - name: INDEXER_POSTGRES_CONNECTION_STRING
+          value: "host=indexerdb-sandbox-service.algo-sandbox port=5432 user=indexerdb password=algorand dbname=indexerdb sslmode=disable"
+        - name: INDEXER_ALGOD_ADDRESS
+          value: "algo-participation-algod-sandbox.algo-sandbox:4001"
+        - name: INDEXER_ALGOD_TOKEN
+          value: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        - name: INDEXER_API_TOKEN
+          value: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        - name: INDEXER_DEV_MODE
+          value: "1"
+        - name: INDEXER_METRICS_MODE
+          value: "1"
+        - name: INDEXER_ENABLE_ALL_PARAMETERS
+          value: "1"
+        - name: INDEXER_DATA
+          value: "/app/data"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: indexer-sandbox-service
+  namespace: algo-sandbox
+spec:
+  type: NodePort
+  selector:
+    app: indexer-sandbox
+  ports:
+    - name: algoclient
+      protocol: TCP
+      appProtocol: http
+      port: 8980
+      targetPort: 8980
+      nodePort: 31004
