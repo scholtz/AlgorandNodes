@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: algo-participation-sandbox
+  name: algo-sandbox
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: algo-participation-service-data
-  namespace: algo-participation-sandbox
+  namespace: algo-sandbox
 spec:
   type: ClusterIP
   selector:
@@ -23,7 +23,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: participation-node-2
-  namespace: algo-participation-sandbox
+  namespace: algo-sandbox
 spec:
   replicas: 1
   strategy:
@@ -38,7 +38,7 @@ spec:
     spec:
       containers:
         - name: algo-participation-sandbox
-          image: docker.io/scholtz2/algorand-participation-sandbox:3.8.4-stable
+          image: scholtz2/algorand-participation-sandbox:3.9.4-stable
           imagePullPolicy: Always
 #           resources:
 #            requests:
@@ -83,23 +83,23 @@ spec:
             runAsUser: 0
             runAsGroup: 0
           volumeMounts:
-            - name: algo-mainnet-participation-pvc
+            - name: algo-sandbox-participation-pvc
               mountPath: /app/data
       volumes:
-        - name: algo-mainnet-participation-pvc
+        - name: algo-sandbox-participation-pvc
           persistentVolumeClaim:
-            claimName: algo-mainnet-participation-pvc
+            claimName: algo-sandbox-participation-pvc
 
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: algo-mainnet-participation-pvc
-  namespace: algo-participation-mainnet
+  name: algo-sandbox-participation-pvc
+  namespace: algo-sandbox
 spec:
-  storageClassName: algo-mainnet-participation-pv
+  storageClassName: algo-sandbox-participation-pv
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   resources:
     requests:
       storage: 40Gi
@@ -107,12 +107,12 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: algo-mainnet-participation-pv
+  name: algo-sandbox-participation-pv
 spec:
-  storageClassName: algo-mainnet-participation-pv
+  storageClassName: algo-sandbox-participation-pv
   capacity:
     storage: 40Gi
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   hostPath:
     path: "/run/desktop/mnt/host/c/algo/participation-sandbox"
