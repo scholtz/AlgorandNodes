@@ -1,12 +1,12 @@
 echo "goal kmd start"
 goal kmd start || error_code=$?
-if [ $error_code -ne 0 ]; then
+if [ "$error_code" -ne "0" ]; then
     echo "goal kmd start failed";
 	exit 1;
 fi
 echo "goal node start"
 goal node start || error_code=$?
-if [ $error_code -ne 0 ]; then
+if [ "$error_code" -ne "0" ]; then
     echo "goal node start failed";
 	exit 1;
 fi

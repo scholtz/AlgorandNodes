@@ -1,6 +1,6 @@
 ARG ALGO_VER
 
-FROM scholtz2/algorand-participation-mainnet:$ALGO_VER-stable
+FROM scholtz2/algorand-kmd-mainnet-extended:$ALGO_VER-stable
 COPY . . 
 USER root
 RUN chown algo:algo /app -R
@@ -11,6 +11,10 @@ RUN chmod 0700 setup.py
 RUN mkdir /app/net
 RUN ls -la /app
 RUN ./setup.py  --bin-dir /node --data-dir "/app/net/data"  --algod-port "4001" --kmd-port "4002" --start-script /app/run-participation.sh --network-template "/app/sandbox/template.json" --network-token "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" --network-dir "/app/net"  --bootstrap-url "" --genesis-file ""
-RUN cp /app/net/data /app/data -rf
+RUN cp /app/net/Node/* /app/data -rf
+COPY run-participation.sh run-participation.sh 
+USER root
 RUN chmod 0700 /app/run-participation.sh
+RUN chown algo:algo  /app/run-participation.sh -R
+USER algo
 CMD ["/app/run-participation.sh"]
