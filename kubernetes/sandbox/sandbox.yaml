@@ -1,7 +1,10 @@
 # Run algorand sandbox in docker desktop kubernetes
 #
 # Requires k8s setup with ability to open ports 4001,4002,8980 and 18888
-# 
+#
+# Setup k8s on mac: https://www.youtube.com/watch?v=KZEG2Nix7-U
+# Setup k8s on windows: https://www.youtube.com/watch?v=o7nTRD0CWAA
+#
 # https://stackoverflow.com/questions/64758012/location-of-kubernetes-config-directory-with-docker-desktop-on-windows
 # docker run -it --privileged --pid=host debian nsenter -t 1 -m -u -n -i sh
 # vi /etc/kubernetes/manifests/kube-apiserver.yaml
@@ -49,6 +52,8 @@ spec:
             - containerPort: 4001
               protocol: TCP
             - containerPort: 4002
+              protocol: TCP
+            - containerPort: 9392 
               protocol: TCP
             - containerPort: 18888
               protocol: TCP
