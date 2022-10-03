@@ -1,4 +1,5 @@
 # Run algorand sandbox in docker desktop kubernetes
+# This file is intended for use in Windows docker kubernetes 
 #
 # Requires k8s setup with ability to open ports 4001,4002,8980 and 18888
 #
@@ -11,6 +12,9 @@
 # add     - --service-node-port-range=80-62767
 #
 # kubectl apply -f https://raw.githubusercontent.com/scholtz/AlgorandNodes/main/kubernetes/sandbox/sandbox.yaml
+#
+# to enable debugger service: 
+# kubectl apply -f https://raw.githubusercontent.com/scholtz/AlgorandNodes/main/kubernetes/sandbox/debugger-service.yaml
 # 
 ---
 apiVersion: v1
