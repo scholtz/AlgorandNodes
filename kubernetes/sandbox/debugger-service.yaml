@@ -6,7 +6,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: algo-participation-algod-sandbox
+  name: algo-participation-sandbox-debugger-service
   namespace: algo-sandbox
 spec:
   type: NodePort
