@@ -1,3 +1,9 @@
+if [ ! -f "/app/data/genesis.json" ] 
+then
+    cp /app/net/Node/* /app/data -rf
+    cp /app/sandbox/config.json /app/data/config.json
+fi
+
 echo "goal kmd start"
 goal kmd start || error_code=$?
 if [ "$error_code" -ne "0" ]; then
