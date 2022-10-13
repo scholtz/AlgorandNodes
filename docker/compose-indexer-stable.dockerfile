@@ -1,7 +1,7 @@
 FROM ubuntu
 USER root
 ENV DEBIAN_FRONTEND noninteractive
-RUN apt update && apt dist-upgrade -y && apt install -y mc wget telnet git curl iotop atop vim && apt-get clean autoclean && apt-get autoremove --yes && rm -rf /var/lib/{apt,dpkg,cache,log}/
+RUN apt update && apt dist-upgrade -y && apt install -y mc wget telnet git curl ss iotop atop vim && apt-get clean autoclean && apt-get autoremove --yes && rm -rf /var/lib/{apt,dpkg,cache,log}/
 
 RUN mkdir /install
 WORKDIR /install
