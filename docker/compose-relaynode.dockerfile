@@ -3,7 +3,8 @@ USER root
 ENV ARCH=amd64
 ARG ALGO_VER
 ENV DEBIAN_FRONTEND noninteractive
-RUN apt update && apt dist-upgrade -y && apt install -y mc wget telnet git iotop atop vim make  gcc build-essential aptly awscli binutils build-essential curl gnupg2 libboost-all-dev sqlite3 autoconf jq bsdmainutils shellcheck && apt-get clean autoclean && apt-get autoremove --yes &&  rm -rf /var/lib/{apt,dpkg,cache,log}/
+RUN apt update && apt dist-upgrade -y && apt install -y mc wget telnet git curl net-tools iotop atop vim dnsutils jq && apt-get autoremove --yes && rm -rf /var/lib/{apt,dpkg,cache,log}/
+RUN apt update && apt dist-upgrade -y && apt install -y make gcc build-essential aptly awscli binutils build-essential gnupg2 libboost-all-dev sqlite3 autoconf bsdmainutils shellcheck && apt-get clean autoclean && apt-get autoremove --yes &&  rm -rf /var/lib/{apt,dpkg,cache,log}/
 ENV GOPATH=/usr/local/algo
 ENV GOROOT=/usr/local/go
 ENV PATH=$GOPATH/bin:$GOROOT/bin:$PATH
@@ -31,7 +32,7 @@ RUN make
 FROM ubuntu:latest as final
 USER root
 ENV DEBIAN_FRONTEND noninteractive
-RUN apt update && apt dist-upgrade -y && apt install -y mc wget telnet git curl iotop atop vim dnsutils && apt-get clean autoclean && apt-get autoremove --yes && rm -rf /var/lib/{apt,dpkg,cache,log}/
+RUN apt update && apt dist-upgrade -y && apt install -y mc wget telnet git curl net-tools iotop atop vim dnsutils jq && apt-get autoremove --yes && rm -rf /var/lib/{apt,dpkg,cache,log}/
 COPY --from=build /usr/local/algo/bin /usr/local/algo/bin
 ENV GOPATH=/usr/local/algo
 ENV ALGORAND_DATA=/app/data
