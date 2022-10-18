@@ -196,8 +196,9 @@ if [ $error_code_int -ne 0 ]; then
 fi
 
 
-date()
-
 END=$(date +%s);
 
 echo $((END-START)) | awk '{print int($1/60)":"int($1%60)}'
+
+
+date()
