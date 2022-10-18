@@ -21,6 +21,15 @@ if [ "$tag" == "latest" ]; then
 fi
 produce=$tag
 
+
+currentFile="current-relay-version.txt"
+base=$(cat "$currentFile")
+
+if [ "$base" == "" ]; then
+    echo "failed to fetch base version";
+	exit 1;
+fi
+
 date
 START=$(date +%s);
 
@@ -30,14 +39,6 @@ if [ "$base" == "$produce" ]; then
 	exit 0;
 fi
 
-
-currentFile="current-relay-version.txt"
-base=$(cat "$currentFile")
-
-if [ "$base" == "" ]; then
-    echo "failed to fetch base version";
-	exit 1;
-fi
 
 cd /home/scholtz/AlgorandNodes/docker
 git pull || error_code=$?
