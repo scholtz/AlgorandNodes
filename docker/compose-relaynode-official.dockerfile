@@ -3,7 +3,7 @@ ARG ALGO_VER
 FROM algorand/stable:$ALGO_VER
 USER root
 ENV DEBIAN_FRONTEND noninteractive
-RUN apt update && apt dist-upgrade -y && apt install -y mc wget telnet git curl net-tools iotop atop vim dnsutils jq && apt-get autoremove --yes && rm -rf /var/lib/{apt,dpkg,cache,log}/
+RUN apt update && apt dist-upgrade -y && apt install -y mc wget telnet git curl net-tools iotop atop vim dnsutils jq iproute2 && apt-get autoremove --yes && rm -rf /var/lib/{apt,dpkg,cache,log}/
 ENV ALGORAND_DATA=/app/data
 RUN mkdir /app
 RUN mkdir /app/data
