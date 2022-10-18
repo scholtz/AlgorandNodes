@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #base=3.10.0
 #produce=3.10.0
 
