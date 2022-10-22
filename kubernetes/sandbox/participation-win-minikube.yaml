@@ -6,7 +6,7 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: participation-node-2
+  name: sandbox-algod-with-kmd-deployment
   namespace: algo-sandbox
 spec:
   replicas: 1
