@@ -184,6 +184,8 @@ sed -i "s~$base~$produce~g" $f1
 f1=g1-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
+cd /home/scholtz/AlgorandNodes/docker
+
 echo $produce > $currentFile
 
 cd /home/scholtz/AlgorandNodes/
