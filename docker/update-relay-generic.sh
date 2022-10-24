@@ -21,8 +21,9 @@ if [ "$tag" == "latest" ]; then
 fi
 produce=$tag
 
+cd /home/scholtz/AlgorandNodes/docker
 
-currentFile="current-relay-version.txt"
+currentFile="/home/scholtz/AlgorandNodes/docker/current-relay-version.txt"
 base=$(cat "$currentFile")
 
 if [ "$base" == "" ]; then
