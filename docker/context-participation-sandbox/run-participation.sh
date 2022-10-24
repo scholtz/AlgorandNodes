@@ -19,9 +19,9 @@ if [ $error_code_int -ne 0 ]; then
 	exit 1;
 fi
 
-data=curl http://localhost:4001/v2/transactions/params -H "X-Algo-API-Token:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-gid=`echo $data | jq '."genesis-id"'`
-ghash=`echo $data | jq '."genesis-hash"'`
+data=$(curl http://localhost:4001/v2/transactions/params -H "X-Algo-API-Token:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+gid=$(echo $data | jq -r '."genesis-id"')
+ghash=$(echo $data | jq -r '."genesis-hash"')
 
 algodtoken=$(cat /app/data/algod.token)
 sed -i s~aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa~$algodtoken~g /kmd/appsettings.json
