@@ -58,22 +58,17 @@ spec:
         - name: aramid-relay-mainnet-h2
           image: scholtz2/aramid-algo-node:v3.7.2-beta
           imagePullPolicy: Always
-          ports:
           resources:
             requests:
               memory: "10000Mi"
-              cpu: "16000m"
+              cpu: "1000m"
             limits:
               memory: "20000Mi"
-              cpu: "32000m"
+              cpu: "4000m"
 
           command:
             - /bin/bash
             - /app/run.sh
-          ports:
-            - containerPort: 4160
-              protocol: TCP
-              
           startupProbe:
             exec:
               command:
@@ -99,13 +94,11 @@ spec:
             timeoutSeconds: 10        
             failureThreshold: 6
             terminationGracePeriodSeconds: 60
-            
           ports:
             - containerPort: 14260
               protocol: TCP
             - containerPort: 18280
               protocol: TCP
-          resources: {}
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000

@@ -3,55 +3,104 @@ kind: Namespace
 metadata:
   name: aramid-indexer-mainnet
 ---
-apiVersion: apps/v1 
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: aramid-indexer-mainnet
+  name: h32-db-aramid-indexer-mainnet-deployment
   namespace: aramid-indexer-mainnet
 spec:
+  replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
-      app: aramid-indexer-mainnet
-  replicas: 1
+      app: h32-db-aramid-indexer-mainnet-deployment
   template:
     metadata:
       labels:
-        app: aramid-indexer-mainnet
+        app: h32-db-aramid-indexer-mainnet-deployment
     spec:
+      nodeName: sch-g-02
       containers:
-      - name: aramid-indexer-mainnet
-        image: scholtz2/algorand-indexer:2.11.1-stable
-        imagePullPolicy: Always
-        command: ["/bin/bash"]  
-        args: ["-c", "./run.sh" ]   
-        ports:
-            - containerPort: 8980
-              protocol: TCP
-        readinessProbe:
-            tcpSocket:
-              port: 8980
-            initialDelaySeconds: 10
-            timeoutSeconds: 5  
-            failureThreshold: 2
-        livenessProbe:
-            tcpSocket:
-              port: 8980
-            initialDelaySeconds: 20
-            timeoutSeconds: 5  
-            failureThreshold: 2
-            terminationGracePeriodSeconds: 1
-        env:
-        - name: INDEXER_POSTGRES_CONNECTION_STRING
-          value: "host=.. port=5432 user=.. password=.. dbname=.. sslmode=disable"
-        - name: INDEXER_ALGOD_ADDRESS
-          value: "algo-set-service-data.algo-relay-mainnet:8080"
-        - name: INDEXER_ALGOD_TOKEN
-          value: ".."
-        - name: INDEXER_API_TOKEN
-          value: ".."
-        - name: INDEXER_DEV_MODE
-          value: "0"
-        - name: INDEXER_METRICS_MODE
-          value: "1"
-        - name: INDEXER_GENESIS
-          value: "/app/genesis/aramidmain/genesis.json"
+        - name: h32-db-aramid-indexer-mainnet-deployment
+          image: postgres:14.4
+          imagePullPolicy: IfNotPresent
+          #command: ["/bin/sh", "-ec", "while :; do date; sleep 60 ; done"]
+          resources:
+            requests:
+              memory: "10000Mi"
+              cpu: "1000m"
+            limits:
+              memory: "20000Mi"
+              cpu: "8000m"
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: aramid-indexer-secret
+                  key: POSTGRES_USER
+              value: "h32-indexer-mainnet"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: aramid-indexer-secret
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: aramid-indexer-secret
+                  key: POSTGRES_DB
+          ports:
+          -
+            containerPort: 5432
+            protocol: "TCP"  
+          readinessProbe:
+              tcpSocket:
+                port: 5432
+              initialDelaySeconds: 5
+              periodSeconds: 10
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sleep","10"]
+          volumeMounts:
+            - name: h32-db-aramid-indexer-mainnet-pvc
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: h32-db-aramid-indexer-mainnet-pvc
+          persistentVolumeClaim:
+            claimName: h32-db-aramid-indexer-mainnet-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: h32-db-aramid-indexer-mainnet-pvc
+  namespace:  aramid-indexer-mainnet
+spec:
+  storageClassName: h32-db-aramid-indexer-mainnet-pv
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: h32-db-aramid-indexer-mainnet-pv
+spec:
+  storageClassName: h32-db-aramid-indexer-mainnet-pv
+  capacity:
+    storage: 20Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/mnt/nvme2/aramid-indexer-mainnet"
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - sch-g-02

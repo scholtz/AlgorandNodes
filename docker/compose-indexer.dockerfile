@@ -13,8 +13,8 @@ WORKDIR /go-algorand
 RUN ./scripts/configure_dev.sh
 RUN ./scripts/buildtools/install_buildtools.sh
 
-RUN echo 5
-RUN git clone https://github.com/scholtz/indexer.git /indexer && cd /indexer
+RUN echo 7
+RUN git clone https://github.com/AramidFinance/indexer.git /indexer && cd /indexer && git checkout 2.14.2.fix-consensus
 WORKDIR /indexer
 
 RUN ls -lA
@@ -35,7 +35,6 @@ COPY --from=build /usr/local/algo/bin /usr/local/algo/bin
 COPY --from=build /indexer /indexer
 COPY --from=build /indexer/cmd/algorand-indexer/algorand-indexer /usr/local/algo/bin/algorand-indexer
 ENV GOPATH=/usr/local/algo
-ENV ALGORAND_DATA=/app/data
 RUN mkdir /app
 ENV PATH=$GOPATH/bin:$PATH
 WORKDIR /app
@@ -47,6 +46,6 @@ USER algo
 
 RUN chmod 0700 /app/run.sh
 
-CMD ["/app/run.sh"]
+CMD ["/bin/bash", "/app/run.sh"]
 
 
