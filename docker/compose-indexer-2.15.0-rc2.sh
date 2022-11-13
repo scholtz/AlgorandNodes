@@ -7,6 +7,7 @@ else
     # stable
     produceVer=$ver-stable
 fi
+echo $produceVer;exit 1;
 
 echo "docker build -t scholtz2/algorand-indexer:$produceVer -f compose-indexer-stable.dockerfile --progress=plain --build-arg INDEXER_VER=$ver context-indexer/"
 docker build -t scholtz2/algorand-indexer:$produceVer -f compose-indexer-stable.dockerfile --progress=plain --build-arg INDEXER_VER=$ver context-indexer/ || error_code=$?
