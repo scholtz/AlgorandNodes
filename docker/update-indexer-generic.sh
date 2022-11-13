@@ -20,7 +20,6 @@ if [ "$tag" == "develop" ]; then
 	exit 1;
 fi
 produce=$tag
-produce=2.14.2
 cd /home/scholtz/AlgorandNodes/docker
 
 currentFile="/home/scholtz/AlgorandNodes/docker/current-indexer-version.txt"
