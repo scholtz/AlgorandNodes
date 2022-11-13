@@ -1,5 +1,4 @@
 ver=2.15.0-rc2
-echo $ver
 if [[ "$ver" == *"-rc"* ]]; then
     # not stable
     produceVer=$ver
@@ -7,7 +6,7 @@ else
     # stable
     produceVer=$ver-stable
 fi
-echo $produceVer;exit 1;
+echo $produceVer->$ver
 
 echo "docker build -t scholtz2/algorand-indexer:$produceVer -f compose-indexer-stable.dockerfile --progress=plain --build-arg INDEXER_VER=$ver context-indexer/"
 docker build -t scholtz2/algorand-indexer:$produceVer -f compose-indexer-stable.dockerfile --progress=plain --build-arg INDEXER_VER=$ver context-indexer/ || error_code=$?
