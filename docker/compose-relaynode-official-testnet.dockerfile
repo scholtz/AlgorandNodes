@@ -19,6 +19,6 @@ RUN chown algo:algo /node -R
 RUN chmod 0700 /app/health.sh
 RUN chmod 0700 /app/run.sh
 USER algo
-CMD ["/bin/bash"]
+CMD ["/bin/bash" "/app/run.sh"]
 
 
