@@ -114,7 +114,7 @@ spec:
           - ReadWriteOnce
         resources:
           requests:
-            storage: 1000Gi
+            storage: 1200Gi
         storageClassName: linode-block-storage-retain
         volumeMode: Filesystem
     - kind: PersistentVolumeClaim
