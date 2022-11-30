@@ -28,7 +28,7 @@ spec:
               topologyKey: "kubernetes.io/hostname"
       containers:
         - name: relaynode-pod
-          image: scholtz2/algorand-relay-mainnet:3.11.3-stable
+          image: scholtz2/algorand-relay-mainnet:3.12.2-stable
           command: ["/bin/bash"]  
           args: ["-c", "./run.sh"]
 #          command:
