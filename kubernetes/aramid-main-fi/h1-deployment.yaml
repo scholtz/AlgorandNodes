@@ -52,28 +52,51 @@ spec:
     metadata:
       labels:
         app: aramid-relay-mainnet
+        lb: aramid-relay-mainnet
     spec:
       nodeName: sch-h-01
       containers:
         - name: aramid-relay-mainnet
-          image: scholtz2/aramid-algo-node:v3.7.2-beta
+          image: scholtz2/aramid-algo-node:v3.12.2-stable
           imagePullPolicy: Always
-          ports:
           resources:
             requests:
-              memory: "10000Mi"
-              cpu: "16000m"
+              memory: "5000Mi"
+              cpu: "5000m"
             limits:
               memory: "20000Mi"
               cpu: "32000m"
-          command: ["/bin/sh", "-ec", "while :; do echo '.'; sleep 5 ; done"]
-
+          #command: ["/bin/sh", "-ec", "while :; do echo '.'; sleep 5 ; done"]
+          startupProbe:
+            exec:
+              command:
+              - /bin/bash
+              - /app/health.sh
+            initialDelaySeconds: 10
+            periodSeconds: 10   
+            failureThreshold: 1000
+          readinessProbe:
+            exec:
+              command:
+              - /bin/bash
+              - /app/health.sh
+            initialDelaySeconds: 10
+            timeoutSeconds: 10   
+            failureThreshold: 100
+          livenessProbe:
+            exec:
+              command:
+              - /bin/bash
+              - /app/health.sh
+            initialDelaySeconds: 10
+            timeoutSeconds: 10        
+            failureThreshold: 6
+            terminationGracePeriodSeconds: 60
           ports:
             - containerPort: 14160
               protocol: TCP
             - containerPort: 18080
               protocol: TCP
-          resources: {}
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
