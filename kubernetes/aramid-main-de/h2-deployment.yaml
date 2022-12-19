@@ -52,23 +52,24 @@ spec:
     metadata:
       labels:
         app: aramid-relay-mainnet-h2
+        lb: aramid-relay-mainnet
     spec:
       nodeName: sch-g-02
       containers:
         - name: aramid-relay-mainnet-h2
-          image: scholtz2/aramid-algo-node:v3.7.2-beta
+          image: scholtz2/aramid-algo-node:v3.12.2-stable
           imagePullPolicy: Always
           resources:
             requests:
-              memory: "10000Mi"
+              memory: "2000Mi"
               cpu: "1000m"
             limits:
-              memory: "20000Mi"
+              memory: "4000Mi"
               cpu: "4000m"
-
-          command:
-            - /bin/bash
-            - /app/run.sh
+          #command: ["/bin/bash", "-ec", "while :; do date; sleep 60 ; done"]
+          #command:
+          #  - /bin/bash
+          #  - /app/run.sh
           startupProbe:
             exec:
               command:

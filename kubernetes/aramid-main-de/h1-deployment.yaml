@@ -52,23 +52,23 @@ spec:
     metadata:
       labels:
         app: aramid-relay-mainnet
+        lb: aramid-relay-mainnet
     spec:
       nodeName: sch-g-01
       containers:
         - name: aramid-relay-mainnet
-          image: scholtz2/aramid-algo-node:v3.9.2-beta
+          image: scholtz2/aramid-algo-node:v3.12.2-stable
           imagePullPolicy: Always
-          ports:
           resources:
             requests:
-              memory: "10000Mi"
-              cpu: "16000m"
+              memory: "4000Mi"
+              cpu: "4000m"
             limits:
               memory: "20000Mi"
-              cpu: "32000m"
-          command:
-            - /bin/bash
-            - /app/run.sh
+              cpu: "16000m"
+          #command:
+          #  - /bin/bash
+          #  - /app/run.sh
           startupProbe:
             exec:
               command:
@@ -100,7 +100,6 @@ spec:
               protocol: TCP
             - containerPort: 18180
               protocol: TCP
-          resources: {}
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
