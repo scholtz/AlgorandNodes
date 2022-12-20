@@ -66,6 +66,7 @@ spec:
             limits:
               memory: "20000Mi"
               cpu: "16000m"
+          #command: ["/bin/bash", "-ec", "while :; do date; sleep 60 ; done"]
           #command:
           #  - /bin/bash
           #  - /app/run.sh
