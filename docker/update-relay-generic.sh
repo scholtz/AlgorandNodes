@@ -147,6 +147,22 @@ if [ $error_code_int -ne 0 ]; then
 fi
 
 
+f1base="aramid-from-official-${base}-stable.sh"
+f1="aramid-from-official-${produce}-stable.sh"
+if [ ! -f "$f1" ]; then
+    cp $f1base $f1
+    sed -i "s~$base~$produce~g" $f1
+fi
+
+echo "Processing ${f1}"
+bash $f1 || error_code=$?
+error_code_int=$(($error_code + 0))
+if [ $error_code_int -ne 0 ]; then
+    echo "$f1 failed";
+	exit 1;
+fi
+
+
 cd /home/scholtz/AlgorandNodes/kubernetes/mainnet-relay-fi
 f1=h2-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
@@ -183,6 +199,26 @@ f1=g2-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
 f1=g1-deployment.yaml
+sed -i "s~$base~$produce~g" $f1
+
+
+cd /home/scholtz/AlgorandNodes/kubernetes/aramid-main-fi
+f1=h1-deployment.yaml
+sed -i "s~$base~$produce~g" $f1
+
+f1=h2-deployment.yaml
+sed -i "s~$base~$produce~g" $f1
+
+cd /home/scholtz/AlgorandNodes/kubernetes/aramid-main-de
+f1=h1-deployment.yaml
+sed -i "s~$base~$produce~g" $f1
+
+f1=h2-deployment.yaml
+sed -i "s~$base~$produce~g" $f1
+
+cd /home/scholtz/AlgorandNodes/kubernetes/aramid-linode-example
+
+f1=statefulset.yaml
 sed -i "s~$base~$produce~g" $f1
 
 cd /home/scholtz/AlgorandNodes/docker
