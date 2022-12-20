@@ -55,7 +55,7 @@ spec:
       nodeName: sch-g-02
       containers:
         - name: algo-kmd-mainnet
-          image: docker.io/scholtz2/algorand-kmd-mainnet-extended:3.12.2-stable
+          image: docker.io/scholtz2/algorand-kmd-mainnet-extended:3.13.1-stable
           imagePullPolicy: Always
           resources:
             requests:
