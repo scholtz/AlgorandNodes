@@ -10,12 +10,14 @@ ENV GOROOT=/usr/local/go
 ENV PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 ENV GOPROXY=https://proxy.golang.org,https://pkg.go.dev,https://goproxy.io,direct
 RUN wget https://golang.org/dl/go1.17.11.linux-amd64.tar.gz && rm -rf $GOPATH && tar -C /usr/local -xzf go1.17.11.linux-amd64.tar.gz && go version
-RUN git clone https://github.com/algorand/go-algorand.git && cd go-algorand && git checkout $ALGO_VER
+ARG CACHEBUST
+RUN echo "$CACHEBUST"
+RUN git clone https://github.com/algorand/go-algorand.git && cd go-algorand  && git checkout $ALGO_VER
 WORKDIR /go-algorand
 
 
 # ARAMID - allow more than 1024 bytes in note field
-RUN sed "~s/MaxTxnNoteBytes:     1024/MaxTxnNoteBytes:     131072/g" config/consensus.go && cat config/consensus.go | grep MaxTxnNoteBytes
+#RUN sed "~s/MaxTxnNoteBytes:     1024/MaxTxnNoteBytes:     131072/g" config/consensus.go && cat config/consensus.go | grep MaxTxnNoteBytes
 
 RUN ./scripts/configure_dev.sh
 RUN ./scripts/buildtools/install_buildtools.sh
@@ -48,5 +50,3 @@ RUN useradd -ms /bin/bash algo
 RUN chown algo:algo /app -R
 USER algo
 CMD ["/bin/bash"]
-
-
