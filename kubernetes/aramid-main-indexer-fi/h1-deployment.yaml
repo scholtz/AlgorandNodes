@@ -1,0 +1,204 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: aramid-indexer-mainnet
+---
+apiVersion: apps/v1 
+kind: Deployment
+metadata:
+  name: h21-aramid-indexer-mainnet
+  namespace: aramid-indexer-mainnet
+spec:
+  selector:
+    matchLabels:
+      app: h21-aramid-indexer-mainnet
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: h21-aramid-indexer-mainnet
+        lb: aramid-indexer-mainnet
+    spec:
+      nodeName: sch-h-01
+      containers:
+      - name: h21-aramid-indexer-mainnet
+        image: scholtz2/aramid-indexer:v2.14.2-beta
+        imagePullPolicy: Always
+        #command: ["/bin/bash", "-ec", "while :; do date; sleep 60 ; done"]
+        #command: ["/bin/bash"]  
+        #args: ["-c", "./run.sh" ]   
+        ports:
+            - containerPort: 8980
+              protocol: TCP
+        readinessProbe:
+            tcpSocket:
+              port: 8980
+            initialDelaySeconds: 10
+            timeoutSeconds: 5  
+            failureThreshold: 2
+        livenessProbe:
+            tcpSocket:
+              port: 8980
+            initialDelaySeconds: 20
+            timeoutSeconds: 5  
+            failureThreshold: 2
+            terminationGracePeriodSeconds: 1
+        env:
+        - name: INDEXER_POSTGRES_CONNECTION_STRING
+          valueFrom:
+            secretKeyRef:
+              name: aramid-indexer-secret
+              key: INDEXER_POSTGRES_CONNECTION_STRING
+        - name: INDEXER_ALGOD_TOKEN
+          value: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        - name: INDEXER_ALGOD_ADDRESS
+          value: "aramid-set-service-data-h2.aramid-relay-mainnet:18280"
+        # - name: INDEXER_API_TOKEN
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: aramid-indexer-secret
+        #       key: INDEXER_API_TOKEN
+        - name: INDEXER_GENESIS
+          value: "/app/genesis/aramidmain/genesis.json"
+        - name: INDEXER_API_TOKEN
+          value: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        - name: INDEXER_DEV_MODE
+          value: "0"
+        - name: INDEXER_METRICS_MODE
+          value: "1"
+        - name: INDEXER_ENABLE_ALL_PARAMETERS
+          value: "1"
+        - name: INDEXER_DATA
+          value: "/app"
+          
+        volumeMounts:
+            - name: aramidmain-indexer-conf
+              mountPath: /app/consensus.json
+              subPath: consensus.json
+            # - name: aramidmain-indexer-conf2
+            #   mountPath: /app/indexer.yaml
+            #   subPath: indexer.yaml
+      volumes:
+        - name: aramidmain-indexer-conf
+          configMap:
+            name: aramidmain-indexer-conf
+        # - name: aramidmain-indexer-conf2
+        #   configMap:
+        #     name: aramidmain-indexer-conf
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: h21-db-aramid-indexer-mainnet-deployment-service
+  namespace: aramid-indexer-mainnet
+spec:
+  type: ClusterIP
+  selector:
+    app: h21-db-aramid-indexer-mainnet-deployment
+  ports:
+    - name: algoclient
+      protocol: TCP
+      appProtocol: http
+      port: 5432
+      targetPort: 5432
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: h21-db-aramid-indexer-mainnet-deployment
+  namespace: aramid-indexer-mainnet
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: h21-db-aramid-indexer-mainnet-deployment
+  template:
+    metadata:
+      labels:
+        app: h21-db-aramid-indexer-mainnet-deployment
+    spec:
+      nodeName: sch-h-01
+      containers:
+        - name: h21-db-aramid-indexer-mainnet-deployment
+          image: postgres:14
+          imagePullPolicy: IfNotPresent
+          #command: ["/bin/sh", "-ec", "while :; do date; sleep 60 ; done"]
+          resources:
+            requests:
+              memory: "10000Mi"
+              cpu: "1000m"
+            limits:
+              memory: "20000Mi"
+              cpu: "8000m"
+          env:
+#            - name: POSTGRES_USER
+#              valueFrom:
+#                secretKeyRef:
+#                  name: aramid-indexer-secret
+#                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: aramid-indexer-secret
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: aramid-indexer-secret
+                  key: POSTGRES_DB
+          ports:
+          -
+            containerPort: 5432
+            protocol: "TCP"  
+          readinessProbe:
+              tcpSocket:
+                port: 5432
+              initialDelaySeconds: 5
+              periodSeconds: 10
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sleep","10"]
+          volumeMounts:
+            - name: h21-db-aramid-indexer-mainnet-pvc
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: h21-db-aramid-indexer-mainnet-pvc
+          persistentVolumeClaim:
+            claimName: h21-db-aramid-indexer-mainnet-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: h21-db-aramid-indexer-mainnet-pvc
+  namespace:  aramid-indexer-mainnet
+spec:
+  storageClassName: h21-db-aramid-indexer-mainnet-pv
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: h21-db-aramid-indexer-mainnet-pv
+spec:
+  storageClassName: h21-db-aramid-indexer-mainnet-pv
+  capacity:
+    storage: 20Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/mnt/nvme2/aramid-indexer-mainnet"
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - sch-h-01
