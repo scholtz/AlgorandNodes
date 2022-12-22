@@ -6,22 +6,22 @@ metadata:
 apiVersion: apps/v1 
 kind: Deployment
 metadata:
-  name: h32-aramid-indexer-mainnet
+  name: h31-aramid-indexer-mainnet
   namespace: aramid-indexer-mainnet
 spec:
   selector:
     matchLabels:
-      app: h32-aramid-indexer-mainnet
+      app: h31-aramid-indexer-mainnet
   replicas: 1
   template:
     metadata:
       labels:
-        app: h32-aramid-indexer-mainnet
+        app: h31-aramid-indexer-mainnet
         lb: aramid-indexer-mainnet
     spec:
-      nodeName: sch-g-02
+      nodeName: sch-g-01
       containers:
-      - name: h32-aramid-indexer-mainnet
+      - name: h31-aramid-indexer-mainnet
         image: scholtz2/aramid-indexer:v2.14.2-beta
         imagePullPolicy: Always
         #command: ["/bin/bash", "-ec", "while :; do date; sleep 60 ; done"]
@@ -89,12 +89,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: h32-db-aramid-indexer-mainnet-deployment-service
+  name: h31-db-aramid-indexer-mainnet-deployment-service
   namespace: aramid-indexer-mainnet
 spec:
   type: ClusterIP
   selector:
-    app: h32-db-aramid-indexer-mainnet-deployment
+    app: h31-db-aramid-indexer-mainnet-deployment
   ports:
     - name: algoclient
       protocol: TCP
@@ -105,7 +105,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: h32-db-aramid-indexer-mainnet-deployment
+  name: h31-db-aramid-indexer-mainnet-deployment
   namespace: aramid-indexer-mainnet
 spec:
   replicas: 1
@@ -113,15 +113,15 @@ spec:
     type: Recreate
   selector:
     matchLabels:
-      app: h32-db-aramid-indexer-mainnet-deployment
+      app: h31-db-aramid-indexer-mainnet-deployment
   template:
     metadata:
       labels:
-        app: h32-db-aramid-indexer-mainnet-deployment
+        app: h31-db-aramid-indexer-mainnet-deployment
     spec:
-      nodeName: sch-g-02
+      nodeName: sch-g-01
       containers:
-        - name: h32-db-aramid-indexer-mainnet-deployment
+        - name: h31-db-aramid-indexer-mainnet-deployment
           image: postgres:14
           imagePullPolicy: IfNotPresent
           #command: ["/bin/sh", "-ec", "while :; do date; sleep 60 ; done"]
@@ -162,20 +162,20 @@ spec:
               exec:
                 command: ["sleep","10"]
           volumeMounts:
-            - name: h32-db-aramid-indexer-mainnet-pvc
+            - name: h31-db-aramid-indexer-mainnet-pvc
               mountPath: /var/lib/postgresql/data
       volumes:
-        - name: h32-db-aramid-indexer-mainnet-pvc
+        - name: h31-db-aramid-indexer-mainnet-pvc
           persistentVolumeClaim:
-            claimName: h32-db-aramid-indexer-mainnet-pvc
+            claimName: h31-db-aramid-indexer-mainnet-pvc
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: h32-db-aramid-indexer-mainnet-pvc
+  name: h31-db-aramid-indexer-mainnet-pvc
   namespace:  aramid-indexer-mainnet
 spec:
-  storageClassName: h32-db-aramid-indexer-mainnet-pv
+  storageClassName: h31-db-aramid-indexer-mainnet-pv
   accessModes:
     - ReadWriteMany
   resources:
@@ -185,9 +185,9 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: h32-db-aramid-indexer-mainnet-pv
+  name: h31-db-aramid-indexer-mainnet-pv
 spec:
-  storageClassName: h32-db-aramid-indexer-mainnet-pv
+  storageClassName: h31-db-aramid-indexer-mainnet-pv
   capacity:
     storage: 20Gi
   accessModes:
@@ -201,4 +201,4 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - sch-g-02
+          - sch-g-01
