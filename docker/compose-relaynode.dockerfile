@@ -13,6 +13,12 @@ RUN wget https://golang.org/dl/go1.17.11.linux-amd64.tar.gz && rm -rf $GOPATH &&
 ARG CACHEBUST
 RUN echo "$CACHEBUST"
 RUN git clone https://github.com/algorand/go-algorand.git && cd go-algorand  && git checkout $ALGO_VER
+
+### TMP modification of the relay node until group sharing resources is available https://docs.google.com/document/d/17bx7GaCHf5XLFxEN8WBwsfIpDk1_OnUe8l0i6fIev3k/edit#
+# MaxAppTotalTxnReferences = 8
+# 
+RUN sed -i 's~MaxAppTotalTxnReferences = 8~MaxAppTotalTxnReferences = 100~' go-algorand/config/consensus.go && cat go-algorand/config/consensus.go | grep MaxAppTotalTxnReferences
+
 WORKDIR /go-algorand
 
 

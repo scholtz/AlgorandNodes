@@ -4,18 +4,34 @@ then
     cp /app/sandbox/config.json /app/data/config.json
 fi
 
-echo "goal kmd start"
-goal kmd start || error_code=$?
-error_code_int=$(($error_code + 0))
-if [ $error_code_int -ne 0 ]; then
-    echo "goal kmd start failed";
-	exit 1;
-fi
 echo "goal node start"
-goal node start || error_code=$?
+goal node start  || error_code=$?
 error_code_int=$(($error_code + 0))
 if [ $error_code_int -ne 0 ]; then
     echo "goal node start failed";
+	exit 1;
+fi
+
+sleep 1
+
+max_retry=$((60 + 0))
+counter=$((0 + 0))
+until /app/health.sh
+do
+   echo "Trying healthcheck again. Try #$counter/$max_retry"
+   sleep 10
+   if [ $counter -eq $max_retry ] 
+   then 
+    echo "Failed!" && exit 1
+   fi
+   ((counter++))
+done
+
+echo "goal kmd start"
+goal kmd start  || error_code=$?
+error_code_int=$(($error_code + 0))
+if [ $error_code_int -ne 0 ]; then
+    echo "goal kmd start failed";
 	exit 1;
 fi
 

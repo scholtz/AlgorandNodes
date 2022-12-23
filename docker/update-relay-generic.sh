@@ -162,6 +162,8 @@ if [ $error_code_int -ne 0 ]; then
 	exit 1;
 fi
 
+f1=compose-participation-sandbox-night-build.dockerfile
+sed -i "s~$base~$produce~g" $f1
 
 cd /home/scholtz/AlgorandNodes/kubernetes/mainnet-relay-fi
 f1=h2-deployment.yaml

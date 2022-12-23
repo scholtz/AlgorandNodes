@@ -34,7 +34,7 @@ spec:
               topologyKey: "kubernetes.io/hostname"
       containers:
         - name: relaynode-pod
-          image: scholtz2/aramid-algo-node:v3.13.1-stable
+          image: scholtz2/aramid-algo-node:v3.13.2-stable
           command: ["/bin/bash"]  
           args: ["-c", "./run.sh"]
 #          command:
