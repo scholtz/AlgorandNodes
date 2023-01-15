@@ -1,0 +1,15 @@
+func loadCustomConsensus(indexerDataDir string) error {
+	var err error
+	consensusPath := filepath.Join(indexerDataDir, "consensus.json")
+	consensusConfigFound := util.FileExists(consensusPath)
+	if consensusConfigFound {
+		err = goconfig.LoadConfigurableConsensusProtocols(indexerDataDir)
+		if err != nil {
+			errMsg := fmt.Errorf("Unable to load optional consensus protocols file: %s %v", consensusPath, err)
+			logger.Error(errMsg)
+		} else {
+			logger.Infof("consensus loaded from %s",consensusPath)
+		}
+	}
+	return err
+}
