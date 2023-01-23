@@ -4,7 +4,10 @@ metadata:
   name: relaynode-ss
   namespace: algorand
 spec:
-  replicas: 2
+  updateStrategy:
+    type: RollingUpdate
+  podManagementPolicy: OrderedReady
+  replicas: 1
   selector:
     matchLabels:
       app: relaynode-app-ss

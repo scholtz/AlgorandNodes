@@ -1,0 +1,69 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: relaynode-vol-relaynode-ss-0
+  uid: 7e9388f6-b80d-4568-a0d2-f1e18b3d463b
+  namespace: algorand
+  labels:
+    app: relaynode-app-ss
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+  volumeName: pvc-8d75b5d7af5d42b0
+  storageClassName: linode-block-storage-retain
+  volumeMode: Filesystem
+status:
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 20Gi
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: relaynode-vol-catchpoints-relaynode-ss-0
+  uid: f66a61a4-8256-4224-8a64-0c65c8af4f54
+  namespace: algorand
+  labels:
+    app: relaynode-app-ss
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 400Gi
+  volumeName: pvc-894ffb91f3c44e5e
+  storageClassName: linode-block-storage-retain
+  volumeMode: Filesystem
+status:
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 400Gi
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: relaynode-vol-mainnet-relaynode-ss-0
+  uid: a94d57ec-ebd8-45f1-b3cc-ab6c8ad51afc
+  namespace: algorand
+  labels:
+    app: relaynode-app-ss
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1200Gi
+  volumeName: pvc-5f7c5499c3484bc5
+  storageClassName: linode-block-storage-retain
+  volumeMode: Filesystem
+status:
+  phase: Bound
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 1200Gi

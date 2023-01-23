@@ -274,7 +274,6 @@ spec:
   hostPath:
     path: "/run/desktop/mnt/host/c/algo/participation-indexerdb"
 ---
----
 apiVersion: apps/v1 
 kind: Deployment
 metadata:
@@ -294,7 +293,7 @@ spec:
     spec:
       containers:
       - name: indexer-sandbox
-        image: scholtz2/algorand-indexer:2.14.1-stable
+        image: scholtz2/algorand-indexer:2.15.2-stable
         imagePullPolicy: Always
         command: ["/bin/bash"]  
         args: ["-c", "./run.sh" ]   

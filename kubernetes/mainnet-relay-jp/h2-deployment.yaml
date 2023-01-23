@@ -6,24 +6,26 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: relaynode-1
+  name: relaynode-2
   namespace: algo-relay-mainnet
 spec:
-  replicas: 1
+  replicas: 2
   strategy:
     type: Recreate
   selector:
     matchLabels:
-      app: algo-relay-mainnet
+      app: algo-relay-mainnet-2
   template:
     metadata:
       labels:
-        app: algo-relay-mainnet
+        app: algo-relay-mainnet-2
+        lb: algo-relay-mainnet
     spec:
+      nodeName: lke85101-130182-63a9f27ade3f
       containers:
-        - name: algo-relay-mainnet
-          image: scholtz2/algorand-relay-mainnet:3.13.3-stable
-          imagePullPolicy: Always
+        - name: algo-relay-mainnet-2
+          image: scholtz2/algorand-relay-mainnet:3.13.2-stable
+          imagePullPolicy: IfNotPresent
           resources:
             requests:
               memory: "1000Mi"
@@ -36,8 +38,6 @@ spec:
             - /app/run.sh
           ports:
             - containerPort: 4160
-              protocol: TCP
-            - containerPort: 8080
               protocol: TCP
           startupProbe:
             exec:
@@ -68,31 +68,31 @@ spec:
             runAsUser: 1000
             runAsGroup: 1000
           volumeMounts:
-            - name: algo-mainnet-vol-root-1
+            - name: algo-mainnet-vol-root-2
               mountPath: /app/data
-            - name: algo-mainnet-vol-net-1
+            - name: algo-mainnet-vol-net-2
               mountPath: /app/data/mainnet-v1.0
-            - name: algo-mainnet-vol-catchpoints-1
+            - name: algo-mainnet-vol-catchpoints-2
               mountPath: /app/data/mainnet-v1.0/catchpoints
       volumes:
-        - name: algo-mainnet-vol-root-1
+        - name: algo-mainnet-vol-root-2
           persistentVolumeClaim:
-            claimName: algo-mainnet-vol-root-1
-        - name: algo-mainnet-vol-net-1
+            claimName: algo-mainnet-vol-root-2
+        - name: algo-mainnet-vol-net-2
           persistentVolumeClaim:
-            claimName: algo-mainnet-vol-net-1
-        - name: algo-mainnet-vol-catchpoints-1
+            claimName: algo-mainnet-vol-net-2
+        - name: algo-mainnet-vol-catchpoints-2
           persistentVolumeClaim:
-            claimName: algo-mainnet-vol-catchpoints-1
+            claimName: algo-mainnet-vol-catchpoints-2
 
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: algo-mainnet-vol-root-1
+  name: algo-mainnet-vol-root-2
   namespace: algo-relay-mainnet
 spec:
-  storageClassName: algo-mainnet-root-1
+  storageClassName: algo-mainnet-root-2
   accessModes:
     - ReadWriteOnce
   resources:
@@ -103,10 +103,10 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: algo-mainnet-vol-net-1
+  name: algo-mainnet-vol-net-2
   namespace: algo-relay-mainnet
 spec:
-  storageClassName: algo-mainnet-net-1
+  storageClassName: algo-mainnet-net-2
   accessModes:
     - ReadWriteOnce
   resources:
@@ -116,28 +116,28 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: algo-mainnet-vol-catchpoints-1
+  name: algo-mainnet-vol-catchpoints-2
   namespace: algo-relay-mainnet
 spec:
-  storageClassName: algo-mainnet-catchpoints-1
+  storageClassName: algo-mainnet-catchpoints-2
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 1200Gi
+      storage: 1500Gi
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: algo-mainnet-root-1
+  name: algo-mainnet-root-2
 spec:
-  storageClassName: algo-mainnet-root-1
+  storageClassName: algo-mainnet-root-2
   capacity:
     storage: 20Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/lke1-root"
+    path: "/mnt/lke2-root"
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -150,15 +150,15 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: algo-mainnet-net-1
+  name: algo-mainnet-net-2
 spec:
-  storageClassName: algo-mainnet-net-1
+  storageClassName: algo-mainnet-net-2
   capacity:
     storage: 500Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/lke1-net"
+    path: "/mnt/lke2-net"
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -171,15 +171,15 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: algo-mainnet-catchpoints-1
+  name: algo-mainnet-catchpoints-2
 spec:
-  storageClassName: algo-mainnet-catchpoints-1
+  storageClassName: algo-mainnet-catchpoints-2
   capacity:
-    storage: 1200Gi
+    storage: 1500Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/lke1-catchpoints"
+    path: "/mnt/lke2-catchpoints"
   nodeAffinity:
     required:
       nodeSelectorTerms:
