@@ -203,6 +203,13 @@ sed -i "s~$base~$produce~g" $f1
 f1=g1-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
+cd /home/scholtz/AlgorandNodes/kubernetes/mainnet-relay-jp
+f1=h1-deployment.yaml
+sed -i "s~$base~$produce~g" $f1
+
+f1=h2-deployment.yaml
+sed -i "s~$base~$produce~g" $f1
+
 
 cd /home/scholtz/AlgorandNodes/kubernetes/aramid-main-fi
 f1=h1-deployment.yaml
