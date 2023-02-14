@@ -170,45 +170,45 @@ if [ $error_code_int -ne 0 ]; then
 	exit 1;
 fi
 
-cd /home/scholtz/AlgorandNodes/kubernetes/mainnet-relay-fi
+cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/mainnet-relay/fi-1-mainnet-relay
 f1=h2-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
 f1=h1-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
-cd /home/scholtz/AlgorandNodes/kubernetes/mainnet
-f1=statefulset.yaml
-sed -i "s~$base~$produce~g" $f1
-
-cd /home/scholtz/AlgorandNodes/kubernetes/sandbox
-f1=sandbox.yaml
-sed -i "s~$base~$produce~g" $f1
-f1=participation-win-minikube.yaml
-sed -i "s~$base~$produce~g" $f1
-
-cd /home/scholtz/AlgorandNodes/kubernetes/kmd-fi
-f1=h2-deployment.yaml
-sed -i "s~$base~$produce~g" $f1
-f1=kmd-win-minikube.yaml
-sed -i "s~$base~$produce~g" $f1
-
-cd /home/scholtz/AlgorandNodes/kubernetes/kmd-de
-f1=h2-deployment.yaml
-sed -i "s~$base~$produce~g" $f1
-
-cd /home/scholtz/AlgorandNodes/kubernetes/testnet
-f1=statefulset.yaml
-sed -i "s~$base~$produce~g" $f1
-
-cd /home/scholtz/AlgorandNodes/kubernetes/mainnet-relay-de
+cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/mainnet-relay/de-1-mainnet-relay
 f1=g2-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
 f1=g1-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
-cd /home/scholtz/AlgorandNodes/kubernetes/mainnet-relay-jp
+cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/mainnet-relay/jp-1-mainnet-relay
+f1=statefulset.yaml
+sed -i "s~$base~$produce~g" $f1
+
+cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/sandbox-relay
+f1=sandbox.yaml
+sed -i "s~$base~$produce~g" $f1
+f1=participation-win-minikube.yaml
+sed -i "s~$base~$produce~g" $f1
+
+cd /home/scholtz/AlgorandNodes/kubernetes/algod-participation/mainnet-participation/fi-1-participation
+f1=h2-deployment.yaml
+sed -i "s~$base~$produce~g" $f1
+f1=kmd-win-minikube.yaml
+sed -i "s~$base~$produce~g" $f1
+
+cd /home/scholtz/AlgorandNodes/kubernetes/algod-participation/mainnet-participation/de-1-participation
+f1=h2-deployment.yaml
+sed -i "s~$base~$produce~g" $f1
+
+cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/testnet-relay/de-1-testnet-relay
+f1=statefulset.yaml
+sed -i "s~$base~$produce~g" $f1
+
+cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/mainnet-relay/jp-2-mainnet-relay
 f1=h1-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
@@ -216,21 +216,21 @@ f1=h2-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
 
-cd /home/scholtz/AlgorandNodes/kubernetes/aramid-main-fi
+cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/aramid-relay/fi-1-aramid-relay
 f1=h1-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
 f1=h2-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
-cd /home/scholtz/AlgorandNodes/kubernetes/aramid-main-de
+cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/aramid-relay/de-1-aramid-relay
 f1=h1-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
 f1=h2-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
-cd /home/scholtz/AlgorandNodes/kubernetes/aramid-linode-example
+cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/aramid-relay/linode-example
 
 f1=statefulset.yaml
 sed -i "s~$base~$produce~g" $f1

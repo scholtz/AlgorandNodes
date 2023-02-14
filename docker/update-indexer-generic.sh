@@ -65,7 +65,7 @@ if [ $error_code_int -ne 0 ]; then
 fi
 
 
-cd /home/scholtz/AlgorandNodes/kubernetes/indexer
+cd /home/scholtz/AlgorandNodes/kubernetes/indexer/mainnet-indexer/de-1-mainnet-indexer
 f1=deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
