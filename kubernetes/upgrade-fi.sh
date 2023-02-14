@@ -1,4 +1,4 @@
-cd mainnet-relay-fi
+cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/mainnet-relay/fi-1-mainnet-relay
 echo "kubectl apply -f h1-deployment.yaml"
 date
 kubectl apply -f h1-deployment.yaml
@@ -16,7 +16,7 @@ while kubectl get deployment relaynode-2 -n algo-relay-mainnet -ojson | jq '.sta
 date
 echo "DONE ALGO RELAY FI, Upgrading Participation KMD FI"
 
-cd ../kmd-fi
+cd /home/scholtz/AlgorandNodes/kubernetes/algod-participation/mainnet-participation/fi-1-participation
 echo "kubectl apply -f h2-deployment.yaml"
 date
 kubectl apply -f h2-deployment.yaml
@@ -26,7 +26,7 @@ while kubectl get deployment kmd-node-2 -n algo-kmd-mainnet -ojson | jq '.status
 
 date
 echo "DONE Upgrading Participation KMD FI, Upgrading aramid servers"
-cd ../aramid-main-fi
+cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/aramid-relay/fi-1-aramid-relay
 
 date
 kubectl apply -f h1-deployment.yaml
