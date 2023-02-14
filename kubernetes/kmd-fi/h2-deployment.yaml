@@ -39,7 +39,7 @@ spec:
       nodeName: sch-h-02
       containers:
         - name: algo-kmd-mainnet
-          image: docker.io/scholtz2/algorand-kmd-mainnet-extended:3.9.4-stable
+          image: docker.io/scholtz2/algorand-kmd-mainnet-extended:3.14.2-stable
           imagePullPolicy: Always
           resources:
             requests:
@@ -129,7 +129,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 30Gi
+      storage: 500Gi
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -142,43 +142,67 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 30Gi
+      storage: 1500Gi
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: algo-mainnet-kmd-root-2
 spec:
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - sch-h-02
   storageClassName: algo-mainnet-kmd-root-2
   capacity:
     storage: 20Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/algo-kmd-root"
+    path: "/mnt/k8s/algo/mainnet-kmd/root"
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: algo-mainnet-kmd-net-2
 spec:
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - sch-h-02
   storageClassName: algo-mainnet-kmd-net-2
   capacity:
-    storage: 30Gi
+    storage: 500Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/algo-kmd-net"
+    path: "/mnt/k8s/algo/mainnet-kmd/net"
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: algo-mainnet-kmd-catchpoints-2
 spec:
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - sch-h-02
   storageClassName: algo-mainnet-kmd-catchpoints-2
   capacity:
-    storage: 30Gi
+    storage: 1500Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/algo-kmd-catchpoints"
+    path: "/mnt/k8s/algo/mainnet-kmd/catchpoints"
