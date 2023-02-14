@@ -48,6 +48,7 @@ if [ $error_code_int -ne 0 ]; then
 	exit 1;
 fi
 
+cd /home/scholtz/AlgorandNodes/docker/indexer/mainnet
 
 f1base="compose-indexer-${base}.sh"
 f1="compose-indexer-${produce}.sh"
@@ -62,6 +63,12 @@ if [ $error_code_int -ne 0 ]; then
     echo "$f1 failed";
 	exit 1;
 fi
+
+
+cd /home/scholtz/AlgorandNodes/kubernetes/indexer
+f1=deployment.yaml
+sed -i "s~$base~$produce~g" $f1
+
 
 echo $produce > $currentFile
 
