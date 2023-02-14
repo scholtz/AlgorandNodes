@@ -49,6 +49,7 @@ if [ $error_code_int -ne 0 ]; then
 	exit 1;
 fi
 
+cd /home/scholtz/AlgorandNodes/docker/algod-relay/mainnet
 
 f1base="compose-relaynode-official-${base}-stable.sh"
 f1="compose-relaynode-official-${produce}-stable.sh"
@@ -64,6 +65,7 @@ if [ $error_code_int -ne 0 ]; then
 	exit 1;
 fi
 
+cd /home/scholtz/AlgorandNodes/docker/algod-relay/testnet
 
 f1base="compose-relaynode-official-${base}-stable-testnet.sh"
 f1="compose-relaynode-official-${produce}-stable-testnet.sh"
@@ -80,6 +82,7 @@ if [ $error_code_int -ne 0 ]; then
 	exit 1;
 fi
 
+cd /home/scholtz/AlgorandNodes/docker/algod-participation/mainnet
 
 f1base="compose-kmd-official-${base}-stable.sh"
 f1="compose-kmd-official-${produce}-stable.sh"
@@ -128,7 +131,10 @@ if [ $error_code_int -ne 0 ]; then
 	exit 1;
 fi
 
-cd /home/scholtz/AlgorandNodes/docker
+cd /home/scholtz/AlgorandNodes/docker/algod-participation/sandbox
+
+f1=compose-participation-sandbox-night-build.dockerfile
+sed -i "s~$base~$produce~g" $f1
 
 
 f1base="compose-participation-sandbox-${base}-stable.sh"
@@ -147,6 +153,8 @@ if [ $error_code_int -ne 0 ]; then
 fi
 
 
+cd /home/scholtz/AlgorandNodes/docker/algod-relay/aramidmain
+
 f1base="aramid-from-official-${base}-stable.sh"
 f1="aramid-from-official-${produce}-stable.sh"
 if [ ! -f "$f1" ]; then
@@ -161,9 +169,6 @@ if [ $error_code_int -ne 0 ]; then
     echo "$f1 failed";
 	exit 1;
 fi
-
-f1=compose-participation-sandbox-night-build.dockerfile
-sed -i "s~$base~$produce~g" $f1
 
 cd /home/scholtz/AlgorandNodes/kubernetes/mainnet-relay-fi
 f1=h2-deployment.yaml
