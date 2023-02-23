@@ -11,10 +11,10 @@
 # vi /etc/kubernetes/manifests/kube-apiserver.yaml
 # add     - --service-node-port-range=80-62767
 #
-# kubectl apply -f https://raw.githubusercontent.com/scholtz/AlgorandNodes/main/kubernetes/sandbox/sandbox.yaml
+# kubectl apply -f https://raw.githubusercontent.com/scholtz/AlgorandNodes/main/kubernetes/algod-relay/sandbox-relay/sandbox.yaml
 #
 # to enable debugger service: 
-# kubectl apply -f https://raw.githubusercontent.com/scholtz/AlgorandNodes/main/kubernetes/sandbox/debugger-service.yaml
+# kubectl apply -f https://raw.githubusercontent.com/scholtz/AlgorandNodes/main/kubernetes/algod-relay/sandbox-relay/debugger-service.yaml
 # 
 ---
 apiVersion: v1
