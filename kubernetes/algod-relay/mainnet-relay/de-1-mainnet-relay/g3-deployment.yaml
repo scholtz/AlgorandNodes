@@ -14,11 +14,11 @@ spec:
     type: Recreate
   selector:
     matchLabels:
-      app: algo-relay-mainnet
+      app: algo-relay-mainnet-tmp
   template:
     metadata:
       labels:
-        app: algo-relay-mainnet
+        app: algo-relay-mainnet-tmp
     spec:
       nodeName: sch-g-03
       containers:
