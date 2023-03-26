@@ -24,6 +24,10 @@ spec:
       labels:
         app: algo-relay-mainnet
     spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
       containers:
         - name: algo-relay-mainnet
           image: scholtz2/algorand-relay-mainnet:3.15.0-stable
@@ -129,36 +133,3 @@ spec:
   resources:
     requests:
       storage: 1200Gi
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: algo-mainnet-root-1
-spec:
-  storageClassName: linode-block-storage-retain
-  capacity:
-    storage: 20Gi
-  accessModes:
-    - ReadWriteOnce
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: algo-mainnet-net-1
-spec:
-  storageClassName: linode-block-storage-retain
-  capacity:
-    storage: 500Gi
-  accessModes:
-    - ReadWriteOnce
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: algo-mainnet-catchpoints-1
-spec:
-  storageClassName: linode-block-storage-retain
-  capacity:
-    storage: 1200Gi
-  accessModes:
-    - ReadWriteOnce
