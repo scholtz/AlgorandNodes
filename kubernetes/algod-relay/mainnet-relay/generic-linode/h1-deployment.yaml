@@ -1,3 +1,7 @@
+# to run the algorand relay in linode, run the command
+# kubectl apply -f https://raw.githubusercontent.com/scholtz/AlgorandNodes/main/kubernetes/algod-relay/mainnet-relay/generic-linode/h1-deployment.yaml
+#
+
 apiVersion: v1
 kind: Namespace
 metadata:
