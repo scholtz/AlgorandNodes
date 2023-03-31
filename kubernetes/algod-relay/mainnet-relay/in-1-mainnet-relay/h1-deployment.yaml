@@ -1,7 +1,3 @@
-# to run the algorand relay in linode, run the command
-# kubectl apply -f https://raw.githubusercontent.com/scholtz/AlgorandNodes/main/kubernetes/algod-relay/mainnet-relay/generic-linode/h1-deployment.yaml
-#
-
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -37,11 +33,11 @@ spec:
               memory: "1000Mi"
               cpu: "1000m"
             limits:
-              memory: "8000Mi"
-              cpu: "8000m"
+              memory: "28000Mi"
+              cpu: "15000m"
           command:
-            - /bin/bash
-            - /app/run.sh
+             - /bin/bash
+             - /app/run.sh
           #command: ["/bin/bash", "-ec", "while :; do date; sleep 60 ; done"]
           ports:
             - containerPort: 4160
@@ -120,7 +116,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 1500Gi
+      storage: 1200Gi
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

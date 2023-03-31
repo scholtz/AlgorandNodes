@@ -6,7 +6,7 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: relaynode-1
+  name: relaynode-2
   namespace: algo-relay-mainnet
 spec:
   replicas: 1
@@ -72,28 +72,28 @@ spec:
             runAsUser: 1000
             runAsGroup: 1000
           volumeMounts:
-            - name: algo-mainnet-vol-root-1
+            - name: algo-mainnet-vol-root-2
               mountPath: /app/data
-            - name: algo-mainnet-vol-net-1
+            - name: algo-mainnet-vol-net-2
               mountPath: /app/data/mainnet-v1.0
-            - name: algo-mainnet-vol-catchpoints-1
+            - name: algo-mainnet-vol-catchpoints-2
               mountPath: /app/data/mainnet-v1.0/catchpoints
       volumes:
-        - name: algo-mainnet-vol-root-1
+        - name: algo-mainnet-vol-root-2
           persistentVolumeClaim:
-            claimName: algo-mainnet-vol-root-1
-        - name: algo-mainnet-vol-net-1
+            claimName: algo-mainnet-vol-root-2
+        - name: algo-mainnet-vol-net-2
           persistentVolumeClaim:
-            claimName: algo-mainnet-vol-net-1
-        - name: algo-mainnet-vol-catchpoints-1
+            claimName: algo-mainnet-vol-net-2
+        - name: algo-mainnet-vol-catchpoints-2
           persistentVolumeClaim:
-            claimName: algo-mainnet-vol-catchpoints-1
+            claimName: algo-mainnet-vol-catchpoints-2
 
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: algo-mainnet-vol-root-1
+  name: algo-mainnet-vol-root-2
   namespace: algo-relay-mainnet
 spec:
   storageClassName: linode-block-storage-retain
@@ -107,20 +107,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: algo-mainnet-vol-net-1
-  namespace: algo-relay-mainnet
-spec:
-  storageClassName: linode-block-storage-retain
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 500Gi
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: algo-mainnet-vol-catchpoints-1
+  name: algo-mainnet-vol-net-2
   namespace: algo-relay-mainnet
 spec:
   storageClassName: linode-block-storage-retain
@@ -129,3 +116,16 @@ spec:
   resources:
     requests:
       storage: 1200Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: algo-mainnet-vol-catchpoints-2
+  namespace: algo-relay-mainnet
+spec:
+  storageClassName: linode-block-storage-retain
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Gi
