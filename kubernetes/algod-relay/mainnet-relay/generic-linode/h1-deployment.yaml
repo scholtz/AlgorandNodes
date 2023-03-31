@@ -1,0 +1,135 @@
+# to run the algorand relay in linode, run the command
+# kubectl apply -f https://raw.githubusercontent.com/scholtz/AlgorandNodes/main/kubernetes/algod-relay/mainnet-relay/generic-linode/h1-deployment.yaml
+#
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: algo-relay-mainnet
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: relaynode-1
+  namespace: algo-relay-mainnet
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: algo-relay-mainnet
+  template:
+    metadata:
+      labels:
+        app: algo-relay-mainnet
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+        - name: algo-relay-mainnet
+          image: scholtz2/algorand-relay-mainnet:3.15.0-stable
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "1000Mi"
+              cpu: "1000m"
+            limits:
+              memory: "28000Mi"
+              cpu: "15000m"
+          command:
+            - /bin/bash
+            - /app/run.sh
+          ports:
+            - containerPort: 4160
+              protocol: TCP
+            - containerPort: 8080
+              protocol: TCP
+          startupProbe:
+            exec:
+              command:
+              - /bin/bash
+              - /app/health.sh
+            initialDelaySeconds: 10
+            periodSeconds: 10   
+            failureThreshold: 1000
+          readinessProbe:
+            exec:
+              command:
+              - /bin/bash
+              - /app/health.sh
+            initialDelaySeconds: 10
+            timeoutSeconds: 10   
+            failureThreshold: 100
+          livenessProbe:
+            exec:
+              command:
+              - /bin/bash
+              - /app/health.sh
+            initialDelaySeconds: 10
+            timeoutSeconds: 10        
+            failureThreshold: 6
+            terminationGracePeriodSeconds: 60
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+          volumeMounts:
+            - name: algo-mainnet-vol-root-1
+              mountPath: /app/data
+            - name: algo-mainnet-vol-net-1
+              mountPath: /app/data/mainnet-v1.0
+            - name: algo-mainnet-vol-catchpoints-1
+              mountPath: /app/data/mainnet-v1.0/catchpoints
+      volumes:
+        - name: algo-mainnet-vol-root-1
+          persistentVolumeClaim:
+            claimName: algo-mainnet-vol-root-1
+        - name: algo-mainnet-vol-net-1
+          persistentVolumeClaim:
+            claimName: algo-mainnet-vol-net-1
+        - name: algo-mainnet-vol-catchpoints-1
+          persistentVolumeClaim:
+            claimName: algo-mainnet-vol-catchpoints-1
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: algo-mainnet-vol-root-1
+  namespace: algo-relay-mainnet
+spec:
+  storageClassName: linode-block-storage-retain
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: algo-mainnet-vol-net-1
+  namespace: algo-relay-mainnet
+spec:
+  storageClassName: linode-block-storage-retain
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: algo-mainnet-vol-catchpoints-1
+  namespace: algo-relay-mainnet
+spec:
+  storageClassName: linode-block-storage-retain
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1200Gi
