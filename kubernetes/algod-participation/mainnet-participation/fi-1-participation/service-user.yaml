@@ -1,4 +1,4 @@
-# kubectl apply -f https://raw.githubusercontent.com/scholtz/AlgorandNodes/main/kubernetes/kmd-fi/service-user.yaml
+# kubectl apply -f https://raw.githubusercontent.com/scholtz/AlgorandNodes/main/kubernetes/algod-participation/mainnet-participation/fi-1-participation/service-user.yaml
 # create admin service user, .. get token by: kubectl get secret admin-token -n kubernetes-dashboard -o json | jq .data.token -r | base64 -d
 # k8s v24+
 
