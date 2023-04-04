@@ -1,12 +1,8 @@
-#apt update && apt dist-upgrade -y 
-
+#!/bin/bash
 
 cp mainnet/* data/ -R
-goal node start 
 diagcfg telemetry enable
 diagcfg metric enable
-#./goal node catchup $catchup -d /root/node/datafastcatchup
-#./goal node status -d ~/node/datafastcatchup -w 1000
-
+goal node start 
 
 while true; do echo `date`; goal node status; sleep 600;done

@@ -192,3 +192,21 @@ spec:
           operator: In
           values:
           - sch-g-01
+---
+# telemetry service
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: algo-set-service-data
+  namespace: algo-relay-mainnet
+spec:
+  type: NodePort
+  selector:
+    server: algo-relay-mainnet-g-01
+  ports:
+    - name: algoclient
+      protocol: TCP
+      appProtocol: http
+      port: 9100
+      nodePort: 9100
