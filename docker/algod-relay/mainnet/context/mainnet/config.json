@@ -2,5 +2,6 @@
     "Version": 15,
     "Archival": true,
     "NetAddress": ":4160",
-	"EndpointAddress": "0.0.0.0:8080"
+	"EndpointAddress": "0.0.0.0:8080",
+    "NodeExporterListenAddress": "0.0.0.0:9100"
 }
