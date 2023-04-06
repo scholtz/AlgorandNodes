@@ -198,7 +198,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: algo-set-service-data
+  name: algo-set-service-data-g-01
   namespace: algo-relay-mainnet
 spec:
   type: NodePort
@@ -209,4 +209,4 @@ spec:
       protocol: TCP
       appProtocol: http
       port: 9100
-      nodePort: 9100
+      nodePort: 59101

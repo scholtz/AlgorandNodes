@@ -19,12 +19,13 @@ spec:
     metadata:
       labels:
         app: algo-relay-mainnet
+        server: algo-relay-mainnet-g-03
     spec:
       nodeName: sch-g-03
       containers:
         - name: algo-relay-mainnet
           image: scholtz2/algorand-relay-mainnet:3.15.0-stable
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           resources:
             requests:
               memory: "5000Mi"
@@ -39,6 +40,8 @@ spec:
             - containerPort: 4160
               protocol: TCP
             - containerPort: 8080
+              protocol: TCP
+            - containerPort: 9100
               protocol: TCP
           startupProbe:
             exec:
@@ -189,3 +192,22 @@ spec:
           operator: In
           values:
           - sch-g-03
+---
+
+# telemetry service
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: algo-set-service-data-g-03
+  namespace: algo-relay-mainnet
+spec:
+  type: NodePort
+  selector:
+    server: algo-relay-mainnet-g-03
+  ports:
+    - name: algoclient
+      protocol: TCP
+      appProtocol: http
+      port: 9100
+      nodePort: 59103
