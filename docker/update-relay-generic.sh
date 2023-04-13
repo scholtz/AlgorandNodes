@@ -184,6 +184,19 @@ sed -i "s~$base~$produce~g" $f1
 f1=g1-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
+f1=g3-deployment.yaml
+sed -i "s~$base~$produce~g" $f1
+
+cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/mainnet-relay/in-1-mainnet-relay
+f1=h2-deployment.yaml
+sed -i "s~$base~$produce~g" $f1
+
+f1=h1-deployment.yaml
+sed -i "s~$base~$produce~g" $f1
+
+f1=h3-deployment.yaml
+sed -i "s~$base~$produce~g" $f1
+
 cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/mainnet-relay/jp-1-mainnet-relay
 f1=statefulset.yaml
 sed -i "s~$base~$produce~g" $f1
