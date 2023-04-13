@@ -24,7 +24,7 @@ spec:
       nodeName: sch-g-02
       containers:
         - name: algo-relay-mainnet
-          image: scholtz2/algorand-relay-mainnet:3.15.0-stable
+          image: scholtz2/algorand-relay-mainnet:3.15.1-stable
           imagePullPolicy: Always
           resources:
             requests:
@@ -203,6 +203,7 @@ metadata:
   namespace: algo-relay-mainnet
 spec:
   type: NodePort
+  externalTrafficPolicy: Local
   selector:
     server: algo-relay-mainnet-g-02
   ports:

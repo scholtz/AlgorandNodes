@@ -5,6 +5,7 @@ metadata:
   namespace: algo-relay-mainnet
 spec:
   type: NodePort
+  externalTrafficPolicy: Local
   selector:
     app: algo-relay-mainnet
   ports:
@@ -38,6 +39,9 @@ metadata:
   namespace: algo-relay-mainnet
 spec:
   type: NodePort
+  externalTrafficPolicy: Local
+#  loadBalancerSourceRanges:
+#  - 18.215.132.11/32
   selector:
     app: algo-relay-mainnet
   ports:

@@ -203,6 +203,7 @@ metadata:
   namespace: algo-relay-mainnet
 spec:
   type: NodePort
+  externalTrafficPolicy: Local
   selector:
     server: algo-relay-mainnet-g-03
   ports:
