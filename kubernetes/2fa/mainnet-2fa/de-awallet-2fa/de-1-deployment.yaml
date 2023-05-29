@@ -1,0 +1,125 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: algo2fa
+---
+apiVersion: apps/v1 
+kind: Deployment
+metadata:
+  name: algo2fa-web-mainnet-deployment
+  namespace: algo2fa
+spec:
+  selector:
+    matchLabels:
+      app: algo2fa-web-mainnet
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: algo2fa-web-mainnet
+    spec:
+      containers:
+        - name: algo2fa-web-mainnet
+          # https://hub.docker.com/r/scholtz2/algorand-2fa-multisig/tags
+          image: scholtz2/algorand-2fa-multisig:1.2023.05.29-beta
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "50Mi"
+              cpu: "10m"
+            limits:
+              memory: "1000Mi"
+              cpu: "1000m"
+          ports: 
+            - containerPort: 80
+              protocol: TCP
+          readinessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 10
+            timeoutSeconds: 5  
+            failureThreshold: 2
+          livenessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 20
+            timeoutSeconds: 5  
+            failureThreshold: 2
+            terminationGracePeriodSeconds: 1
+          env:
+          - name: Algo__Mnemonic
+            valueFrom:
+              secretKeyRef:
+                name: algo2fa-mainnet-secret
+                key: Algo__Mnemonic
+          volumeMounts:
+            - name: algo2fa-mainnet-conf
+              mountPath: /app/appsettings.json
+              subPath: appsettings.json
+            - name: algo2fa-mainnet-pvc
+              mountPath: /app/Data
+      volumes:
+        - name: algo2fa-mainnet-conf
+          configMap:
+            name: algo2fa-mainnet-conf
+        - name: algo2fa-mainnet-pvc
+          persistentVolumeClaim:
+            claimName: algo2fa-mainnet-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: algo2fa-mainnet-pvc
+  namespace: algo2fa
+spec:
+  storageClassName: nfs-slow-retain
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: algo2fa-service
+  namespace: algo2fa
+spec:
+  type: ClusterIP
+  selector:
+    app: algo2fa-web-mainnet
+  ports:
+    - name: http
+      protocol: TCP
+      appProtocol: http
+      port: 80
+      targetPort: 80
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: algo2fa-ingress-mainnet
+  namespace: algo2fa
+  annotations: 
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    cert-manager.io/cluster-issuer: letsencrypt
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  tls:
+  - hosts:
+    - 2fa-mainnet.h3.a-wallet.net
+    secretName: tls-2fa-mainnet.h3.a-wallet.net
+  rules:
+  - host: 2fa-mainnet.h3.a-wallet.net
+    http:
+      paths:
+      - path: /(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: algo2fa-service
+            port:
+              number: 80

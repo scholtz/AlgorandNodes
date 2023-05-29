@@ -1,0 +1,1 @@
+kubectl create secret generic -n algo2fa algo2fa-mainnet-secret --from-literal=Algo__Mnemonic="write new account mnemonics here"
