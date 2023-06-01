@@ -1,6 +1,8 @@
 #!/bin/bash
-
-cp mainnet/* data/ -R
+if [ ! -f data/config.json ]
+then
+    cp mainnet/* data/ -R
+fi
 diagcfg telemetry enable
 diagcfg metric enable
 goal node start 
