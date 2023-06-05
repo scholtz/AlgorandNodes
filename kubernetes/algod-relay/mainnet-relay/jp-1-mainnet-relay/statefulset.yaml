@@ -32,6 +32,7 @@ spec:
       containers:
         - name: relaynode-pod
           image: scholtz2/algorand-relay-mainnet:3.15.1-stable
+          imagePullPolicy: Always
           command: ["/bin/bash"]  
           args: ["-c", "./run.sh"]
 #          command:
@@ -84,7 +85,6 @@ spec:
               mountPath: /app/data/mainnet-v1.0/catchpoints
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
-          imagePullPolicy: IfNotPresent
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
       dnsPolicy: ClusterFirst
