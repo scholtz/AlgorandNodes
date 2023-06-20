@@ -41,7 +41,7 @@ spec:
     spec:
       containers:
         - name: algo-participation-sandbox
-          image: scholtz2/algorand-participation-sandbox:3.15.1-stable
+          image: scholtz2/algorand-participation-sandbox:3.16.2-stable
           imagePullPolicy: Always
 #           resources:
 #            requests:

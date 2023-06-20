@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: algo-relay-mainnet
-          image: scholtz2/algorand-relay-mainnet:3.15.1-stable
+          image: scholtz2/algorand-relay-mainnet:3.16.2-stable
           imagePullPolicy: Always
           resources:
             requests:
