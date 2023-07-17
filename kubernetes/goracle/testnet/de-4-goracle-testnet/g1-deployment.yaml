@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: goracle-testnet
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goracle-testnet-1
+  namespace: goracle-testnet
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: goracle-testnet
+  template:
+    metadata:
+      labels:
+        app: goracle-testnet
+        server: goracle-testnet-g-01
+    spec:
+      nodeName: sch-g-01
+      containers:
+        - name: goracle-testnet
+          image: scholtz2/goracle-testnet:v1.1.13-stable
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "1000Mi"
+              cpu: "1000m"
+            limits:
+              memory: "2000Mi"
+              cpu: "2000m"
+          env:
+          - name: ALGORAND_NODE_IP
+            value: "relaynode-ss-0.algorand-testnet"
+          - name: PARTICIPATION_SEED_PHRASE
+            valueFrom:
+              secretKeyRef:
+                name: goracle-testnet-secret
+                key: PARTICIPATION_SEED_PHRASE
+          - name: MAIN_ADDRESS_PUBLIC_KEY
+            valueFrom:
+              secretKeyRef:
+                name: goracle-testnet-secret
+                key: MAIN_ADDRESS_PUBLIC_KEY

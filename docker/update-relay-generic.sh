@@ -256,7 +256,8 @@ cd /home/scholtz/AlgorandNodes/
 
 git add .
 git commit -m "cicd update from ${base} to ${produce}"
-git push  || error_code=$?
+git push || error_code=$?
+error_code_int=$(($error_code + 0))
 if [ $error_code_int -ne 0 ]; then
     echo "git push failed";
 	exit 1;
