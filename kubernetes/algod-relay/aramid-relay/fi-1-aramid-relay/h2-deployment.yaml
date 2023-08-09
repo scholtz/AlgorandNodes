@@ -136,7 +136,7 @@ spec:
       nodeName: sch-h-02
       containers:
         - name: aramid-relay-mainnet-h2
-          image: scholtz2/aramid-algo-node:v3.16.3-stable
+          image: scholtz2/aramid-algo-node:v3.17.0-stable
           imagePullPolicy: Always
           resources:
             requests:
