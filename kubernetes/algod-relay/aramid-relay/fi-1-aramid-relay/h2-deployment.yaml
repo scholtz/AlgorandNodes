@@ -133,7 +133,7 @@ spec:
         app: aramid-relay-mainnet-h2
         lb: aramid-relay-mainnet
     spec:
-      nodeName: sch-h-02
+      nodeName: s3-k1-fi.a-wallet.net
       containers:
         - name: aramid-relay-mainnet-h2
           image: scholtz2/aramid-algo-node:v3.17.0-stable
@@ -258,7 +258,7 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - sch-h-02
+          - s3-k1-fi.a-wallet.net
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -280,7 +280,7 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - sch-h-02
+          - s3-k1-fi.a-wallet.net
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -302,4 +302,4 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - sch-h-02
+          - s3-k1-fi.a-wallet.net
