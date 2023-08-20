@@ -6,7 +6,7 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: relaynode-1
+  name: relaynode-3
   namespace: algo-relay-mainnet
 spec:
   replicas: 1
@@ -20,11 +20,11 @@ spec:
       labels:
         app: algo-relay-mainnet
     spec:
-      nodeName: s1-k1-fi.a-wallet.net
+      nodeName: s3-k1-fi.a-wallet.net
       containers:
         - name: algo-relay-mainnet
           image: scholtz2/algorand-relay-mainnet:3.17.0-stable
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           resources:
             requests:
               memory: "10000Mi"
@@ -37,8 +37,6 @@ spec:
             - /app/run.sh
           ports:
             - containerPort: 4160
-              protocol: TCP
-            - containerPort: 8080
               protocol: TCP
           startupProbe:
             exec:
@@ -69,31 +67,31 @@ spec:
             runAsUser: 1000
             runAsGroup: 1000
           volumeMounts:
-            - name: algo-mainnet-vol-root-1
+            - name: algo-mainnet-vol-root-3
               mountPath: /app/data
-            - name: algo-mainnet-vol-net-1
+            - name: algo-mainnet-vol-net-3
               mountPath: /app/data/mainnet-v1.0
-            - name: algo-mainnet-vol-catchpoints-1
+            - name: algo-mainnet-vol-catchpoints-3
               mountPath: /app/data/mainnet-v1.0/catchpoints
       volumes:
-        - name: algo-mainnet-vol-root-1
+        - name: algo-mainnet-vol-root-3
           persistentVolumeClaim:
-            claimName: algo-mainnet-vol-root-1
-        - name: algo-mainnet-vol-net-1
+            claimName: algo-mainnet-vol-root-3
+        - name: algo-mainnet-vol-net-3
           persistentVolumeClaim:
-            claimName: algo-mainnet-vol-net-1
-        - name: algo-mainnet-vol-catchpoints-1
+            claimName: algo-mainnet-vol-net-3
+        - name: algo-mainnet-vol-catchpoints-3
           persistentVolumeClaim:
-            claimName: algo-mainnet-vol-catchpoints-1
+            claimName: algo-mainnet-vol-catchpoints-3
 
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: algo-mainnet-vol-root-1
+  name: algo-mainnet-vol-root-3
   namespace: algo-relay-mainnet
 spec:
-  storageClassName: algo-mainnet-root-1
+  storageClassName: algo-mainnet-root-3
   accessModes:
     - ReadWriteOnce
   resources:
@@ -104,10 +102,10 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: algo-mainnet-vol-net-1
+  name: algo-mainnet-vol-net-3
   namespace: algo-relay-mainnet
 spec:
-  storageClassName: algo-mainnet-net-1
+  storageClassName: algo-mainnet-net-3
   accessModes:
     - ReadWriteOnce
   resources:
@@ -117,10 +115,10 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: algo-mainnet-vol-catchpoints-1
+  name: algo-mainnet-vol-catchpoints-3
   namespace: algo-relay-mainnet
 spec:
-  storageClassName: algo-mainnet-catchpoints-1
+  storageClassName: algo-mainnet-catchpoints-3
   accessModes:
     - ReadWriteOnce
   resources:
@@ -130,9 +128,9 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: algo-mainnet-root-1
+  name: algo-mainnet-root-3
 spec:
-  storageClassName: algo-mainnet-root-1
+  storageClassName: algo-mainnet-root-3
   capacity:
     storage: 20Gi
   accessModes:
@@ -146,14 +144,14 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - s1-k1-fi.a-wallet.net
+          - s3-k1-fi.a-wallet.net
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: algo-mainnet-net-1
+  name: algo-mainnet-net-3
 spec:
-  storageClassName: algo-mainnet-net-1
+  storageClassName: algo-mainnet-net-3
   capacity:
     storage: 500Gi
   accessModes:
@@ -167,14 +165,14 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - s1-k1-fi.a-wallet.net
+          - s3-k1-fi.a-wallet.net
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: algo-mainnet-catchpoints-1
+  name: algo-mainnet-catchpoints-3
 spec:
-  storageClassName: algo-mainnet-catchpoints-1
+  storageClassName: algo-mainnet-catchpoints-3
   capacity:
     storage: 1500Gi
   accessModes:
@@ -188,4 +186,4 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - s1-k1-fi.a-wallet.net
+          - s3-k1-fi.a-wallet.net

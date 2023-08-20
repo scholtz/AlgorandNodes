@@ -5,6 +5,7 @@ metadata:
   namespace: algo-relay-mainnet
 spec:
   type: NodePort
+  externalTrafficPolicy: Local
   selector:
     app: algo-relay-mainnet
   ports:
