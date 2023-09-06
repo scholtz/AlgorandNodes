@@ -3,6 +3,6 @@
     "GossipFanout": 8,
     "DNSBootstrapID": "<network>.voi.network",
     "Archival": true,
-    "NetAddress": ":80",
-	"EndpointAddress": "0.0.0.0:8080"
+    "NetAddress": ":24161",
+	"EndpointAddress": "0.0.0.0:28081"
 }
