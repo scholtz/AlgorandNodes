@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: voitest-24261-service
+  namespace: algo-relay-voitest
+spec:
+  type: NodePort
+  externalTrafficPolicy: Local
+  selector:
+    app: algo-relay-voitest
+  ports:
+    - name: algorelay
+      protocol: TCP
+      appProtocol: http
+      port: 24261
+      nodePort: 24261
+      targetPort: 24261
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: voitest-28081-service
+  namespace: algo-relay-voitest
+spec:
+  type: ClusterIP
+  selector:
+    app: algo-relay-voitest
+  ports:
+    - name: algoclient
+      protocol: TCP
+      appProtocol: http
+      port: 28081
+      targetPort: 28081
