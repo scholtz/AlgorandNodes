@@ -1,6 +1,6 @@
 {
     "Version": 15,
     "Archival": false,
-	"EndpointAddress": "0.0.0.0:8080",
+	"EndpointAddress": "0.0.0.0:8081",
     "EnableCatchupFromArchiveServers": true
 }

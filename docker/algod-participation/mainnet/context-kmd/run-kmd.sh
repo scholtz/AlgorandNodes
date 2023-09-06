@@ -5,7 +5,7 @@ sed -i s~aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa~$algod
 cd /kmd/ && nohup dotnet AlgorandKMDServer.dll &
 
 if ! test -f "/app/data/genesis.json"; then
-	cp mainnet/* data/ -R
+	cp /app/mainnet/* /app/data/ -R
 fi
 
 goal node start  || error_code=$?
