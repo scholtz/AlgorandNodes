@@ -1,0 +1,161 @@
+##
+# Sample setup of voi public participation server for voitest chain
+# kubectl apply -f https://raw.githubusercontent.com/scholtz/AlgorandNodes/main/kubernetes/algod-participation/voitest-participation/linode-generic/deployment.yaml
+#
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: algo-participation-voitest
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: participation-node-1
+  namespace: algo-participation-voitest
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: algo-participation-voitest
+  template:
+    metadata:
+      labels:
+        app: algo-participation-voitest
+    spec:
+      containers:
+        - name: algo-participation-voitest
+          image: docker.io/scholtz2/algorand-participation-voitest-extended:3.17.0-stable
+          imagePullPolicy: Always
+          # resources:
+          #   requests:
+          #     memory: "4000Mi"
+          #     cpu: "1000m"
+          #   limits:
+          #     memory: "10000Mi"
+          #     cpu: "8000m"
+          #command: ["/bin/sh", "-ec", "while :; do date; sleep 60 ; done"]
+          command: ["/bin/bash", "/app/run-participation-voitest.sh"]
+          ports:
+            - containerPort: 28081
+              protocol: TCP
+            - containerPort: 18888
+              protocol: TCP
+          startupProbe:
+           exec:
+             command:
+             - /bin/bash
+             - /app/health.sh
+           initialDelaySeconds: 10
+           periodSeconds: 10   
+           failureThreshold: 1000
+          readinessProbe:
+           exec:
+             command:
+             - /bin/bash
+             - /app/health.sh
+           initialDelaySeconds: 10
+           timeoutSeconds: 10   
+           failureThreshold: 100
+          livenessProbe:
+           exec:
+             command:
+             - /bin/bash
+             - /app/health.sh
+           initialDelaySeconds: 10
+           timeoutSeconds: 10        
+           failureThreshold: 6
+           terminationGracePeriodSeconds: 60
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+          volumeMounts:
+            - name: algo-voitest-participation-vol-root-1
+              mountPath: /app/data
+            - name: algo-voitest-participation-vol-net-1
+              mountPath: /app/data/voitest-v1.0
+            - name: algo-voitest-participation-vol-catchpoints-1
+              mountPath: /app/data/voitest-v1.0/catchpoints
+      volumes:
+        - name: algo-voitest-participation-vol-root-1
+          persistentVolumeClaim:
+            claimName: algo-voitest-participation-vol-root-1
+        - name: algo-voitest-participation-vol-net-1
+          persistentVolumeClaim:
+            claimName: algo-voitest-participation-vol-net-1
+        - name: algo-voitest-participation-vol-catchpoints-1
+          persistentVolumeClaim:
+            claimName: algo-voitest-participation-vol-catchpoints-1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: voitest-participation-service-28081-data
+  namespace: algo-participation-voitest
+spec:
+  type: ClusterIP
+  selector:
+    app: algo-participation-voitest
+  ports:
+    - name: algoclient
+      protocol: TCP
+      appProtocol: http
+      port: 28081
+      targetPort: 28081
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: voitest-participation-service-18888-data
+  namespace: algo-participation-voitest
+spec:
+  type: ClusterIP
+  selector:
+    app: algo-participation-voitest
+  ports:
+    - name: algoclient
+      protocol: TCP
+      appProtocol: http
+      port: 18888
+      targetPort: 18888
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: algo-voitest-participation-vol-root-1
+  namespace: algo-participation-voitest
+spec:
+  storageClassName: linode-block-storage-retain
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: algo-voitest-participation-vol-net-1
+  namespace: algo-participation-voitest
+spec:
+  storageClassName: linode-block-storage-retain
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: algo-voitest-participation-vol-catchpoints-1
+  namespace: algo-participation-voitest
+spec:
+  storageClassName: linode-block-storage-retain
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Gi
