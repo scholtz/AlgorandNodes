@@ -6,7 +6,7 @@ metadata:
   annotations: 
     kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-    cert-manager.io/cluster-issuer: letsencrypt
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
     nginx.ingress.kubernetes.io/proxy-connect-timeout: '60'
     nginx.ingress.kubernetes.io/proxy-send-timeout: '60'
     nginx.ingress.kubernetes.io/proxy-read-timeout: '60'
@@ -14,10 +14,10 @@ spec:
   ingressClassName: "nginx"
   tls:
   - hosts:
-    - voitest-participation.h2.a-wallet.net
-    secretName: tls-voitest-participation.h2.a-wallet.net
+    - voitest-participation.k1-us.a-wallet.net
+    secretName: tls-voitest-participation.k1-us.a-wallet.net
   rules:
-  - host: voitest-participation.h2.a-wallet.net
+  - host: voitest-participation.k1-us.a-wallet.net
     http:
       paths:
       - path: /
