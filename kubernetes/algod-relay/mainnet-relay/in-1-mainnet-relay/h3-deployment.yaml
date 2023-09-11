@@ -26,7 +26,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: algo-relay-mainnet
-          image: scholtz2/algorand-relay-mainnet:3.17.0-stable
+          image: scholtz2/algorand-relay-mainnet:3.18.0-stable
           imagePullPolicy: Always
           resources:
             requests:
