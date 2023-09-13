@@ -99,7 +99,7 @@ if [ $error_code_int -ne 0 ]; then
 	exit 1;
 fi
 
-cd /home/scholtz/AlgorandKMDServer
+cd /home/scholtz/AlgorandKMDServer/
 
 git pull || error_code=$?
 error_code_int=$(($error_code + 0))
@@ -107,6 +107,8 @@ if [ $error_code_int -ne 0 ]; then
     echo "git pull failed";
 	exit 1;
 fi
+
+cd /home/scholtz/AlgorandKMDServer/docker/mainnet
 
 f1base="compose-algorand-kmd-mainnet-extended-${base}.sh"
 f1="compose-algorand-kmd-mainnet-extended-${produce}.sh"
@@ -122,6 +124,25 @@ if [ $error_code_int -ne 0 ]; then
     echo "$f1 failed";
 	exit 1;
 fi
+
+cd /home/scholtz/AlgorandKMDServer/docker/voitest
+
+f1base="compose-algorand-participation-voitest-extended-${base}.sh"
+f1="compose-algorand-participation-voitest-extended-${produce}.sh"
+if [ ! -f "$f1" ]; then
+    cp $f1base $f1
+    sed -i "s~$base~$produce~g" $f1
+fi
+
+echo "Processing ${f1}"
+bash $f1 || error_code=$?
+error_code_int=$(($error_code + 0))
+if [ $error_code_int -ne 0 ]; then
+    echo "$f1 failed";
+	exit 1;
+fi
+
+cd /home/scholtz/AlgorandKMDServer/
 
 git add .
 git commit -m "cicd update from ${base} to ${produce}"
@@ -177,6 +198,13 @@ sed -i "s~$base~$produce~g" $f1
 f1=h1-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
+f1=s3-k1-fi-deployment.yaml
+sed -i "s~$base~$produce~g" $f1
+
+cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/voitest-relay/fi-1-voitest-relay
+f1=s3-k1-fi-deployment.yaml
+sed -i "s~$base~$produce~g" $f1
+
 cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/mainnet-relay/de-1-mainnet-relay
 f1=g2-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
@@ -211,6 +239,14 @@ cd /home/scholtz/AlgorandNodes/kubernetes/algod-participation/mainnet-participat
 f1=h2-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 f1=kmd-win-minikube.yaml
+sed -i "s~$base~$produce~g" $f1
+
+cd /home/scholtz/AlgorandNodes/kubernetes/algod-participation/voitest-participation/fi-1-participation
+f1=h2-deployment.yaml
+sed -i "s~$base~$produce~g" $f1
+
+cd /home/scholtz/AlgorandNodes/kubernetes/algod-participation/voitest-participation/linode-generic
+f1=deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
 cd /home/scholtz/AlgorandNodes/kubernetes/algod-participation/mainnet-participation/de-1-participation

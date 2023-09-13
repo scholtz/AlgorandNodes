@@ -23,7 +23,7 @@ spec:
       nodeName: s3-k1-fi.a-wallet.net
       containers:
         - name: algo-relay-voitest
-          image: scholtz2/algorand-relay-voitest:3.17.0-stable
+          image: scholtz2/algorand-relay-voitest:3.18.0-stable
           imagePullPolicy: IfNotPresent
           resources:
             requests:
