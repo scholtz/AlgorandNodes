@@ -65,6 +65,41 @@ if [ $error_code_int -ne 0 ]; then
 	exit 1;
 fi
 
+cd /home/scholtz/AlgorandNodes/docker/algod-relay/aramidmain
+echo "docker/algod-relay/aramidmain"
+
+f1base="aramid-from-official-${base}-stable.sh"
+f1="aramid-from-official-${produce}-stable.sh"
+if [ ! -f "$f1" ]; then
+    cp $f1base $f1
+    sed -i "s~$base~$produce~g" $f1
+fi
+
+echo "Processing ${f1}"
+bash $f1 || error_code=$?
+error_code_int=$(($error_code + 0))
+if [ $error_code_int -ne 0 ]; then
+    echo "$f1 failed";
+	exit 1;
+fi
+
+cd /home/scholtz/AlgorandNodes/docker/algod-relay/voitest
+echo "docker/algod-relay/voitest"
+f1base="compose-relaynode-official-${base}-stable-testnet.sh"
+f1="compose-relaynode-official-${produce}-stable-testnet.sh"
+if [ ! -f "$f1" ]; then
+    echo "copy $f1base to $f1"
+    cp $f1base $f1
+    sed -i "s~$base~$produce~g" $f1
+fi
+echo "Processing ${f1}"
+bash $f1 || error_code=$?
+error_code_int=$(($error_code + 0))
+if [ $error_code_int -ne 0 ]; then
+    echo "$f1 failed";
+	exit 1;
+fi
+
 cd /home/scholtz/AlgorandNodes/docker/algod-relay/testnet
 
 f1base="compose-relaynode-official-${base}-stable-testnet.sh"
@@ -83,6 +118,7 @@ if [ $error_code_int -ne 0 ]; then
 fi
 
 cd /home/scholtz/AlgorandNodes/docker/algod-participation/mainnet
+echo "docker/algod-participation/mainnet"
 
 f1base="compose-kmd-official-${base}-stable.sh"
 f1="compose-kmd-official-${produce}-stable.sh"
@@ -100,6 +136,7 @@ if [ $error_code_int -ne 0 ]; then
 fi
 
 cd /home/scholtz/AlgorandKMDServer/
+echo "AlgorandKMDServer"
 
 git pull || error_code=$?
 error_code_int=$(($error_code + 0))
@@ -109,6 +146,7 @@ if [ $error_code_int -ne 0 ]; then
 fi
 
 cd /home/scholtz/AlgorandKMDServer/docker/mainnet
+echo "AlgorandKMDServer/docker/mainnet"
 
 f1base="compose-algorand-kmd-mainnet-extended-${base}.sh"
 f1="compose-algorand-kmd-mainnet-extended-${produce}.sh"
@@ -126,6 +164,7 @@ if [ $error_code_int -ne 0 ]; then
 fi
 
 cd /home/scholtz/AlgorandKMDServer/docker/voitest
+echo "AlgorandKMDServer/docker/voitest"
 
 f1base="compose-algorand-participation-voitest-extended-${base}.sh"
 f1="compose-algorand-participation-voitest-extended-${produce}.sh"
@@ -153,6 +192,7 @@ if [ $error_code_int -ne 0 ]; then
 fi
 
 cd /home/scholtz/AlgorandNodes/docker/algod-participation/sandbox
+echo "docker/algod-participation/sandbox"
 
 f1=compose-participation-sandbox-night-build.dockerfile
 sed -i "s~$base~$produce~g" $f1
@@ -160,24 +200,6 @@ sed -i "s~$base~$produce~g" $f1
 
 f1base="compose-participation-sandbox-${base}-stable.sh"
 f1="compose-participation-sandbox-${produce}-stable.sh"
-if [ ! -f "$f1" ]; then
-    cp $f1base $f1
-    sed -i "s~$base~$produce~g" $f1
-fi
-
-echo "Processing ${f1}"
-bash $f1 || error_code=$?
-error_code_int=$(($error_code + 0))
-if [ $error_code_int -ne 0 ]; then
-    echo "$f1 failed";
-	exit 1;
-fi
-
-
-cd /home/scholtz/AlgorandNodes/docker/algod-relay/aramidmain
-
-f1base="aramid-from-official-${base}-stable.sh"
-f1="aramid-from-official-${produce}-stable.sh"
 if [ ! -f "$f1" ]; then
     cp $f1base $f1
     sed -i "s~$base~$produce~g" $f1
@@ -201,15 +223,6 @@ sed -i "s~$base~$produce~g" $f1
 f1=s3-k1-fi-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
-cd /home/scholtz/AlgorandNodes/docker/algod-relay/voitest
-
-f1base="compose-relaynode-official-${base}-stable-testnet.sh"
-f1="compose-relaynode-official-${produce}-stable-testnet.sh"
-if [ ! -f "$f1" ]; then
-    cp $f1base $f1
-    sed -i "s~$base~$produce~g" $f1
-fi
-sed -i "s~$base~$produce~g" $f1
 
 cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/mainnet-relay/de-1-mainnet-relay
 f1=g2-deployment.yaml
@@ -257,6 +270,10 @@ sed -i "s~$base~$produce~g" $f1
 
 cd /home/scholtz/AlgorandNodes/kubernetes/algod-participation/mainnet-participation/de-1-participation
 f1=h2-deployment.yaml
+sed -i "s~$base~$produce~g" $f1
+
+cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/voitest-relay/fi-1-voitest-relay
+f1=s3-k1-fi-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
 cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/testnet-relay/de-1-testnet-relay
