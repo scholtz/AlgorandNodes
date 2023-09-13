@@ -201,8 +201,14 @@ sed -i "s~$base~$produce~g" $f1
 f1=s3-k1-fi-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
-cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/voitest-relay/fi-1-voitest-relay
-f1=s3-k1-fi-deployment.yaml
+cd /home/scholtz/AlgorandNodes/docker/algod-relay/voitest
+
+f1base="compose-relaynode-official-${base}-stable-testnet.sh"
+f1="compose-relaynode-official-${produce}-stable-testnet.sh"
+if [ ! -f "$f1" ]; then
+    cp $f1base $f1
+    sed -i "s~$base~$produce~g" $f1
+fi
 sed -i "s~$base~$produce~g" $f1
 
 cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/mainnet-relay/de-1-mainnet-relay
