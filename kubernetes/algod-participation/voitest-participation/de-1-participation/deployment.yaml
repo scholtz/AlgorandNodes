@@ -1,0 +1,222 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: algo-participation-voitest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: voitest-participation-service-28081-data
+  namespace: algo-participation-voitest
+spec:
+  type: ClusterIP
+  selector:
+    app: algo-participation-voitest
+  ports:
+    - name: algoclient
+      protocol: TCP
+      appProtocol: http
+      port: 28081
+      targetPort: 28081
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: voitest-participation-service-18888-data
+  namespace: algo-participation-voitest
+spec:
+  type: ClusterIP
+  selector:
+    app: algo-participation-voitest
+  ports:
+    - name: algoclient
+      protocol: TCP
+      appProtocol: http
+      port: 18888
+      targetPort: 18888
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: participation-node-2
+  namespace: algo-participation-voitest
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: algo-participation-voitest
+  template:
+    metadata:
+      labels:
+        app: algo-participation-voitest
+    spec:
+      nodeName: sch-g-03
+      containers:
+        - name: algo-participation-voitest
+          image: docker.io/scholtz2/algorand-participation-voitest-extended:3.18.0-stable
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "4000Mi"
+              cpu: "1000m"
+            limits:
+              memory: "10000Mi"
+              cpu: "8000m"
+          #command: ["/bin/sh", "-ec", "while :; do date; sleep 60 ; done"]
+          command: ["/bin/bash", "/app/run-participation-voitest.sh"]
+          ports:
+            - containerPort: 28081
+              protocol: TCP
+            - containerPort: 18888
+              protocol: TCP
+          startupProbe:
+            exec:
+              command:
+              - /bin/bash
+              - /app/health.sh
+            initialDelaySeconds: 10
+            periodSeconds: 10   
+            failureThreshold: 1000
+          readinessProbe:
+            exec:
+              command:
+              - /bin/bash
+              - /app/health.sh
+            initialDelaySeconds: 10
+            timeoutSeconds: 10   
+            failureThreshold: 100
+          livenessProbe:
+            exec:
+              command:
+              - /bin/bash
+              - /app/health.sh
+            initialDelaySeconds: 10
+            timeoutSeconds: 10        
+            failureThreshold: 6
+            terminationGracePeriodSeconds: 60
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+          volumeMounts:
+            - name: algo-voitest-participation-vol-root-2
+              mountPath: /app/data
+            - name: algo-voitest-participation-vol-net-2
+              mountPath: /app/data/voitest-v1.0
+            - name: algo-voitest-participation-vol-catchpoints-2
+              mountPath: /app/data/voitest-v1.0/catchpoints
+      volumes:
+        - name: algo-voitest-participation-vol-root-2
+          persistentVolumeClaim:
+            claimName: algo-voitest-participation-vol-root-2
+        - name: algo-voitest-participation-vol-net-2
+          persistentVolumeClaim:
+            claimName: algo-voitest-participation-vol-net-2
+        - name: algo-voitest-participation-vol-catchpoints-2
+          persistentVolumeClaim:
+            claimName: algo-voitest-participation-vol-catchpoints-2
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: algo-voitest-participation-vol-root-2
+  namespace: algo-participation-voitest
+spec:
+  storageClassName: algo-voitest-participation-root-2
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: algo-voitest-participation-vol-net-2
+  namespace: algo-participation-voitest
+spec:
+  storageClassName: algo-voitest-participation-net-2
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: algo-voitest-participation-vol-catchpoints-2
+  namespace: algo-participation-voitest
+spec:
+  storageClassName: algo-voitest-participation-catchpoints-2
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1500Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: algo-voitest-participation-root-2
+spec:
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - sch-g-03
+  storageClassName: algo-voitest-participation-root-2
+  capacity:
+    storage: 20Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/k8s/algo/voitest-participation/root"
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: algo-voitest-participation-net-2
+spec:
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - sch-g-03
+  storageClassName: algo-voitest-participation-net-2
+  capacity:
+    storage: 500Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/k8s/algo/voitest-participation/net"
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: algo-voitest-participation-catchpoints-2
+spec:
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - sch-g-03
+  storageClassName: algo-voitest-participation-catchpoints-2
+  capacity:
+    storage: 1500Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/k8s/algo/voitest-participation/catchpoints"
