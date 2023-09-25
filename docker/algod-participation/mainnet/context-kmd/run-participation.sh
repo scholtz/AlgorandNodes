@@ -14,6 +14,7 @@ round=`goal node lastround`
 if [ "10000000" -gt "$round" ]; then
 	echo "Executing catchup script because current round is $round"
 	catchup=`curl -s https://algorand-catchpoints.s3.us-east-2.amazonaws.com/channel/mainnet/latest.catchpoint`
+	sleep 10s
 	echo "going to run 'goal node catchup $catchup'"
 	goal node catchup $catchup || error_code=$?
 	if [ $error_code_int -ne 0 ]; then

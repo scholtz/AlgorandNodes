@@ -20,6 +20,7 @@ echo "catchup check: my round is $myNodeRound, blockchain round is $blockchainRo
 if [ "$myNodeRound" -lt "$blockchainRound" ]; then
 	echo "Executing catchup script because my current round is $myNodeRound"
 	catchup=$(curl -s https://algod.aramidmain.a-wallet.net/v2/status | jq -r '.["last-catchpoint"]')
+	sleep 10s
 	echo "going to run 'goal node catchup $catchup'"
 	goal node catchup $catchup || error_code=$?
 	if [ $error_code_int -ne 0 ]; then

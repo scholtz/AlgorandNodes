@@ -3,6 +3,12 @@
 if ! test -f "/app/data/genesis.json"; then
     echo "initiating new node. genesis.json was not found";
 	cp /app/voitest/* /app/data/ -R
+
+	echo "diagcfg telemetry enable"
+	diagcfg telemetry enable
+	host=`hostname`.voi
+	echo "diagcfg telemetry name -n $host"
+	diagcfg telemetry name -n $host
 fi
 
 echo "goal node start"
@@ -21,6 +27,7 @@ echo "catchup check: my round is $myNodeRound, blockchain round is $blockchainRo
 if [ "$myNodeRound" -lt "$blockchainRound" ]; then
 	echo "Executing catchup script because my current round is $myNodeRound"
 	catchup=$(curl -s https://testnet-api.voi.nodly.io/v2/status | jq -r '.["last-catchpoint"]')
+	sleep 10s
 	echo "going to run 'goal node catchup $catchup'"
 	goal node catchup $catchup || error_code=$?
 	if [ $error_code_int -ne 0 ]; then

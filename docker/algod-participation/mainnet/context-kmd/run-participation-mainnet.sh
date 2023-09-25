@@ -21,6 +21,7 @@ echo "catchup check: my round is $myNodeRound, blockchain round is $blockchainRo
 if [ "$myNodeRound" -lt "$blockchainRound" ]; then
 	echo "Executing catchup script because my current round is $myNodeRound"
 	catchup=`curl -s https://algorand-catchpoints.s3.us-east-2.amazonaws.com/channel/mainnet/latest.catchpoint`
+	sleep 10s
 	echo "going to run 'goal node catchup $catchup'"
 	goal node catchup $catchup || error_code=$?
 	if [ $error_code_int -ne 0 ]; then

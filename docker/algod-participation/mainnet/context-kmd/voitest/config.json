@@ -3,6 +3,5 @@
     "Archival": false,
 	"EndpointAddress": "0.0.0.0:28081",
     "EnableCatchupFromArchiveServers": true,
-    "DNSBootstrapID": "<network>.voi.network",
-    "GossipFanout": 8
+    "DNSBootstrapID": "<network>.voi.network"
 }
