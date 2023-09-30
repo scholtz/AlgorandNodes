@@ -21,6 +21,7 @@ spec:
         app: algo-relay-voitest
     spec:
       nodeName: s3-k1-fi.a-wallet.net
+      hostname: 00-htz-fi-hel-001
       containers:
         - name: algo-relay-voitest
           image: scholtz2/algorand-relay-voitest:3.18.0-stable
@@ -37,6 +38,8 @@ spec:
             - /app/run.sh
           ports:
             - containerPort: 5011
+              protocol: TCP
+            - containerPort: 9100
               protocol: TCP
             - containerPort: 28081
               protocol: TCP
