@@ -12,9 +12,9 @@ spec:
     - name: algorelay
       protocol: TCP
       appProtocol: http
-      port: 24261
-      nodePort: 24261
-      targetPort: 24261
+      port: 5011
+      nodePort: 5011
+      targetPort: 5011
 ---
 apiVersion: v1
 kind: Service

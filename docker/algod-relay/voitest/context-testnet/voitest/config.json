@@ -1,8 +1,13 @@
 {
     "Version": 19,
+    "CatchpointFileHistoryLength": 0,
     "GossipFanout": 8,
     "DNSBootstrapID": "<network>.voi.network",
-    "Archival": true,
-    "NetAddress": ":24161",
-	"EndpointAddress": "0.0.0.0:28081"
+    "EnableTxBacklogRateLimiting": true,
+    "MaxConnectionsPerIP": 2,
+    "IncomingConnectionsLimit": 120,
+    "Archival": false,
+    "NetAddress": ":5011",
+	"EndpointAddress": "0.0.0.0:28081",
+    "EnableMetricReporting" : true
 }
