@@ -6,7 +6,7 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: relaynode-3
+  name: relaynode-2
   namespace: algo-relay-voitest
 spec:
   replicas: 1
@@ -19,10 +19,10 @@ spec:
     metadata:
       labels:
         app: algo-relay-voitest
-        server: 00-htz-fi-hel-001
+        server: 00-htz-fi-hel-002
     spec:
-      nodeName: s3-k1-fi.a-wallet.net
-      hostname: 00-htz-fi-hel-001
+      nodeName: s1-k1-fi.a-wallet.net
+      hostname: 00-htz-fi-hel-002
       containers:
         - name: algo-relay-voitest
           image: scholtz2/algorand-relay-voitest:3.18.0-stable
@@ -73,31 +73,31 @@ spec:
             runAsUser: 1000
             runAsGroup: 1000
           volumeMounts:
-            - name: algo-voitest-vol-root-3
+            - name: algo-voitest-vol-root-2
               mountPath: /app/data
-            - name: algo-voitest-vol-net-3
+            - name: algo-voitest-vol-net-2
               mountPath: /app/data/voitest-v1.0
-            - name: algo-voitest-vol-catchpoints-3
+            - name: algo-voitest-vol-catchpoints-2
               mountPath: /app/data/voitest-v1.0/catchpoints
       volumes:
-        - name: algo-voitest-vol-root-3
+        - name: algo-voitest-vol-root-2
           persistentVolumeClaim:
-            claimName: algo-voitest-vol-root-3
-        - name: algo-voitest-vol-net-3
+            claimName: algo-voitest-vol-root-2
+        - name: algo-voitest-vol-net-2
           persistentVolumeClaim:
-            claimName: algo-voitest-vol-net-3
-        - name: algo-voitest-vol-catchpoints-3
+            claimName: algo-voitest-vol-net-2
+        - name: algo-voitest-vol-catchpoints-2
           persistentVolumeClaim:
-            claimName: algo-voitest-vol-catchpoints-3
+            claimName: algo-voitest-vol-catchpoints-2
 
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: algo-voitest-vol-root-3
+  name: algo-voitest-vol-root-2
   namespace: algo-relay-voitest
 spec:
-  storageClassName: algo-voitest-root-3
+  storageClassName: algo-voitest-root-2
   accessModes:
     - ReadWriteOnce
   resources:
@@ -108,10 +108,10 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: algo-voitest-vol-net-3
+  name: algo-voitest-vol-net-2
   namespace: algo-relay-voitest
 spec:
-  storageClassName: algo-voitest-net-3
+  storageClassName: algo-voitest-net-2
   accessModes:
     - ReadWriteOnce
   resources:
@@ -121,10 +121,10 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: algo-voitest-vol-catchpoints-3
+  name: algo-voitest-vol-catchpoints-2
   namespace: algo-relay-voitest
 spec:
-  storageClassName: algo-voitest-catchpoints-3
+  storageClassName: algo-voitest-catchpoints-2
   accessModes:
     - ReadWriteOnce
   resources:
@@ -134,9 +134,9 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: algo-voitest-root-3
+  name: algo-voitest-root-2
 spec:
-  storageClassName: algo-voitest-root-3
+  storageClassName: algo-voitest-root-2
   capacity:
     storage: 20Gi
   accessModes:
@@ -150,14 +150,14 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - s3-k1-fi.a-wallet.net
+          - s1-k1-fi.a-wallet.net
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: algo-voitest-net-3
+  name: algo-voitest-net-2
 spec:
-  storageClassName: algo-voitest-net-3
+  storageClassName: algo-voitest-net-2
   capacity:
     storage: 500Gi
   accessModes:
@@ -171,14 +171,14 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - s3-k1-fi.a-wallet.net
+          - s1-k1-fi.a-wallet.net
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: algo-voitest-catchpoints-3
+  name: algo-voitest-catchpoints-2
 spec:
-  storageClassName: algo-voitest-catchpoints-3
+  storageClassName: algo-voitest-catchpoints-2
   capacity:
     storage: 1500Gi
   accessModes:
@@ -192,4 +192,4 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - s3-k1-fi.a-wallet.net
+          - s1-k1-fi.a-wallet.net
