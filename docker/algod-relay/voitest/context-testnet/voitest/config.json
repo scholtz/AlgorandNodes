@@ -8,6 +8,7 @@
     "IncomingConnectionsLimit": 120,
     "Archival": false,
     "NetAddress": ":5011",
-	"EndpointAddress": "0.0.0.0:28081",
-    "EnableMetricReporting" : true
+    "EndpointAddress": "0.0.0.0:28081",
+    "EnableMetricReporting" : true,
+    "UseXForwardedForAddressField" : "X-Forwarded-For"
 }
