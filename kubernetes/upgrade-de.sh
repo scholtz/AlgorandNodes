@@ -50,3 +50,11 @@ while kubectl get deployment relaynode-2 -n aramid-relay-mainnet -ojson | jq '.s
 
 date
 echo "DONE"
+
+echo "DONE Upgrading VoiTest public participation server"
+cd /home/scholtz/AlgorandNodes/kubernetes/algod-participation/voitest-participation/de-1-participation
+date
+kubectl apply -f deployment.yaml
+sleep 1
+echo "waiting for pods to be live"
+while kubectl get deployment participation-node-2 -n algo-participation-voitest -ojson | jq '.status.conditions[].status' -r | grep -q False; do sleep 1; date; done
