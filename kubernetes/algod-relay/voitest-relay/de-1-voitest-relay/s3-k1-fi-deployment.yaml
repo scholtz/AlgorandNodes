@@ -1,43 +1,48 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: algo-relay-mainnet
+  name: algo-relay-voitest
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: relaynode-1
-  namespace: algo-relay-mainnet
+  name: relaynode-3
+  namespace: algo-relay-voitest
 spec:
   replicas: 1
   strategy:
     type: Recreate
   selector:
     matchLabels:
-      app: algo-relay-mainnet
+      app: algo-relay-voitest
   template:
     metadata:
       labels:
-        app: algo-relay-mainnet
+        app: algo-relay-voitest
+        server: 00-htz-fi-hel-001
     spec:
+      nodeName: s3-k1-fi.a-wallet.net
+      hostname: 00-htz-fi-hel-001
       containers:
-        - name: algo-relay-mainnet
-          image: scholtz2/algorand-relay-mainnet:3.18.1-stable
-          imagePullPolicy: Always
+        - name: algo-relay-voitest
+          image: scholtz2/algorand-relay-voitest:3.18.0-stable
+          imagePullPolicy: IfNotPresent
           resources:
             requests:
-              memory: "1000Mi"
-              cpu: "1000m"
+              memory: "8000Mi"
+              cpu: "4000m"
             limits:
-              memory: "20000Mi"
+              memory: "16000Mi"
               cpu: "16000m"
           command:
             - /bin/bash
             - /app/run.sh
           ports:
-            - containerPort: 4160
+            - containerPort: 5011
               protocol: TCP
-            - containerPort: 8080
+            - containerPort: 9100
+              protocol: TCP
+            - containerPort: 28081
               protocol: TCP
           startupProbe:
             exec:
@@ -63,36 +68,36 @@ spec:
             initialDelaySeconds: 10
             timeoutSeconds: 10        
             failureThreshold: 6
-            terminationGracePeriodSeconds: 60
+            terminationGracePeriodSeconds: 10
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
           volumeMounts:
-            - name: algo-mainnet-vol-root-1
+            - name: algo-voitest-vol-root-3
               mountPath: /app/data
-            - name: algo-mainnet-vol-net-1
-              mountPath: /app/data/mainnet-v1.0
-            - name: algo-mainnet-vol-catchpoints-1
-              mountPath: /app/data/mainnet-v1.0/catchpoints
+            - name: algo-voitest-vol-net-3
+              mountPath: /app/data/voitest-v1.0
+            - name: algo-voitest-vol-catchpoints-3
+              mountPath: /app/data/voitest-v1.0/catchpoints
       volumes:
-        - name: algo-mainnet-vol-root-1
+        - name: algo-voitest-vol-root-3
           persistentVolumeClaim:
-            claimName: algo-mainnet-vol-root-1
-        - name: algo-mainnet-vol-net-1
+            claimName: algo-voitest-vol-root-3
+        - name: algo-voitest-vol-net-3
           persistentVolumeClaim:
-            claimName: algo-mainnet-vol-net-1
-        - name: algo-mainnet-vol-catchpoints-1
+            claimName: algo-voitest-vol-net-3
+        - name: algo-voitest-vol-catchpoints-3
           persistentVolumeClaim:
-            claimName: algo-mainnet-vol-catchpoints-1
+            claimName: algo-voitest-vol-catchpoints-3
 
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: algo-mainnet-vol-root-1
-  namespace: algo-relay-mainnet
+  name: algo-voitest-vol-root-3
+  namespace: algo-relay-voitest
 spec:
-  storageClassName: algo-mainnet-root-1
+  storageClassName: algo-voitest-root-3
   accessModes:
     - ReadWriteOnce
   resources:
@@ -103,10 +108,10 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: algo-mainnet-vol-net-1
-  namespace: algo-relay-mainnet
+  name: algo-voitest-vol-net-3
+  namespace: algo-relay-voitest
 spec:
-  storageClassName: algo-mainnet-net-1
+  storageClassName: algo-voitest-net-3
   accessModes:
     - ReadWriteOnce
   resources:
@@ -116,28 +121,28 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: algo-mainnet-vol-catchpoints-1
-  namespace: algo-relay-mainnet
+  name: algo-voitest-vol-catchpoints-3
+  namespace: algo-relay-voitest
 spec:
-  storageClassName: algo-mainnet-catchpoints-1
+  storageClassName: algo-voitest-catchpoints-3
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 1200Gi
+      storage: 1500Gi
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: algo-mainnet-root-1
+  name: algo-voitest-root-3
 spec:
-  storageClassName: algo-mainnet-root-1
+  storageClassName: algo-voitest-root-3
   capacity:
     storage: 20Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/lke1-root"
+    path: "/mnt/k8s/algo/voitest/root"
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -145,20 +150,20 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - lke85101-130182-63a9f27ade3f
+          - s3-k1-fi.a-wallet.net
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: algo-mainnet-net-1
+  name: algo-voitest-net-3
 spec:
-  storageClassName: algo-mainnet-net-1
+  storageClassName: algo-voitest-net-3
   capacity:
     storage: 500Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/lke1-net"
+    path: "/mnt/k8s/algo/voitest/net"
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -166,20 +171,20 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - lke85101-130182-63a9f27ade3f
+          - s3-k1-fi.a-wallet.net
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: algo-mainnet-catchpoints-1
+  name: algo-voitest-catchpoints-3
 spec:
-  storageClassName: algo-mainnet-catchpoints-1
+  storageClassName: algo-voitest-catchpoints-3
   capacity:
-    storage: 1200Gi
+    storage: 1500Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/lke1-catchpoints"
+    path: "/mnt/k8s/algo/voitest/catchpoints"
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -187,4 +192,4 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - lke85101-130182-63a9f27ade3f
+          - s3-k1-fi.a-wallet.net

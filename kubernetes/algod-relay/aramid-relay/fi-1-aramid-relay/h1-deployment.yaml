@@ -57,7 +57,7 @@ spec:
       nodeName: s1-k1-fi.a-wallet.net
       containers:
         - name: aramid-relay-mainnet
-          image: scholtz2/aramid-algo-node:v3.18.0-stable
+          image: scholtz2/aramid-algo-node:v3.18.1-stable
           imagePullPolicy: Always
           resources:
             requests:
