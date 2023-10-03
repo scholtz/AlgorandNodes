@@ -261,7 +261,11 @@ f1=kmd-win-minikube.yaml
 sed -i "s~$base~$produce~g" $f1
 
 cd /home/scholtz/AlgorandNodes/kubernetes/algod-participation/voitest-participation/fi-1-participation
-f1=h2-deployment.yaml
+f1=deployment.yaml
+sed -i "s~$base~$produce~g" $f1
+
+cd /home/scholtz/AlgorandNodes/kubernetes/algod-participation/voitest-participation/de-1-participation
+f1=deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
 cd /home/scholtz/AlgorandNodes/kubernetes/algod-participation/voitest-participation/linode-generic
@@ -274,6 +278,14 @@ sed -i "s~$base~$produce~g" $f1
 
 cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/voitest-relay/fi-1-voitest-relay
 f1=s3-k1-fi-deployment.yaml
+sed -i "s~$base~$produce~g" $f1
+f1=s2-k1-fi-deployment.yaml
+sed -i "s~$base~$produce~g" $f1
+
+cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/voitest-relay/de-1-voitest-relay
+f1=s2-k1-de-deployment.yaml
+sed -i "s~$base~$produce~g" $f1
+f1=s3-k1-de-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
 cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/testnet-relay/de-1-testnet-relay
