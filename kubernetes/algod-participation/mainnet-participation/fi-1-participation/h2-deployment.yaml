@@ -48,40 +48,41 @@ spec:
             limits:
               memory: "20000Mi"
               cpu: "32000m"
-#          command: ["/bin/sh", "-ec", "while :; do date; sleep 60 ; done"]
-          command: ["/bin/bash", "/app/run-kmd.sh"]
-#            - /bin/bash
-#            - /app/run-kmd.sh
+          #          command: ["/bin/sh", "-ec", "while :; do date; sleep 60 ; done"]
+          command:
+            ["/bin/bash", "/app/run-participation-mainnet-with-appsettings.sh"]
+          #            - /bin/bash
+          #            - /app/run-kmd.sh
           ports:
             - containerPort: 8080
               protocol: TCP
             - containerPort: 18888
               protocol: TCP
-#          startupProbe:
-#            exec:
-#              command:
-#              - /bin/bash
-#              - /app/health.sh
-#            initialDelaySeconds: 10
-#            periodSeconds: 10   
-#            failureThreshold: 1000
-#          readinessProbe:
-#            exec:
-#              command:
-#              - /bin/bash
-#              - /app/health.sh
-#            initialDelaySeconds: 10
-#            timeoutSeconds: 10   
-#            failureThreshold: 100
-#          livenessProbe:
-#            exec:
-#              command:
-#              - /bin/bash
-#              - /app/health.sh
-#            initialDelaySeconds: 10
-#            timeoutSeconds: 10        
-#            failureThreshold: 6
-#            terminationGracePeriodSeconds: 60
+          #          startupProbe:
+          #            exec:
+          #              command:
+          #              - /bin/bash
+          #              - /app/health.sh
+          #            initialDelaySeconds: 10
+          #            periodSeconds: 10
+          #            failureThreshold: 1000
+          #          readinessProbe:
+          #            exec:
+          #              command:
+          #              - /bin/bash
+          #              - /app/health.sh
+          #            initialDelaySeconds: 10
+          #            timeoutSeconds: 10
+          #            failureThreshold: 100
+          #          livenessProbe:
+          #            exec:
+          #              command:
+          #              - /bin/bash
+          #              - /app/health.sh
+          #            initialDelaySeconds: 10
+          #            timeoutSeconds: 10
+          #            failureThreshold: 6
+          #            terminationGracePeriodSeconds: 60
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
