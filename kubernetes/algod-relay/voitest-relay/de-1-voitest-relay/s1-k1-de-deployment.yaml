@@ -6,7 +6,7 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: relaynode-3
+  name: relaynode-1
   namespace: algo-relay-voitest
 spec:
   replicas: 1
@@ -21,7 +21,7 @@ spec:
         app: algo-relay-voitest
         server: 00-htz-fi-hel-001
     spec:
-      nodeName: sch-g-03
+      nodeName: sch-g-01
       hostname: 00-htz-fi-hel-001
       containers:
         - name: algo-relay-voitest
@@ -150,7 +150,7 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - sch-g-03
+          - sch-g-01
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -171,7 +171,7 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - sch-g-03
+          - sch-g-01
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -192,4 +192,4 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - sch-g-03
+          - sch-g-01
