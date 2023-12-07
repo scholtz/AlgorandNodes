@@ -146,7 +146,7 @@ spec:
       nodeName: s3-k1-fi.a-wallet.net
       containers:
         - name: aramid-relay-mainnet-h2
-          image: scholtz2/aramid-algo-node:v3.19.0-stable
+          image: scholtz2/aramid-algo-node:v3.20.1-stable
           imagePullPolicy: Always
           resources:
             requests:

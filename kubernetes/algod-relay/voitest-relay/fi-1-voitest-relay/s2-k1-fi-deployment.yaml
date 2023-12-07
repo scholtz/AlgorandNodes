@@ -25,7 +25,7 @@ spec:
       hostname: 00-htz-fi-hel-002
       containers:
         - name: algo-relay-voitest
-          image: scholtz2/algorand-relay-voitest:3.19.0-stable
+          image: scholtz2/algorand-relay-voitest:3.20.1-stable
           imagePullPolicy: IfNotPresent
           resources:
             requests:
