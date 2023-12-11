@@ -47,26 +47,26 @@ spec:
           startupProbe:
             exec:
               command:
-              - /bin/bash
-              - /app/health.sh
+                - /bin/bash
+                - /app/health.sh
             initialDelaySeconds: 10
-            periodSeconds: 10   
+            periodSeconds: 10
             failureThreshold: 1000
           readinessProbe:
             exec:
               command:
-              - /bin/bash
-              - /app/health.sh
+                - /bin/bash
+                - /app/health.sh
             initialDelaySeconds: 10
-            timeoutSeconds: 10   
+            timeoutSeconds: 10
             failureThreshold: 100
           livenessProbe:
             exec:
               command:
-              - /bin/bash
-              - /app/health.sh
+                - /bin/bash
+                - /app/health.sh
             initialDelaySeconds: 10
-            timeoutSeconds: 10        
+            timeoutSeconds: 10
             failureThreshold: 6
             terminationGracePeriodSeconds: 10
           securityContext:
@@ -77,8 +77,6 @@ spec:
               mountPath: /app/data
             - name: algo-voitest-vol-net-2
               mountPath: /app/data/voitest-v1
-            - name: algo-voitest-vol-catchpoints-2
-              mountPath: /app/data/voitest-v1/catchpoints
       volumes:
         - name: algo-voitest-vol-root-2
           persistentVolumeClaim:
@@ -86,9 +84,6 @@ spec:
         - name: algo-voitest-vol-net-2
           persistentVolumeClaim:
             claimName: algo-voitest-vol-net-2
-        - name: algo-voitest-vol-catchpoints-2
-          persistentVolumeClaim:
-            claimName: algo-voitest-vol-catchpoints-2
 
 ---
 apiVersion: v1
@@ -119,19 +114,6 @@ spec:
       storage: 500Gi
 ---
 apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: algo-voitest-vol-catchpoints-2
-  namespace: algo-relay-voitest
-spec:
-  storageClassName: algo-voitest-catchpoints-2
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1500Gi
----
-apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: algo-voitest-root-2
@@ -146,11 +128,11 @@ spec:
   nodeAffinity:
     required:
       nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - sch-g-02
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - sch-g-02
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -167,29 +149,8 @@ spec:
   nodeAffinity:
     required:
       nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - sch-g-02
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: algo-voitest-catchpoints-2
-spec:
-  storageClassName: algo-voitest-catchpoints-2
-  capacity:
-    storage: 1500Gi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: "/mnt/k8s/algo/voitest/catchpoints"
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - sch-g-02
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - sch-g-02

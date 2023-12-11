@@ -19,13 +19,13 @@ spec:
     metadata:
       labels:
         app: algo-relay-voitest
-        server: 00-htz-fi-hel-001
+        server: 00-htz-de-nue-001
     spec:
       nodeName: sch-g-01
-      hostname: 00-htz-fi-hel-001
+      hostname: 00-htz-de-nue-001
       containers:
         - name: algo-relay-voitest
-          image: scholtz2/algorand-relay-voitest:3.19.0-stable
+          image: scholtz2/algorand-relay-voitest:3.20.1-stable
           imagePullPolicy: IfNotPresent
           resources:
             requests:
@@ -47,26 +47,26 @@ spec:
           startupProbe:
             exec:
               command:
-              - /bin/bash
-              - /app/health.sh
+                - /bin/bash
+                - /app/health.sh
             initialDelaySeconds: 10
-            periodSeconds: 10   
+            periodSeconds: 10
             failureThreshold: 1000
           readinessProbe:
             exec:
               command:
-              - /bin/bash
-              - /app/health.sh
+                - /bin/bash
+                - /app/health.sh
             initialDelaySeconds: 10
-            timeoutSeconds: 10   
+            timeoutSeconds: 10
             failureThreshold: 100
           livenessProbe:
             exec:
               command:
-              - /bin/bash
-              - /app/health.sh
+                - /bin/bash
+                - /app/health.sh
             initialDelaySeconds: 10
-            timeoutSeconds: 10        
+            timeoutSeconds: 10
             failureThreshold: 6
             terminationGracePeriodSeconds: 10
           securityContext:
@@ -146,11 +146,11 @@ spec:
   nodeAffinity:
     required:
       nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - sch-g-01
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - sch-g-01
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -167,11 +167,11 @@ spec:
   nodeAffinity:
     required:
       nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - sch-g-01
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - sch-g-01
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -188,8 +188,8 @@ spec:
   nodeAffinity:
     required:
       nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - sch-g-01
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - sch-g-01
