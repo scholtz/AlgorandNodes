@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: algorand-indexer
-        image: scholtz2/algorand-indexer:2.15.4-stable
+        image: scholtz2/algorand-indexer:v3.3.1-stable
         command: [ "/bin/bash", "-c", "--" ]
         args: [ "while true; do sleep 30; done;" ]
         volumeMounts:
