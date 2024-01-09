@@ -1,5 +1,5 @@
 ver=3.18.1
-docker build -t scholtz2/algorand-kmd-mainnet:$ver-stable -f compose-kmd-official.dockerfile --progress=plain --build-arg ALGO_VER=$ver context-kmd/ || error_code=$?
+docker build -t scholtz2/algorand-kmd-mainnet:$ver-stable -f compose-kmd-official.dockerfile --build-arg ALGO_VER=$ver context-kmd/ || error_code=$?
 error_code_int=$(($error_code + 0))
 if [ $error_code_int -ne 0 ]; then
     echo "failed to build image";
@@ -14,4 +14,4 @@ fi
 docker tag scholtz2/algorand-kmd-mainnet:$ver-stable scholtz2/algorand-participation-mainnet:$ver-stable
 docker push scholtz2/algorand-participation-mainnet:$ver-stable
 
-#docker build -t scholtz2/algorand-participation-sandbox:$ver-stable -f compose-participation-sandbox.dockerfile --progress=plain --build-arg ALGO_VER=$ver context-participation-sandbox/
+#docker build -t scholtz2/algorand-participation-sandbox:$ver-stable -f compose-participation-sandbox.dockerfile --build-arg ALGO_VER=$ver context-participation-sandbox/
