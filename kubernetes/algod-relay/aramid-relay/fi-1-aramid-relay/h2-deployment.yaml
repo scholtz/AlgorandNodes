@@ -35,16 +35,16 @@ spec:
       appProtocol: http
       port: 18280
       targetPort: 18280
-      
+
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: aramidmain-algod-ingress
   namespace: aramid-relay-mainnet
-  annotations: 
-    kubernetes.io/ingress.class: "nginx"
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+  annotations:
+    kubernetes.io/ingress.class: 'nginx'
+    nginx.ingress.kubernetes.io/backend-protocol: 'HTTP'
     cert-manager.io/cluster-issuer: letsencrypt
     nginx.ingress.kubernetes.io/configuration-snippet: |
       more_set_headers "server: hide";
@@ -53,27 +53,27 @@ metadata:
       proxy_set_header X-Algo-API-Token aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa;
 spec:
   tls:
-  - hosts:
-    - aramidmain-algod.h2.scholtz.sk
-    secretName: tls-aramidmain-algod
+    - hosts:
+        - aramidmain-algod.h2.scholtz.sk
+      secretName: tls-aramidmain-algod
   rules:
-  - host: aramidmain-algod.h2.scholtz.sk
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: aramid-set-service-data-h2
-            port:
-              number: 18280
+    - host: aramidmain-algod.h2.scholtz.sk
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: aramid-set-service-data-h2
+                port:
+                  number: 18280
 #---
 #apiVersion: networking.k8s.io/v1
 #kind: Ingress
 #metadata:
 #  name: aramidmain-algod-2-ingress
 #  namespace: aramid-relay-mainnet
-#  annotations: 
+#  annotations:
 #    kubernetes.io/ingress.class: "nginx"
 #    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 #    cert-manager.io/cluster-issuer: letsencrypt
@@ -99,9 +99,9 @@ kind: Ingress
 metadata:
   name: aramidmain-algod-3-ingress
   namespace: aramid-relay-mainnet
-  annotations: 
-    kubernetes.io/ingress.class: "nginx"
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+  annotations:
+    kubernetes.io/ingress.class: 'nginx'
+    nginx.ingress.kubernetes.io/backend-protocol: 'HTTP'
     cert-manager.io/cluster-issuer: letsencrypt
     nginx.ingress.kubernetes.io/configuration-snippet: |
       more_set_headers "server: hide";
@@ -110,20 +110,20 @@ metadata:
       proxy_set_header X-Algo-API-Token aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa;
 spec:
   tls:
-  - hosts:
-    - algod.aramidmain.a-wallet.net
-    secretName: tls-aramidmain-algod-3
+    - hosts:
+        - algod.aramidmain.a-wallet.net
+      secretName: tls-aramidmain-algod-3
   rules:
-  - host: algod.aramidmain.a-wallet.net
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: aramid-set-service-data-h2
-            port:
-              number: 18280
+    - host: algod.aramidmain.a-wallet.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: aramid-set-service-data-h2
+                port:
+                  number: 18280
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -146,41 +146,41 @@ spec:
       nodeName: s3-k1-fi.a-wallet.net
       containers:
         - name: aramid-relay-mainnet-h2
-          image: scholtz2/aramid-algo-node:v3.21.0-stable
+          image: scholtz2/aramid-algo-node:v3.20.1-stable
           imagePullPolicy: Always
           resources:
             requests:
-              memory: "6000Mi"
-              cpu: "6000m"
+              memory: '6000Mi'
+              cpu: '6000m'
             limits:
-              memory: "20000Mi"
-              cpu: "32000m"
+              memory: '20000Mi'
+              cpu: '32000m'
           #command: ["/bin/sh", "-ec", "while :; do echo '.'; sleep 5 ; done"]
           #command:
           #  - /bin/bash
           #  - /app/run.sh
-              
+
           startupProbe:
             exec:
               command:
-              - /bin/bash
-              - /app/health.sh
+                - /bin/bash
+                - /app/health.sh
             initialDelaySeconds: 10
-            periodSeconds: 10   
+            periodSeconds: 10
             failureThreshold: 1000
           readinessProbe:
             exec:
               command:
-              - /bin/bash
-              - /app/health.sh
+                - /bin/bash
+                - /app/health.sh
             initialDelaySeconds: 10
-            timeoutSeconds: 10   
+            timeoutSeconds: 10
             failureThreshold: 100
           livenessProbe:
-              tcpSocket:
-                port: 18280
-              initialDelaySeconds: 15
-              periodSeconds: 20
+            tcpSocket:
+              port: 18280
+            initialDelaySeconds: 15
+            periodSeconds: 20
           ports:
             - containerPort: 14260
               protocol: TCP
@@ -259,16 +259,16 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/k8s/aramid/mainnet/root"
+    path: '/mnt/k8s/aramid/mainnet/root'
 
   nodeAffinity:
     required:
       nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - s3-k1-fi.a-wallet.net
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - s3-k1-fi.a-wallet.net
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -281,16 +281,16 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/k8s/aramid/mainnet/net"
+    path: '/mnt/k8s/aramid/mainnet/net'
 
   nodeAffinity:
     required:
       nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - s3-k1-fi.a-wallet.net
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - s3-k1-fi.a-wallet.net
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -303,13 +303,13 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/k8s/aramid/mainnet/catchpoints"
+    path: '/mnt/k8s/aramid/mainnet/catchpoints'
 
   nodeAffinity:
     required:
       nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - s3-k1-fi.a-wallet.net
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - s3-k1-fi.a-wallet.net

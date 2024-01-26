@@ -57,39 +57,39 @@ spec:
       nodeName: s1-k1-fi.a-wallet.net
       containers:
         - name: aramid-relay-mainnet
-          image: scholtz2/aramid-algo-node:v3.21.0-stable
+          image: scholtz2/aramid-algo-node:v3.20.1-stable
           imagePullPolicy: Always
           resources:
             requests:
-              memory: "5000Mi"
-              cpu: "5000m"
+              memory: '5000Mi'
+              cpu: '5000m'
             limits:
-              memory: "20000Mi"
-              cpu: "32000m"
+              memory: '20000Mi'
+              cpu: '32000m'
           #command: ["/bin/sh", "-ec", "while :; do echo '.'; sleep 5 ; done"]
           startupProbe:
             exec:
               command:
-              - /bin/bash
-              - /app/health.sh
+                - /bin/bash
+                - /app/health.sh
             initialDelaySeconds: 10
-            periodSeconds: 10   
+            periodSeconds: 10
             failureThreshold: 1000
           readinessProbe:
             exec:
               command:
-              - /bin/bash
-              - /app/health.sh
+                - /bin/bash
+                - /app/health.sh
             initialDelaySeconds: 10
-            timeoutSeconds: 10   
+            timeoutSeconds: 10
             failureThreshold: 100
           livenessProbe:
             exec:
               command:
-              - /bin/bash
-              - /app/health.sh
+                - /bin/bash
+                - /app/health.sh
             initialDelaySeconds: 10
-            timeoutSeconds: 10        
+            timeoutSeconds: 10
             failureThreshold: 6
             terminationGracePeriodSeconds: 60
           ports:
@@ -170,15 +170,15 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/k8s/aramid/mainnet/root"
+    path: '/mnt/k8s/aramid/mainnet/root'
   nodeAffinity:
     required:
       nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - s1-k1-fi.a-wallet.net
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - s1-k1-fi.a-wallet.net
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -191,15 +191,15 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/k8s/aramid/mainnet/net"
+    path: '/mnt/k8s/aramid/mainnet/net'
   nodeAffinity:
     required:
       nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - s1-k1-fi.a-wallet.net
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - s1-k1-fi.a-wallet.net
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -212,12 +212,12 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/k8s/aramid/mainnet/catchpoints"
+    path: '/mnt/k8s/aramid/mainnet/catchpoints'
   nodeAffinity:
     required:
       nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - s1-k1-fi.a-wallet.net
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - s1-k1-fi.a-wallet.net
