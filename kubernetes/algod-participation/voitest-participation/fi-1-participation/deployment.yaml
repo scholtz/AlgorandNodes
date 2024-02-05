@@ -55,7 +55,7 @@ spec:
       nodeName: s3-k1-fi.a-wallet.net
       containers:
         - name: algo-participation-voitest
-          image: docker.io/scholtz2/algorand-participation-voitest-extended:3.21.0-stable
+          image: docker.io/scholtz2/algorand-participation-voitest-extended:3.22.0-stable
           imagePullPolicy: Always
           resources:
             requests:

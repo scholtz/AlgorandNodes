@@ -55,17 +55,18 @@ spec:
         lb: aramid-relay-mainnet
     spec:
       nodeName: sch-g-01
+      terminationGracePeriodSeconds: 3
       containers:
         - name: aramid-relay-mainnet
-          image: scholtz2/aramid-algo-node:v3.21.0-stable
+          image: scholtz2/aramid-algo-node:v3.22.0-stable
           imagePullPolicy: Always
           resources:
             requests:
-              memory: "4000Mi"
-              cpu: "4000m"
+              memory: '4000Mi'
+              cpu: '4000m'
             limits:
-              memory: "20000Mi"
-              cpu: "16000m"
+              memory: '20000Mi'
+              cpu: '16000m'
           #command: ["/bin/bash", "-ec", "while :; do date; sleep 60 ; done"]
           #command:
           #  - /bin/bash
@@ -73,26 +74,26 @@ spec:
           startupProbe:
             exec:
               command:
-              - /bin/bash
-              - /app/health.sh
+                - /bin/bash
+                - /app/health.sh
             initialDelaySeconds: 10
-            periodSeconds: 10   
+            periodSeconds: 10
             failureThreshold: 1000
           readinessProbe:
             exec:
               command:
-              - /bin/bash
-              - /app/health.sh
+                - /bin/bash
+                - /app/health.sh
             initialDelaySeconds: 10
-            timeoutSeconds: 10   
+            timeoutSeconds: 10
             failureThreshold: 100
           livenessProbe:
             exec:
               command:
-              - /bin/bash
-              - /app/health.sh
+                - /bin/bash
+                - /app/health.sh
             initialDelaySeconds: 10
-            timeoutSeconds: 10        
+            timeoutSeconds: 10
             failureThreshold: 6
             terminationGracePeriodSeconds: 60
 
@@ -174,15 +175,15 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/nvme2/aramid/mainnet/root"
+    path: '/mnt/nvme2/aramid/mainnet/root'
   nodeAffinity:
     required:
       nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - sch-g-01
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - sch-g-01
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -195,15 +196,15 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/nvme2/aramid/mainnet/net"
+    path: '/mnt/nvme2/aramid/mainnet/net'
   nodeAffinity:
     required:
       nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - sch-g-01
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - sch-g-01
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -216,12 +217,12 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/nvme2/aramid/mainnet/catchpoints"
+    path: '/mnt/nvme2/aramid/mainnet/catchpoints'
   nodeAffinity:
     required:
       nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - sch-g-01
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - sch-g-01

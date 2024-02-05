@@ -30,7 +30,7 @@ spec:
         runAsGroup: 1000
       containers:
         - name: algo-participation-voitest
-          image: docker.io/scholtz2/algorand-participation-voitest-extended:3.21.0-stable
+          image: docker.io/scholtz2/algorand-participation-voitest-extended:3.22.0-stable
           imagePullPolicy: IfNotPresent
           # resources:
           #   requests:
