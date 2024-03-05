@@ -39,9 +39,10 @@ spec:
       labels:
         app: algo-participation-sandbox
     spec:
+      terminationGracePeriodSeconds: 3
       containers:
         - name: algo-participation-sandbox
-          image: scholtz2/algorand-participation-sandbox:3.22.0-stable
+          image: scholtz2/algorand-participation-sandbox:3.22.1-stable
           imagePullPolicy: Always
 #           resources:
 #            requests:
@@ -208,6 +209,7 @@ spec:
       labels:
         app: indexerdb-sandbox
     spec:
+      terminationGracePeriodSeconds: 3
       containers:
         - name: indexerdb-sandbox
           image: postgres:14.4
@@ -291,6 +293,7 @@ spec:
       labels:
         app: indexer-sandbox
     spec:
+      terminationGracePeriodSeconds: 3
       containers:
       - name: indexer-sandbox
         image: scholtz2/algorand-indexer:2.15.2-stable

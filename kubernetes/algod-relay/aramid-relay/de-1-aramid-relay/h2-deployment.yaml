@@ -55,9 +55,10 @@ spec:
         lb: aramid-relay-mainnet
     spec:
       nodeName: sch-g-02
+      terminationGracePeriodSeconds: 3
       containers:
         - name: aramid-relay-mainnet-h2
-          image: scholtz2/aramid-algo-node:v3.22.0-stable
+          image: scholtz2/aramid-algo-node:v3.22.1-stable
           imagePullPolicy: Always
           resources:
             requests:

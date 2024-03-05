@@ -22,6 +22,7 @@ spec:
         lb: algo-relay-mainnet
     spec:
       nodeName: lke85101-130182-63a9f27ade3f
+      terminationGracePeriodSeconds: 3
       containers:
         - name: algo-relay-mainnet-2
           image: scholtz2/algorand-relay-mainnet:3.13.2-stable

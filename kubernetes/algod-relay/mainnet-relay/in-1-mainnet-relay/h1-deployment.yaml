@@ -24,9 +24,10 @@ spec:
         runAsUser: 1000
         runAsGroup: 1000
         fsGroup: 1000
+      terminationGracePeriodSeconds: 3
       containers:
         - name: algo-relay-mainnet
-          image: scholtz2/algorand-relay-mainnet:3.22.0-stable
+          image: scholtz2/algorand-relay-mainnet:3.22.1-stable
           imagePullPolicy: Always
           resources:
             requests:

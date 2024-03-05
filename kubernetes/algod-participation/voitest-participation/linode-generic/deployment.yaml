@@ -28,9 +28,10 @@ spec:
         fsGroup: 1000
         runAsUser: 1000
         runAsGroup: 1000
+      terminationGracePeriodSeconds: 3
       containers:
         - name: algo-participation-voitest
-          image: docker.io/scholtz2/algorand-participation-voitest-extended:3.22.0-stable
+          image: docker.io/scholtz2/algorand-participation-voitest-extended:3.22.1-stable
           imagePullPolicy: IfNotPresent
           # resources:
           #   requests:

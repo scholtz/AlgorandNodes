@@ -22,9 +22,10 @@ spec:
         server: algo-relay-mainnet-g-03
     spec:
       nodeName: sch-g-03
+      terminationGracePeriodSeconds: 3
       containers:
         - name: algo-relay-mainnet
-          image: scholtz2/algorand-relay-mainnet:3.22.0-stable
+          image: scholtz2/algorand-relay-mainnet:3.22.1-stable
           imagePullPolicy: Always
           resources:
             requests:

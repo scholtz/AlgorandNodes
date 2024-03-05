@@ -31,6 +31,7 @@ spec:
                     values:
                     - relaynode-app-ss
               topologyKey: "kubernetes.io/hostname"
+      terminationGracePeriodSeconds: 3
       containers:
         - name: relaynode-pod
           image: scholtz2/algorand-relay-testnet:3.9.2-stable

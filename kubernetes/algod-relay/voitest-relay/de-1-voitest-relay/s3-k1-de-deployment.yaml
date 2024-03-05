@@ -23,9 +23,10 @@ spec:
     spec:
       nodeName: sch-g-03
       hostname: 00-htz-fi-hel-001
+      terminationGracePeriodSeconds: 3
       containers:
         - name: algo-relay-voitest
-          image: scholtz2/algorand-relay-voitest:3.22.0-stable
+          image: scholtz2/algorand-relay-voitest:3.22.1-stable
           imagePullPolicy: IfNotPresent
           resources:
             requests:

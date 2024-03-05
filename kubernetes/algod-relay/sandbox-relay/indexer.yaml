@@ -16,6 +16,7 @@ spec:
       labels:
         app: indexer-sandbox
     spec:
+      terminationGracePeriodSeconds: 3
       containers:
       - name: indexer-sandbox
         image: scholtz2/algorand-indexer:2.14.1-stable

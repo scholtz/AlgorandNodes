@@ -37,9 +37,10 @@ spec:
         app: algo-kmd-mainnet
     spec:
       nodeName: s3-k1-fi.a-wallet.net
+      terminationGracePeriodSeconds: 3
       containers:
         - name: algo-kmd-mainnet
-          image: docker.io/scholtz2/algorand-kmd-mainnet-extended:3.22.0-stable
+          image: docker.io/scholtz2/algorand-kmd-mainnet-extended:3.22.1-stable
           imagePullPolicy: Always
           resources:
             requests:
