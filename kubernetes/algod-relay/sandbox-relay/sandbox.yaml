@@ -42,7 +42,7 @@ spec:
       terminationGracePeriodSeconds: 3
       containers:
         - name: algo-participation-sandbox
-          image: scholtz2/algorand-participation-sandbox:3.22.1-stable
+          image: scholtz2/algorand-participation-sandbox:3.23.1-stable
           imagePullPolicy: Always
 #           resources:
 #            requests:
