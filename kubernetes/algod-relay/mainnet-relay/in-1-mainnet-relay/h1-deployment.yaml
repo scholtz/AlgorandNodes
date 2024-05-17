@@ -9,7 +9,7 @@ metadata:
   name: relaynode-1
   namespace: algo-relay-mainnet
 spec:
-  replicas: 1
+  replicas: 0
   strategy:
     type: Recreate
   selector:
@@ -37,8 +37,8 @@ spec:
               memory: "28000Mi"
               cpu: "15000m"
           command:
-             - /bin/bash
-             - /app/run.sh
+            - /bin/bash
+            - /app/run.sh
           #command: ["/bin/bash", "-ec", "while :; do date; sleep 60 ; done"]
           ports:
             - containerPort: 4160
@@ -48,26 +48,26 @@ spec:
           startupProbe:
             exec:
               command:
-              - /bin/bash
-              - /app/health.sh
+                - /bin/bash
+                - /app/health.sh
             initialDelaySeconds: 10
-            periodSeconds: 10   
+            periodSeconds: 10
             failureThreshold: 1000
           readinessProbe:
             exec:
               command:
-              - /bin/bash
-              - /app/health.sh
+                - /bin/bash
+                - /app/health.sh
             initialDelaySeconds: 10
-            timeoutSeconds: 10   
+            timeoutSeconds: 10
             failureThreshold: 100
           livenessProbe:
             exec:
               command:
-              - /bin/bash
-              - /app/health.sh
+                - /bin/bash
+                - /app/health.sh
             initialDelaySeconds: 10
-            timeoutSeconds: 10        
+            timeoutSeconds: 10
             failureThreshold: 6
             terminationGracePeriodSeconds: 60
           securityContext:
