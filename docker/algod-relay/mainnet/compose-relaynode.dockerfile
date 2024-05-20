@@ -52,6 +52,7 @@ ENV PATH=$GOPATH/bin:$PATH
 WORKDIR /app
 RUN echo 3
 COPY . . 
+RUN username=$(id -nu 1000) || userdel -rf $username
 RUN useradd -ms /bin/bash algo
 RUN chown algo:algo /app -R
 USER algo

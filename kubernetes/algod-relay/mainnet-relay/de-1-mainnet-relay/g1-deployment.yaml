@@ -21,6 +21,10 @@ spec:
         app: algo-relay-mainnet
         server: algo-relay-mainnet-g-01
     spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
       nodeName: sch-g-01
       terminationGracePeriodSeconds: 3
       containers:
@@ -37,6 +41,7 @@ spec:
           command:
             - /bin/bash
             - /app/run.sh
+          # command: ["/bin/bash", "-ec", "while :; do date; sleep 60 ; done"]
           ports:
             - containerPort: 4160
               protocol: TCP
@@ -47,26 +52,26 @@ spec:
           startupProbe:
             exec:
               command:
-              - /bin/bash
-              - /app/health.sh
+                - /bin/bash
+                - /app/health.sh
             initialDelaySeconds: 10
-            periodSeconds: 10   
+            periodSeconds: 10
             failureThreshold: 1000
           readinessProbe:
             exec:
               command:
-              - /bin/bash
-              - /app/health.sh
+                - /bin/bash
+                - /app/health.sh
             initialDelaySeconds: 10
-            timeoutSeconds: 10   
+            timeoutSeconds: 10
             failureThreshold: 100
           livenessProbe:
             exec:
               command:
-              - /bin/bash
-              - /app/health.sh
+                - /bin/bash
+                - /app/health.sh
             initialDelaySeconds: 10
-            timeoutSeconds: 10        
+            timeoutSeconds: 10
             failureThreshold: 6
             terminationGracePeriodSeconds: 60
           securityContext:
@@ -146,11 +151,11 @@ spec:
   nodeAffinity:
     required:
       nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - sch-g-01
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - sch-g-01
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -167,11 +172,11 @@ spec:
   nodeAffinity:
     required:
       nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - sch-g-01
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - sch-g-01
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -188,11 +193,11 @@ spec:
   nodeAffinity:
     required:
       nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - sch-g-01
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - sch-g-01
 ---
 # telemetry service
 
