@@ -35,7 +35,7 @@ spec:
       terminationGracePeriodSeconds: 3
       containers:
         - name: relaynode-pod
-          image: scholtz2/aramid-algo-node:v3.24.0-stable
+          image: scholtz2/aramid-algo-node:v3.25.0-stable
           command: ["/bin/bash"]  
           args: ["-c", "./run.sh"]
 #          command:

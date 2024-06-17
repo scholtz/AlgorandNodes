@@ -26,7 +26,7 @@ spec:
       terminationGracePeriodSeconds: 3
       containers:
         - name: algo-relay-voitest
-          image: scholtz2/algorand-relay-voitest:3.24.0-stable
+          image: scholtz2/algorand-relay-voitest:3.25.0-stable
           imagePullPolicy: IfNotPresent
           resources:
             requests:

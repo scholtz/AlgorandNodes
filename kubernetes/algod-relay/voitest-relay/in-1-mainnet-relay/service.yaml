@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: algo-set-service
+  namespace: algo-relay-voitest
+spec:
+  type: NodePort
+  externalTrafficPolicy: Local
+  selector:
+    app: algo-relay-voitest-nonarchival
+  ports:
+    - name: algorelay
+      protocol: TCP
+      appProtocol: http
+      port: 5011
+      nodePort: 30011
+      targetPort: 5011
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: algo-set-service-data
+  namespace: algo-relay-voitest
+spec:
+  type: NodePort
+  externalTrafficPolicy: Local
+  selector:
+    app: algo-relay-voitest-nonarchival
+  ports:
+    - name: algoclient
+      protocol: TCP
+      appProtocol: http
+      port: 28081
+      targetPort: 28081
+      nodePort: 30081
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: algo-set-service-metrics
+  namespace: algo-relay-voitest
+spec:
+  type: NodePort
+  externalTrafficPolicy: Local
+  selector:
+    app: algo-relay-voitest-nonarchival
+  ports:
+    - name: algoclient
+      protocol: TCP
+      appProtocol: http
+      port: 9100
+      targetPort: 9100
+      nodePort: 30100
