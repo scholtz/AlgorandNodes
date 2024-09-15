@@ -1,0 +1,8 @@
+{
+  "Version": 33,
+  "EndpointAddress": "0.0.0.0:8080",
+  "DNSBootstrapID": "aramidmain.a-wallet.net",
+  "CatchupParallelBlocks": 64,
+  "MaxAcctLookback": 1024,
+  "EnableFollowMode": true
+}

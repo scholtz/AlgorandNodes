@@ -1,0 +1,414 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: aramid-indexer-mainnet
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aramid-indexer-8980-service
+  namespace: aramid-indexer-mainnet
+spec:
+  type: ClusterIP
+  selector:
+    app: i3-1-aramid-indexer-mainnet
+  ports:
+    - name: indexer
+      protocol: TCP
+      appProtocol: http
+      port: 8980
+      targetPort: 8980
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: aramidmain-indexer-v3-ingress
+  namespace: aramid-indexer-mainnet
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    cert-manager.io/cluster-issuer: letsencrypt
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "server: hide";
+      more_set_headers "X-Content-Type-Options: nosniff";
+      more_set_headers "X-Frame-Options: DENY";
+      proxy_set_header X-Indexer-API-Token aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa;
+spec:
+  tls:
+    - hosts:
+        - aramidindexer-v3.de-k1.a-wallet.net
+      secretName: tls-aramidindexer-v3.de-k1.a-wallet.net
+  rules:
+    - host: aramidindexer-v3.de-k1.a-wallet.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: aramid-indexer-8980-service
+                port:
+                  number: 8980
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: i3-1-aramid-indexer-mainnet-deployment
+  namespace: aramid-indexer-mainnet
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: i3-1-aramid-indexer-mainnet
+  template:
+    metadata:
+      labels:
+        app: i3-1-aramid-indexer-mainnet
+    spec:
+      nodeName: sch-g-01
+      containers:
+        - name: i3-1-conduit
+          image: scholtz2/aramid-conduit:v1.7.0-stable
+          command:
+            [
+              "/bin/bash",
+              "-ec",
+              "date; sleep 10; date; conduit; sleep 100 ; date; ",
+            ]
+            #while ! timeout 1 bash -c "echo > /dev/tcp/localhost/8080";  do sleep 1 && echo -n .; done
+          #command: ["/bin/bash", "-ec", "while :; do date; sleep 60 ; done"]
+          securityContext:
+            runAsUser: 999
+            runAsGroup: 999
+          volumeMounts:
+            - name: i3-1-conduit-conf
+              mountPath: /data/conduit.yml
+              subPath: conduit.yml
+            - name: aramidmain-indexer-conf
+              mountPath: /data/consensus.json
+              subPath: consensus.json
+            - name: i3-1-aramid-conduit-1-pvc
+              mountPath: /data
+        - name: i3-1-follow-node
+          image: scholtz2/aramid-algo-follow-node:v3.25.0-stable
+          command:
+            [
+              "/bin/bash",
+              "-ec",
+              "date; sleep 1 ;cp --update=none config.json data/config.json; cp --update=none genesis/aramidmain/genesis.json data/genesis.json; cp --update=none consensus.json data/consensus.json; date; goal node start; date; while :; do date; sleep 600 ; done ",
+            ]
+          # command: ["goal", "node", "start"]
+          # command: ["/bin/bash", "-ec", "while :; do date; sleep 600 ; done"]
+          # lifecycle:
+          #   postStart:
+          #     exec:
+          #       command: ["goal", "node", "start"]
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "4000Mi"
+              cpu: "2000m"
+            limits:
+              memory: "20000Mi"
+              cpu: "16000m"
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          # readinessProbe:
+          #   tcpSocket:
+          #     port: 8080
+          #   initialDelaySeconds: 10
+          #   timeoutSeconds: 10
+          #   failureThreshold: 20
+          # livenessProbe:
+          #   tcpSocket:
+          #     port: 8080
+          #   initialDelaySeconds: 20
+          #   timeoutSeconds: 5
+          #   failureThreshold: 5
+          #   terminationGracePeriodSeconds: 1
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+          volumeMounts:
+            - name: i3-1-aramid-follow-main-vol-root-1
+              mountPath: /app/data
+            - name: i3-1-aramid-follow-main-vol-net-1
+              mountPath: /app/data/aramidmain-v1.0
+            - name: i3-1-aramid-indexer-secret
+              subPath: INDEXER_ALGOD_TOKEN
+              mountPath: /app/data/algod.token
+            - name: i3-1-aramid-indexer-secret
+              subPath: INDEXER_API_TOKEN
+              mountPath: /app/data/algod.admin.token
+        - name: i3-1-db
+          image: postgres:14
+          imagePullPolicy: IfNotPresent
+          #command: ["/bin/sh", "-ec", "while :; do date; sleep 60 ; done"]
+          resources:
+            requests:
+              memory: "10000Mi"
+              cpu: "1000m"
+            limits:
+              memory: "20000Mi"
+              cpu: "8000m"
+          env:
+            - name: PGDATA
+              value: /data
+            # - name: POSTGRES_USER
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: i3-1-aramid-indexer-secret
+            #       key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: i3-1-aramid-indexer-secret
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: i3-1-aramid-indexer-secret
+                  key: POSTGRES_DB
+          ports:
+            - containerPort: 5432
+              protocol: "TCP"
+          readinessProbe:
+            tcpSocket:
+              port: 5432
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          securityContext:
+            runAsUser: 999
+            runAsGroup: 999
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sleep", "10"]
+          volumeMounts:
+            - name: i3-1-aramid-indexer-db-mainnet-pvc
+              mountPath: /data
+
+        - name: i3-1-indexer
+          image: scholtz2/aramid-indexer:v3.5.0-stable
+          imagePullPolicy: Always
+          #command: ["/bin/bash", "-ec", "while :; do date; sleep 60 ; done"]
+          command: ["/bin/bash", "-c", "algorand-indexer daemon"]
+
+          ports:
+            - containerPort: 8980
+              protocol: TCP
+          # readinessProbe:
+          #     tcpSocket:
+          #       port: 8980
+          #     initialDelaySeconds: 10
+          #     timeoutSeconds: 5
+          #     failureThreshold: 2
+          # livenessProbe:
+          #     tcpSocket:
+          #       port: 8980
+          #     initialDelaySeconds: 20
+          #     timeoutSeconds: 5
+          #     failureThreshold: 2
+          #     terminationGracePeriodSeconds: 1
+          env:
+            - name: INDEXER_POSTGRES_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: i3-1-aramid-indexer-secret
+                  key: INDEXER_POSTGRES_CONNECTION_STRING
+            - name: INDEXER_ALGOD_ADDRESS
+              value: "localhost:8080"
+            - name: INDEXER_ALGOD_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: i3-1-aramid-indexer-secret
+                  key: INDEXER_ALGOD_TOKEN
+            - name: INDEXER_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: i3-1-aramid-indexer-secret
+                  key: INDEXER_API_TOKEN
+            - name: INDEXER_GENESIS
+              value: "/app/genesis/aramidmain/genesis.json"
+            - name: INDEXER_DEV_MODE
+              value: "0"
+            - name: INDEXER_METRICS_MODE
+              value: "1"
+            - name: INDEXER_ENABLE_ALL_PARAMETERS
+              value: "1"
+            - name: INDEXER_DATA
+              value: "/app"
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+
+          volumeMounts:
+            - name: aramidmain-indexer-conf
+              mountPath: /app/consensus.json
+              subPath: consensus.json
+      volumes:
+        - name: aramidmain-indexer-conf
+          configMap:
+            name: aramidmain-indexer-conf
+        - name: i3-1-conduit-conf
+          configMap:
+            name: i3-1-conduit-conf
+        - name: i3-1-aramid-indexer-db-mainnet-pvc
+          persistentVolumeClaim:
+            claimName: i3-1-aramid-indexer-db-mainnet-pvc
+        - name: i3-1-aramid-follow-main-vol-root-1
+          persistentVolumeClaim:
+            claimName: i3-1-aramid-follow-main-vol-root-1
+        - name: i3-1-aramid-follow-main-vol-net-1
+          persistentVolumeClaim:
+            claimName: i3-1-aramid-follow-main-vol-net-1
+        - name: i3-1-aramid-conduit-1-pvc
+          persistentVolumeClaim:
+            claimName: i3-1-aramid-conduit-1-pvc
+        - name: i3-1-aramid-indexer-secret
+          secret:
+            secretName: i3-1-aramid-indexer-secret
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: i3-1-aramid-indexer-db-mainnet-pvc
+  namespace: aramid-indexer-mainnet
+spec:
+  storageClassName: i3-1-aramid-indexer-db-mainnet-pv
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: i3-1-aramid-follow-main-vol-root-1
+  namespace: aramid-indexer-mainnet
+spec:
+  storageClassName: i3-1-aramid-follow-main-root-1
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 20Gi
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: i3-1-aramid-follow-main-vol-net-1
+  namespace: aramid-indexer-mainnet
+spec:
+  storageClassName: i3-1-aramid-follow-main-net-1
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 50Gi
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: i3-1-aramid-conduit-1-pvc
+  namespace: aramid-indexer-mainnet
+spec:
+  storageClassName: i3-1-aramid-conduit-1
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 50Gi
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: i3-1-aramid-indexer-db-mainnet-pv
+spec:
+  storageClassName: i3-1-aramid-indexer-db-mainnet-pv
+  capacity:
+    storage: 20Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/mnt/14tb/aramid/i3-1-mainnet-db"
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - sch-g-01
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: i3-1-aramid-follow-main-root-1
+spec:
+  storageClassName: i3-1-aramid-follow-main-root-1
+  capacity:
+    storage: 20Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/mnt/14tb/aramid/i3-1-mainnet-follow/root"
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - sch-g-01
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: i3-1-aramid-follow-main-net-1
+spec:
+  storageClassName: i3-1-aramid-follow-main-net-1
+  capacity:
+    storage: 50Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/mnt/14tb/aramid/i3-1-mainnet-follow/net"
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - sch-g-01
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: i3-1-aramid-conduit-1
+spec:
+  storageClassName: i3-1-aramid-conduit-1
+  capacity:
+    storage: 50Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/mnt/14tb/aramid/i3-1-mainnet-conduit"
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - sch-g-01

@@ -19,7 +19,10 @@ WORKDIR /app
 
 #RUN gpg --verify algorand-indexer_2.6.5_amd64.deb.sig algorand-indexer_2.6.5_amd64.deb
 COPY . . 
+RUN username=$(id -nu 1000) || userdel -rf $username
+RUN userdel -rf ubuntu
 RUN useradd -ms /bin/bash algo
+# RUN cat /etc/passwd
 RUN chown algo:algo /app -R
 RUN algorand-indexer help
 

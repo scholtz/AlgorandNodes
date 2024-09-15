@@ -6,40 +6,40 @@ metadata:
 apiVersion: v1
 kind: Service
 metadata:
-  name: aramid-set-service
+  name: aramid-set-service-h3
   namespace: aramid-relay-mainnet
 spec:
   type: NodePort
   selector:
-    app: aramid-relay-mainnet
+    app: aramid-relay-mainnet-h3
   ports:
     - name: algorelay
       protocol: TCP
       appProtocol: http
-      port: 14160
-      nodePort: 14160
-      targetPort: 14160
+      port: 14360
+      nodePort: 14360
+      targetPort: 14360
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: aramid-set-service-data
+  name: aramid-set-service-data-h3
   namespace: aramid-relay-mainnet
 spec:
   type: ClusterIP
   selector:
-    app: aramid-relay-mainnet
+    app: aramid-relay-mainnet-h3
   ports:
     - name: algoclient
       protocol: TCP
       appProtocol: http
-      port: 18180
-      targetPort: 18180
+      port: 18380
+      targetPort: 18380
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: relaynode-1
+  name: relaynode-3
   namespace: aramid-relay-mainnet
 spec:
   replicas: 1
@@ -47,90 +47,89 @@ spec:
     type: Recreate
   selector:
     matchLabels:
-      app: aramid-relay-mainnet
+      app: aramid-relay-mainnet-h3
   template:
     metadata:
       labels:
-        app: aramid-relay-mainnet
+        app: aramid-relay-mainnet-h3
         lb: aramid-relay-mainnet
     spec:
-      nodeName: sch-g-01
+      nodeName: sch-g-03
       terminationGracePeriodSeconds: 3
       containers:
-        - name: aramid-relay-mainnet
+        - name: aramid-relay-mainnet-h3
           image: scholtz2/aramid-algo-node:v3.25.0-stable
           imagePullPolicy: Always
           resources:
             requests:
-              memory: '4000Mi'
-              cpu: '2000m'
+              memory: '2000Mi'
+              cpu: '1000m'
             limits:
-              memory: '20000Mi'
-              cpu: '16000m'
-          # command: ['/bin/bash', '-ec', 'while :; do date; sleep 60 ; done']
+              memory: '4000Mi'
+              cpu: '4000m'
+          #command: ["/bin/bash", "-ec", "while :; do date; sleep 60 ; done"]
           #command:
           #  - /bin/bash
           #  - /app/run.sh
-          startupProbe:
-            exec:
-              command:
-                - /bin/bash
-                - /app/health.sh
-            initialDelaySeconds: 10
-            periodSeconds: 10
-            failureThreshold: 1000
-          readinessProbe:
-            exec:
-              command:
-                - /bin/bash
-                - /app/health.sh
-            initialDelaySeconds: 10
-            timeoutSeconds: 10
-            failureThreshold: 100
-          livenessProbe:
-            exec:
-              command:
-                - /bin/bash
-                - /app/health.sh
-            initialDelaySeconds: 10
-            timeoutSeconds: 10
-            failureThreshold: 6
-            terminationGracePeriodSeconds: 60
-
+          # startupProbe:
+          #   exec:
+          #     command:
+          #     - /bin/bash
+          #     - /app/health.sh
+          #   initialDelaySeconds: 10
+          #   periodSeconds: 10
+          #   failureThreshold: 1000
+          # readinessProbe:
+          #   exec:
+          #     command:
+          #     - /bin/bash
+          #     - /app/health.sh
+          #   initialDelaySeconds: 10
+          #   timeoutSeconds: 10
+          #   failureThreshold: 100
+          # livenessProbe:
+          #   exec:
+          #     command:
+          #     - /bin/bash
+          #     - /app/health.sh
+          #   initialDelaySeconds: 10
+          #   timeoutSeconds: 10
+          #   failureThreshold: 6
+          #   terminationGracePeriodSeconds: 60
           ports:
-            - containerPort: 14160
+            - containerPort: 14360
               protocol: TCP
-            - containerPort: 18180
+            - containerPort: 18380
               protocol: TCP
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
           volumeMounts:
-            - name: aramid-main-vol-root-1
+            - name: aramid-main-vol-root-h3
               mountPath: /app/data
-            - name: aramid-main-vol-net-1
+            - name: aramid-main-vol-net-h3
               mountPath: /app/data/aramidmain-v1.0
-            - name: aramid-main-vol-catchpoints-1
+            - name: aramid-main-vol-catchpoints-h3
               mountPath: /app/data/aramidmain-v1.0/catchpoints
       volumes:
-        - name: aramid-main-vol-root-1
+        - name: aramid-main-vol-root-h3
           persistentVolumeClaim:
-            claimName: aramid-main-vol-root-1
-        - name: aramid-main-vol-net-1
+            claimName: aramid-main-vol-root-h3
+        - name: aramid-main-vol-net-h3
           persistentVolumeClaim:
-            claimName: aramid-main-vol-net-1
-        - name: aramid-main-vol-catchpoints-1
+            claimName: aramid-main-vol-net-h3
+        - name: aramid-main-vol-catchpoints-h3
           persistentVolumeClaim:
-            claimName: aramid-main-vol-catchpoints-1
+            claimName: aramid-main-vol-catchpoints-h3
 
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: aramid-main-vol-root-1
+  name: aramid-main-vol-root-h3
   namespace: aramid-relay-mainnet
 spec:
-  storageClassName: aramid-main-root-1
+  storageClassName: aramid-main-root-h3
   accessModes:
     - ReadWriteOnce
   resources:
@@ -141,10 +140,10 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: aramid-main-vol-net-1
+  name: aramid-main-vol-net-h3
   namespace: aramid-relay-mainnet
 spec:
-  storageClassName: aramid-main-net-1
+  storageClassName: aramid-main-net-h3
   accessModes:
     - ReadWriteOnce
   resources:
@@ -154,10 +153,10 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: aramid-main-vol-catchpoints-1
+  name: aramid-main-vol-catchpoints-h3
   namespace: aramid-relay-mainnet
 spec:
-  storageClassName: aramid-main-catchpoints-1
+  storageClassName: aramid-main-catchpoints-h3
   accessModes:
     - ReadWriteOnce
   resources:
@@ -167,15 +166,16 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: aramid-main-root-1
+  name: aramid-main-root-h3
 spec:
-  storageClassName: aramid-main-root-1
+  storageClassName: aramid-main-root-h3
   capacity:
     storage: 20Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: '/mnt/nvme2/aramid/mainnet/root'
+    path: '/mnt/nvme2/aramid/mainnet-3/root'
+
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -183,20 +183,21 @@ spec:
             - key: kubernetes.io/hostname
               operator: In
               values:
-                - sch-g-01
+                - sch-g-03
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: aramid-main-net-1
+  name: aramid-main-net-h3
 spec:
-  storageClassName: aramid-main-net-1
+  storageClassName: aramid-main-net-h3
   capacity:
     storage: 50Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: '/mnt/nvme2/aramid/mainnet/net'
+    path: '/mnt/nvme2/aramid/mainnet-3/net'
+
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -204,20 +205,21 @@ spec:
             - key: kubernetes.io/hostname
               operator: In
               values:
-                - sch-g-01
+                - sch-g-03
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: aramid-main-catchpoints-1
+  name: aramid-main-catchpoints-h3
 spec:
-  storageClassName: aramid-main-catchpoints-1
+  storageClassName: aramid-main-catchpoints-h3
   capacity:
     storage: 100Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: '/mnt/nvme2/aramid/mainnet/catchpoints'
+    path: '/mnt/nvme2/aramid/mainnet-3/catchpoints'
+
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -225,4 +227,4 @@ spec:
             - key: kubernetes.io/hostname
               operator: In
               values:
-                - sch-g-01
+                - sch-g-03
