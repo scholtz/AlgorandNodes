@@ -1,0 +1,58 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: goracle-mainnet
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goracle-mainnet-1
+  namespace: goracle-mainnet
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: goracle-mainnet
+  template:
+    metadata:
+      labels:
+        app: goracle-mainnet
+        server: goracle-mainnet-g-01
+    spec:
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+        runAsGroup: 1000
+      terminationGracePeriodSeconds: 2
+      containers:
+        - name: goracle-mainnet
+          image: public.ecr.aws/g4c3r1u3/gora-nr:v1.1.49
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            allowPrivilegeEscalation: false
+          command: ["/bin/sh"]
+          args: ["-c", "cp .gora2 .gora; /usr/bin/node --trace-uncaught ./node_runner.js"]
+          resources:
+            requests:
+              memory: "1000Mi"
+              cpu: "1000m"
+            limits:
+              memory: "2000Mi"
+              cpu: "2000m"
+          volumeMounts:
+            - mountPath: "/opt/gora/node_runner/.gora2"
+              name: goracle-mainnet-config
+              subPath: .gora
+      volumes:
+        - name: goracle-mainnet-config
+          configMap:
+            name: goracle-mainnet-config
+            defaultMode: 256 #0400
+            # items:
+            #   - key: .gora
+            #     path: .gora
+            #     mode: 0400

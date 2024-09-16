@@ -1,0 +1,157 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: algo-relay-voimain
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: relaynode-2
+  namespace: algo-relay-voimain
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: algo-relay-voimain
+  template:
+    metadata:
+      labels:
+        app: algo-relay-voimain
+        server: 00-htz-de-fal-002
+    spec:
+      nodeName: sch-g-02
+      hostname: 00-htz-de-fal-002
+      terminationGracePeriodSeconds: 3
+      containers:
+        - name: algo-relay-voimain
+          image: scholtz2/algorand-relay-voimain:3.25.0-stable
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              memory: '8000Mi'
+              cpu: '1000m'
+            limits:
+              memory: '16000Mi'
+              cpu: '16000m'
+          command:
+            - /bin/bash
+            - /app/run.sh
+          ports:
+            - containerPort: 5011
+              protocol: TCP
+            - containerPort: 9100
+              protocol: TCP
+            - containerPort: 28081
+              protocol: TCP
+          startupProbe:
+            exec:
+              command:
+                - /bin/bash
+                - /app/health.sh
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 1000
+          readinessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - /app/health.sh
+            initialDelaySeconds: 10
+            timeoutSeconds: 10
+            failureThreshold: 100
+          livenessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - /app/health.sh
+            initialDelaySeconds: 10
+            timeoutSeconds: 10
+            failureThreshold: 6
+            terminationGracePeriodSeconds: 10
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+          volumeMounts:
+            - name: algo-voimain-vol-root-2
+              mountPath: /app/data
+            - name: algo-voimain-vol-net-2
+              mountPath: /app/data/voimain-v1
+      volumes:
+        - name: algo-voimain-vol-root-2
+          persistentVolumeClaim:
+            claimName: algo-voimain-vol-root-2
+        - name: algo-voimain-vol-net-2
+          persistentVolumeClaim:
+            claimName: algo-voimain-vol-net-2
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: algo-voimain-vol-root-2
+  namespace: algo-relay-voimain
+spec:
+  storageClassName: algo-voimain-root-2
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: algo-voimain-vol-net-2
+  namespace: algo-relay-voimain
+spec:
+  storageClassName: algo-voimain-net-2
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: algo-voimain-root-2
+spec:
+  storageClassName: algo-voimain-root-2
+  capacity:
+    storage: 20Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: '/mnt/k8s/algo/voimain/root'
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - sch-g-02
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: algo-voimain-net-2
+spec:
+  storageClassName: algo-voimain-net-2
+  capacity:
+    storage: 500Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: '/mnt/k8s/algo/voimain/net'
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - sch-g-02

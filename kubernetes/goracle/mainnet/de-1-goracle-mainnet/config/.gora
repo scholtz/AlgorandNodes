@@ -1,0 +1,12 @@
+{
+  "blockchain": {
+    "server": "https://mainnet-api.algonode.cloud:443",
+    "token": "",
+    "perNetworkConfig": {
+      "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=": {
+        "mnemonic": "",
+        "mainAddr": ""
+      }
+    }
+  }
+}

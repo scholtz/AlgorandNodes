@@ -1,0 +1,31 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: voimain-algod-public-ingress
+  namespace: algo-relay-voimain
+  annotations:
+    kubernetes.io/ingress.class: 'nginx'
+    nginx.ingress.kubernetes.io/backend-protocol: 'HTTP'
+    cert-manager.io/cluster-issuer: letsencrypt
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "server: hide";
+      more_set_headers "X-Content-Type-Options: nosniff";
+      more_set_headers "X-Frame-Options: DENY";
+      proxy_set_header X-Algo-API-Token aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa;
+spec:
+  tls:
+    - hosts:
+        - voimain-algod-public.de.nodes.biatec.io
+      secretName: tls-voimain-algod-public.de.nodes.biatec.io
+  rules:
+    - host: voimain-algod-public.de.nodes.biatec.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: voimain-28081-service
+                port:
+                  number: 28081
