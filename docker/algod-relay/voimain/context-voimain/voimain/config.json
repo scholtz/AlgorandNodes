@@ -1,8 +1,7 @@
 {
   "Version": 19,
-  "CatchpointFileHistoryLength": 0,
   "GossipFanout": 8,
-  "DNSBootstrapID": "<network>.mainnet-voi.network",
+  "DNSBootstrapID": "<network>.mainnet-voi.network?backup=<network>.mainnet-voi.net&dedup=<name>.mainnet-voi.(network|net)",
   "EnableTxBacklogRateLimiting": true,
   "MaxConnectionsPerIP": 2,
   "IncomingConnectionsLimit": 120,
@@ -10,5 +9,8 @@
   "NetAddress": ":5010",
   "EndpointAddress": "0.0.0.0:28081",
   "EnableMetricReporting": true,
-  "UseXForwardedForAddressField": "X-Forwarded-For"
+  "UseXForwardedForAddressField": "X-Forwarded-For",
+  "MaxBlockHistoryLookback": 22000,
+  "CatchpointTracking": 2,
+  "CatchpointFileHistoryLength": 3
 }
