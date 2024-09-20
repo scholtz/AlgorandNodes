@@ -3,43 +3,41 @@ kind: Namespace
 metadata:
   name: aramid-relay-mainnet
 ---
-apiVersion: v1
-kind: Service
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
-  name: aramid-set-service
+  name: aramidmain-algod-3-ingress
   namespace: aramid-relay-mainnet
+  annotations:
+    kubernetes.io/ingress.class: 'nginx'
+    nginx.ingress.kubernetes.io/backend-protocol: 'HTTP'
+    cert-manager.io/cluster-issuer: letsencrypt
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "server: hide";
+      more_set_headers "X-Content-Type-Options: nosniff";
+      more_set_headers "X-Frame-Options: DENY";
+      proxy_set_header X-Algo-API-Token aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa;
 spec:
-  type: NodePort
-  selector:
-    app: aramid-relay-mainnet
-  ports:
-    - name: algorelay
-      protocol: TCP
-      appProtocol: http
-      port: 14160
-      nodePort: 14160
-      targetPort: 14160
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: aramid-set-service-data
-  namespace: aramid-relay-mainnet
-spec:
-  type: ClusterIP
-  selector:
-    app: aramid-relay-mainnet
-  ports:
-    - name: algoclient
-      protocol: TCP
-      appProtocol: http
-      port: 18080
-      targetPort: 18080
+  tls:
+    - hosts:
+        - algod.aramidmain.a-wallet.net
+      secretName: tls-aramidmain-algod-3
+  rules:
+    - host: algod.aramidmain.a-wallet.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: aramid-set-service-data-a1
+                port:
+                  number: 18280
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: relaynode-1
+  name: aramid-archival-mainnet-a1
   namespace: aramid-relay-mainnet
 spec:
   replicas: 1
@@ -47,27 +45,31 @@ spec:
     type: Recreate
   selector:
     matchLabels:
-      app: aramid-relay-mainnet
+      app: aramid-archival-mainnet-a1
   template:
     metadata:
       labels:
-        app: aramid-relay-mainnet
-        lb: aramid-relay-mainnet
+        app: aramid-archival-mainnet-a1
+        lb: aramid-archival-mainnet
     spec:
-      nodeName: s1-k1-fi.a-wallet.net
+      nodeName: s3-k1-fi.a-wallet.net
       terminationGracePeriodSeconds: 3
       containers:
-        - name: aramid-relay-mainnet
+        - name: aramid-archival-mainnet-a1
           image: scholtz2/aramid-algo-node:v3.25.0-stable
           imagePullPolicy: Always
           resources:
             requests:
-              memory: '5000Mi'
-              cpu: '5000m'
+              memory: '1000Mi'
+              cpu: '1000m'
             limits:
               memory: '20000Mi'
               cpu: '32000m'
-          command: ['/bin/sh', '-ec', "while :; do echo '.'; sleep 5 ; done"]
+          # command: ['/bin/sh', '-ec', "while :; do echo '.'; sleep 5 ; done"]
+          #command:
+          #  - /bin/bash
+          #  - /app/run.sh
+
           startupProbe:
             exec:
               command:
@@ -85,48 +87,44 @@ spec:
             timeoutSeconds: 10
             failureThreshold: 100
           livenessProbe:
-            exec:
-              command:
-                - /bin/bash
-                - /app/health.sh
-            initialDelaySeconds: 10
-            timeoutSeconds: 10
-            failureThreshold: 6
-            terminationGracePeriodSeconds: 60
+            tcpSocket:
+              port: 18280
+            initialDelaySeconds: 15
+            periodSeconds: 20
           ports:
-            - containerPort: 14160
+            - containerPort: 14260
               protocol: TCP
-            - containerPort: 18080
+            - containerPort: 18280
               protocol: TCP
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
           volumeMounts:
-            - name: aramid-main-vol-root-1
+            - name: aramid-main-vol-root-a1
               mountPath: /app/data
-            - name: aramid-main-vol-net-1
+            - name: aramid-main-vol-net-a1
               mountPath: /app/data/aramidmain-v1.0
-            - name: aramid-main-vol-catchpoints-1
-              mountPath: /app/data/aramidmain-v1.0/catchpoints
+            - name: aramid-main-vol-coldstorage-a1
+              mountPath: /app/coldstorage
       volumes:
-        - name: aramid-main-vol-root-1
+        - name: aramid-main-vol-root-a1
           persistentVolumeClaim:
-            claimName: aramid-main-vol-root-1
-        - name: aramid-main-vol-net-1
+            claimName: aramid-main-vol-root-a1
+        - name: aramid-main-vol-net-a1
           persistentVolumeClaim:
-            claimName: aramid-main-vol-net-1
-        - name: aramid-main-vol-catchpoints-1
+            claimName: aramid-main-vol-net-a1
+        - name: aramid-main-vol-coldstorage-a1
           persistentVolumeClaim:
-            claimName: aramid-main-vol-catchpoints-1
+            claimName: aramid-main-vol-coldstorage-a1
 
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: aramid-main-vol-root-1
+  name: aramid-main-vol-root-a1
   namespace: aramid-relay-mainnet
 spec:
-  storageClassName: aramid-main-root-1
+  storageClassName: aramid-main-root-a1
   accessModes:
     - ReadWriteOnce
   resources:
@@ -137,10 +135,10 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: aramid-main-vol-net-1
+  name: aramid-main-vol-net-a1
   namespace: aramid-relay-mainnet
 spec:
-  storageClassName: aramid-main-net-1
+  storageClassName: aramid-main-net-a1
   accessModes:
     - ReadWriteOnce
   resources:
@@ -150,10 +148,10 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: aramid-main-vol-catchpoints-1
+  name: aramid-main-vol-coldstorage-a1
   namespace: aramid-relay-mainnet
 spec:
-  storageClassName: aramid-main-catchpoints-1
+  storageClassName: aramid-main-coldstorage-a1
   accessModes:
     - ReadWriteOnce
   resources:
@@ -163,15 +161,16 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: aramid-main-root-1
+  name: aramid-main-root-a1
 spec:
-  storageClassName: aramid-main-root-1
+  storageClassName: aramid-main-root-a1
   capacity:
     storage: 20Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: '/mnt/k8s/aramid/mainnet/root'
+    path: '/mnt/k8s/aramid/archival/root'
+
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -179,20 +178,21 @@ spec:
             - key: kubernetes.io/hostname
               operator: In
               values:
-                - s1-k1-fi.a-wallet.net
+                - s3-k1-fi.a-wallet.net
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: aramid-main-net-1
+  name: aramid-main-net-a1
 spec:
-  storageClassName: aramid-main-net-1
+  storageClassName: aramid-main-net-a1
   capacity:
     storage: 50Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: '/mnt/k8s/aramid/mainnet/net'
+    path: '/mnt/k8s/aramid/archival/net'
+
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -200,20 +200,21 @@ spec:
             - key: kubernetes.io/hostname
               operator: In
               values:
-                - s1-k1-fi.a-wallet.net
+                - s3-k1-fi.a-wallet.net
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: aramid-main-catchpoints-1
+  name: aramid-main-coldstorage-a1
 spec:
-  storageClassName: aramid-main-catchpoints-1
+  storageClassName: aramid-main-coldstorage-a1
   capacity:
     storage: 100Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: '/mnt/k8s/aramid/mainnet/catchpoints'
+    path: '/mnt/k8s/aramid/archival/coldstorage'
+
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -221,4 +222,4 @@ spec:
             - key: kubernetes.io/hostname
               operator: In
               values:
-                - s1-k1-fi.a-wallet.net
+                - s3-k1-fi.a-wallet.net

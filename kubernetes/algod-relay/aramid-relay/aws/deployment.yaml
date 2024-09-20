@@ -9,7 +9,7 @@ metadata:
   name: aramid-set-service
   namespace: aramid-relay-mainnet
 spec:
-  type: NodePort
+  type: LoadBalancer  # Changed from NodePort to LoadBalancer for AWS
   selector:
     app: aramid-relay-mainnet
   ports:
@@ -17,7 +17,6 @@ spec:
       protocol: TCP
       appProtocol: http
       port: 14160
-      nodePort: 14160
       targetPort: 14160
 ---
 apiVersion: v1
@@ -33,8 +32,8 @@ spec:
     - name: algoclient
       protocol: TCP
       appProtocol: http
-      port: 18080
-      targetPort: 18080
+      port: 18180
+      targetPort: 18180
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -54,20 +53,19 @@ spec:
         app: aramid-relay-mainnet
         lb: aramid-relay-mainnet
     spec:
-      nodeName: s1-k1-fi.a-wallet.net
+      # Removed nodeName specification
       terminationGracePeriodSeconds: 3
       containers:
         - name: aramid-relay-mainnet
           image: scholtz2/aramid-algo-node:v3.25.0-stable
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           resources:
             requests:
-              memory: '5000Mi'
-              cpu: '5000m'
+              memory: '4000Mi'
+              cpu: '2000m'
             limits:
               memory: '20000Mi'
-              cpu: '32000m'
-          command: ['/bin/sh', '-ec', "while :; do echo '.'; sleep 5 ; done"]
+              cpu: '16000m'
           startupProbe:
             exec:
               command:
@@ -96,7 +94,7 @@ spec:
           ports:
             - containerPort: 14160
               protocol: TCP
-            - containerPort: 18080
+            - containerPort: 18180
               protocol: TCP
           securityContext:
             runAsUser: 1000
@@ -118,7 +116,6 @@ spec:
         - name: aramid-main-vol-catchpoints-1
           persistentVolumeClaim:
             claimName: aramid-main-vol-catchpoints-1
-
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -126,13 +123,12 @@ metadata:
   name: aramid-main-vol-root-1
   namespace: aramid-relay-mainnet
 spec:
-  storageClassName: aramid-main-root-1
+  storageClassName: gp2  # Changed to AWS EBS storage class
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
       storage: 20Gi
-
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -140,7 +136,7 @@ metadata:
   name: aramid-main-vol-net-1
   namespace: aramid-relay-mainnet
 spec:
-  storageClassName: aramid-main-net-1
+  storageClassName: gp2  # Changed to AWS EBS storage class
   accessModes:
     - ReadWriteOnce
   resources:
@@ -153,72 +149,11 @@ metadata:
   name: aramid-main-vol-catchpoints-1
   namespace: aramid-relay-mainnet
 spec:
-  storageClassName: aramid-main-catchpoints-1
+  storageClassName: gp2  # Changed to AWS EBS storage class
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
       storage: 100Gi
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: aramid-main-root-1
-spec:
-  storageClassName: aramid-main-root-1
-  capacity:
-    storage: 20Gi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: '/mnt/k8s/aramid/mainnet/root'
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - s1-k1-fi.a-wallet.net
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: aramid-main-net-1
-spec:
-  storageClassName: aramid-main-net-1
-  capacity:
-    storage: 50Gi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: '/mnt/k8s/aramid/mainnet/net'
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - s1-k1-fi.a-wallet.net
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: aramid-main-catchpoints-1
-spec:
-  storageClassName: aramid-main-catchpoints-1
-  capacity:
-    storage: 100Gi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: '/mnt/k8s/aramid/mainnet/catchpoints'
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - s1-k1-fi.a-wallet.net
+
+# Removed PersistentVolume definitions as AWS EKS will dynamically provision volumes
