@@ -2,8 +2,6 @@ ARG ALGO_VER
 
 FROM scholtz2/algorand-relay-mainnet:$ALGO_VER
 USER algo
-COPY . . 
-USER root
-RUN chmod 0777 *.sh
+COPY --chown=algo:algo . .
 USER algo
-CMD /app/run.sh
+CMD ["/bin/bash","-ec","/app/run.sh"]

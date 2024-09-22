@@ -1,0 +1,21 @@
+# docs: https://github.com/bitnami/charts/blob/master/bitnami/redis/values.yaml
+
+global:
+  redis:
+    password: "redis-password"
+
+auth:
+  password: "redis-password"
+
+image:
+  pullPolicy: IfNotPresent
+
+master:
+  persistence:
+    enabled: false
+    storageClass: "nfs-fast-retain"
+
+replica:
+  replicaCount: 1
+  persistence:
+    enabled: false

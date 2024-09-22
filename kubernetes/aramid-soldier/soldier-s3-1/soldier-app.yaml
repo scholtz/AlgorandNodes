@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: aramid-s31
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aramid-s31-soldier-app-deployment
+  namespace: aramid-s31
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aramid-s31-soldier-app-deployment
+  template:
+    metadata:
+      labels:
+        app: aramid-s31-soldier-app-deployment
+    spec:
+      nodeName: sch-g-01
+      containers:
+        - name: aramid-s31-soldier-app-deployment
+          image: scholtz2/zerobridge-soldier-app:1.2024.09.14-beta
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: aramid-s31-soldier-app-conf
+              mountPath: /usr/src/app/env
+            - name: aramid-s31-logs-pvc
+              mountPath: /usr/src/app/logs
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sleep", "120"]
+          readinessProbe:
+            exec:
+              command:
+                - cat
+                - /usr/src/app/ready.txt
+            initialDelaySeconds: 10
+            periodSeconds: 20
+      volumes:
+        - name: aramid-s31-soldier-app-conf
+          configMap:
+            name: aramid-s31-soldier-app-conf
+        - name: aramid-s31-logs-pvc
+          persistentVolumeClaim:
+            claimName: aramid-s31-logs-pvc
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: aramid-s31-logs-pvc
+  namespace: aramid-s31
+spec:
+  storageClassName: nfs-fast-retain
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 20Gi

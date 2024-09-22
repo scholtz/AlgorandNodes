@@ -21,12 +21,13 @@ USER root
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt update && apt dist-upgrade -y && apt install -y bc mc wget telnet git curl net-tools iotop atop vim dnsutils jq && apt-get autoremove --yes && rm -rf /var/lib/{apt,dpkg,cache,log}/
 COPY --from=build /code/indexer-fix/cmd/algorand-indexer/algorand-indexer /usr/local/bin/algorand-indexer
-RUN useradd -ms /bin/bash -d /data -u 999 algo
-WORKDIR /data
-RUN chown algo:algo /data -R
+RUN userdel -rf ubuntu && useradd -ms /bin/bash -d /app -u 1000 algo
+WORKDIR /app
 USER algo
-ENV INDEXER_DATA /data
-
-CMD ["algorand-indexer"]
+RUN mkdir /app/data
+ENV INDEXER_DATA /app/data
+COPY --chown=algo:algo context .
+RUN chmod +x /app/run.sh
+CMD ["/bin/bash","-ec","/app/run.sh"]
 
 

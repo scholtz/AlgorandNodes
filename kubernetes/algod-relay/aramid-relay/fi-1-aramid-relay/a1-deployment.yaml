@@ -65,7 +65,7 @@ spec:
             limits:
               memory: '20000Mi'
               cpu: '32000m'
-          # command: ['/bin/sh', '-ec', "while :; do echo '.'; sleep 5 ; done"]
+          #command: ['/bin/sh', '-ec', "while :; do echo '.'; sleep 5 ; done"]
           #command:
           #  - /bin/bash
           #  - /app/run.sh

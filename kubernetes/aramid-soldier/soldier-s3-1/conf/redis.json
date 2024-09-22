@@ -1,0 +1,3 @@
+{
+  "url": "redis://:redis-password@redis-master.aramid-s31:6379"
+}

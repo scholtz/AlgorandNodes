@@ -1,0 +1,123 @@
+{
+  "chains": {
+    "416001": {
+      "isListener": true,
+      "type": "algo",
+      "algod": {
+        "host": "https://mainnet-api.algonode.cloud",
+        "port": 443,
+        "header": "",
+        "token": "",
+        "delay": 1000
+      },
+      "indexer": {
+        "host": "https://mainnet-idx.algonode.cloud",
+        "port": 443,
+        "header": "",
+        "token": "",
+        "delay": 1000
+      },
+      "fetchNumberOfBlocks": 1000,
+      "soldierAccount": {
+        "addr": "Q5GB5LAP7DRIWBVBR6KJABKK7VXULI4CCNZOQFR3BYMMRLREIBQI3565ZE",
+        "pk": "mnemonic"
+      }
+    },
+    "416102": {
+      "isListener": true,
+      "type": "algo",
+      "algod": {
+        "host": "https://testnet-api.voi.nodly.io",
+        "port": 443,
+        "header": "",
+        "token": "",
+        "delay": 1000
+      },
+      "indexer": {
+        "host": "https://testnet-idx.voi.nodly.io",
+        "port": 443,
+        "header": "",
+        "token": "",
+        "delay": 1000
+      },
+      "fetchNumberOfBlocks": 1000,
+      "soldierAccount": {
+        "addr": "Q5GB5LAP7DRIWBVBR6KJABKK7VXULI4CCNZOQFR3BYMMRLREIBQI3565ZE",
+        "pk": "mnemonic"
+      }
+    },
+    "101003": {
+      "isListener": true,
+      "type": "algo",
+      "algod": {
+        "host": "https://algod.aramidmain.a-wallet.net",
+        "port": 443,
+        "header": "x-algo-api-token",
+        "token": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "delay": 10
+      },
+      "indexer": {
+        "host": "https://aramidindexer.de-k1.a-wallet.net",
+        "port": 443,
+        "header": "X-Indexer-API-Token",
+        "token": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "delay": 10
+      },
+      "fetchNumberOfBlocks": 1000,
+      "soldierAccount": {
+        "addr": "Q5GB5LAP7DRIWBVBR6KJABKK7VXULI4CCNZOQFR3BYMMRLREIBQI3565ZE",
+        "pk": "mnemonic"
+      }
+    },
+    "11155111": {
+      "isListener": true,
+      "type": "eth",
+      "providerUrl": "wss://eth-sepolia.g.alchemy.com/v2/mq_hiyVpSSQIGfr6oZ6PuQgRG3wvcsrP",
+      "soldierAccount": {
+        "addr": "0x4F8240A5513C4C6A020B5bd352cdE785e8db47A9",
+        "pk": "private key"
+      }
+    },
+    "17000": {
+      "isListener": true,
+      "type": "eth",
+      "providerUrl": "wss://ethereum-holesky-rpc.publicnode.com",
+      "soldierAccount": {
+        "addr": "0x4F8240A5513C4C6A020B5bd352cdE785e8db47A9",
+        "pk": "private key"
+      }
+    },
+    "102002": {
+      "isListener": false,
+      "type": "near"
+    },
+    "3": {
+      "isListener": false,
+      "type": "eth"
+    },
+    "4": {
+      "isListener": false,
+      "type": "eth"
+    },
+    "80001": {
+      "isListener": false,
+      "type": "eth"
+    },
+    "137": {
+      "isListener": false,
+      "type": "eth"
+    },
+    "1313161554": {
+      "isListener": false,
+      "type": "eth"
+    },
+    "1313161555": {
+      "isListener": false,
+      "type": "eth"
+    },
+    "1": {
+      "isListener": false,
+      "type": "eth"
+    }
+  }
+}

@@ -64,9 +64,9 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: aramid-set-service-data-h2
+                name: aramid-set-service-data
                 port:
-                  number: 18280
+                  number: 18080
 #---
 #apiVersion: networking.k8s.io/v1
 #kind: Ingress

@@ -62,11 +62,11 @@ spec:
           imagePullPolicy: Always
           resources:
             requests:
-              memory: '2000Mi'
-              cpu: '1000m'
+              memory: "2000Mi"
+              cpu: "1000m"
             limits:
-              memory: '4000Mi'
-              cpu: '4000m'
+              memory: "4000Mi"
+              cpu: "4000m"
           #command: ["/bin/bash", "-ec", "while :; do date; sleep 60 ; done"]
           #command:
           #  - /bin/bash
@@ -109,8 +109,6 @@ spec:
               mountPath: /app/data
             - name: aramid-main-vol-net-h3
               mountPath: /app/data/aramidmain-v1.0
-            - name: aramid-main-vol-catchpoints-h3
-              mountPath: /app/data/aramidmain-v1.0/catchpoints
       volumes:
         - name: aramid-main-vol-root-h3
           persistentVolumeClaim:
@@ -118,9 +116,6 @@ spec:
         - name: aramid-main-vol-net-h3
           persistentVolumeClaim:
             claimName: aramid-main-vol-net-h3
-        - name: aramid-main-vol-catchpoints-h3
-          persistentVolumeClaim:
-            claimName: aramid-main-vol-catchpoints-h3
 
 ---
 apiVersion: v1
@@ -174,7 +169,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: '/mnt/nvme2/aramid/mainnet-3/root'
+    path: "/mnt/nvme2/aramid/mainnet-3/root"
 
   nodeAffinity:
     required:
@@ -196,7 +191,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: '/mnt/nvme2/aramid/mainnet-3/net'
+    path: "/mnt/nvme2/aramid/mainnet-3/net"
 
   nodeAffinity:
     required:
@@ -218,7 +213,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: '/mnt/nvme2/aramid/mainnet-3/catchpoints'
+    path: "/mnt/nvme2/aramid/mainnet-3/catchpoints"
 
   nodeAffinity:
     required:

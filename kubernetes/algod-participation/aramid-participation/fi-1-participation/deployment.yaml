@@ -1,17 +1,17 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: algo-participation-aramidmain
+  name: aramid-participation-mainnet
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: aramidmain-participation-service-18081-data
-  namespace: algo-participation-aramidmain
+  namespace: aramid-participation-mainnet
 spec:
   type: ClusterIP
   selector:
-    app: algo-participation-aramidmain
+    app: aramid-participation-mainnet
   ports:
     - name: algoclient
       protocol: TCP
@@ -23,11 +23,11 @@ apiVersion: v1
 kind: Service
 metadata:
   name: aramidmain-participation-service-18888-data
-  namespace: algo-participation-aramidmain
+  namespace: aramid-participation-mainnet
 spec:
   type: ClusterIP
   selector:
-    app: algo-participation-aramidmain
+    app: aramid-participation-mainnet
   ports:
     - name: algoclient
       protocol: TCP
@@ -39,11 +39,11 @@ apiVersion: v1
 kind: Service
 metadata:
   name: aramidmain-participation-service-18080-data
-  namespace: algo-participation-aramidmain
+  namespace: aramid-participation-mainnet
 spec:
   type: ClusterIP
   selector:
-    app: algo-participation-aramidmain
+    app: aramid-participation-mainnet
   ports:
     - name: algoclient
       protocol: TCP
@@ -55,27 +55,27 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: participation-node-1
-  namespace: algo-participation-aramidmain
+  namespace: aramid-participation-mainnet
 spec:
   replicas: 1
   strategy:
     type: Recreate
   selector:
     matchLabels:
-      app: algo-participation-aramidmain
+      app: aramid-participation-mainnet
   template:
     metadata:
       labels:
-        app: algo-participation-aramidmain
+        app: aramid-participation-mainnet
     spec:
-      nodeName: sch-g-01
+      nodeName: s1-k1-fi.a-wallet.net
       terminationGracePeriodSeconds: 3
       securityContext:
         fsGroup: 1000
         runAsUser: 1000
         runAsGroup: 1000
       containers:
-        - name: algo-participation-aramidmain
+        - name: aramid-participation-mainnet
           image: scholtz2/algorand-participation-aramidmain-extended:3.25.0-stable
           imagePullPolicy: Always
           resources:
@@ -128,8 +128,6 @@ spec:
               mountPath: /app/data
             - name: algo-aramidmain-participation-vol-net-1
               mountPath: /app/data/aramidmain-v1.0
-            - name: algo-aramidmain-participation-vol-catchpoints-1
-              mountPath: /app/data/aramidmain-v1.0/catchpoints
       volumes:
         - name: algo-aramidmain-participation-vol-root-1
           persistentVolumeClaim:
@@ -137,16 +135,13 @@ spec:
         - name: algo-aramidmain-participation-vol-net-1
           persistentVolumeClaim:
             claimName: algo-aramidmain-participation-vol-net-1
-        - name: algo-aramidmain-participation-vol-catchpoints-1
-          persistentVolumeClaim:
-            claimName: algo-aramidmain-participation-vol-catchpoints-1
 
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: algo-aramidmain-participation-vol-root-1
-  namespace: algo-participation-aramidmain
+  namespace: aramid-participation-mainnet
 spec:
   storageClassName: algo-aramidmain-participation-root-1
   accessModes:
@@ -160,7 +155,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: algo-aramidmain-participation-vol-net-1
-  namespace: algo-participation-aramidmain
+  namespace: aramid-participation-mainnet
 spec:
   storageClassName: algo-aramidmain-participation-net-1
   accessModes:
@@ -168,19 +163,6 @@ spec:
   resources:
     requests:
       storage: 500Gi
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: algo-aramidmain-participation-vol-catchpoints-1
-  namespace: algo-participation-aramidmain
-spec:
-  storageClassName: algo-aramidmain-participation-catchpoints-1
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1500Gi
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -194,7 +176,7 @@ spec:
             - key: kubernetes.io/hostname
               operator: In
               values:
-                - sch-g-01
+                - s1-k1-fi.a-wallet.net
   storageClassName: algo-aramidmain-participation-root-1
   capacity:
     storage: 20Gi
@@ -215,7 +197,7 @@ spec:
             - key: kubernetes.io/hostname
               operator: In
               values:
-                - sch-g-01
+                - s1-k1-fi.a-wallet.net
   storageClassName: algo-aramidmain-participation-net-1
   capacity:
     storage: 500Gi
@@ -223,24 +205,3 @@ spec:
     - ReadWriteOnce
   hostPath:
     path: "/mnt/k8s/algo/aramidmain-participation/net"
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: algo-aramidmain-participation-catchpoints-1
-spec:
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - sch-g-01
-  storageClassName: algo-aramidmain-participation-catchpoints-1
-  capacity:
-    storage: 1500Gi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: "/mnt/k8s/algo/aramidmain-participation/catchpoints"

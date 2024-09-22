@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: i3-1-aramid-indexer-mainnet-deployment
+  name: i3-1-aramid-indexer-mainnet-db-deployment
   namespace: aramid-indexer-mainnet
 spec:
   replicas: 1
@@ -9,100 +9,30 @@ spec:
     type: Recreate
   selector:
     matchLabels:
-      appId: i3-1-aramid-indexer-mainnet
+      app: i3-1-aramid-indexer-mainnet-db
   template:
     metadata:
       labels:
-        appId: i3-1-aramid-indexer-mainnet
-        app: aramid-indexer-mainnet
+        app: i3-1-aramid-indexer-mainnet-db
     spec:
+      securityContext:
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+      terminationGracePeriodSeconds: 3
       nodeName: sch-g-01
       containers:
-        - name: i3-1-conduit
-          image: scholtz2/aramid-conduit:v1.7.0-stable
-          command:
-            [
-              "/bin/bash",
-              "-ec",
-              "date; sleep 10; date; conduit; sleep 100 ; date; ",
-            ]
-            #while ! timeout 1 bash -c "echo > /dev/tcp/localhost/8080";  do sleep 1 && echo -n .; done
-          #command: ["/bin/bash", "-ec", "while :; do date; sleep 60 ; done"]
-          securityContext:
-            runAsUser: 999
-            runAsGroup: 999
-          volumeMounts:
-            - name: i3-1-conduit-conf
-              mountPath: /data/conduit.yml
-              subPath: conduit.yml
-            - name: aramidmain-indexer-conf
-              mountPath: /data/consensus.json
-              subPath: consensus.json
-            - name: i3-1-aramid-conduit-1-pvc
-              mountPath: /data
-        - name: i3-1-follow-node
-          image: scholtz2/aramid-algo-follow-node:v3.25.0-stable
-          command:
-            [
-              "/bin/bash",
-              "-ec",
-              "date; sleep 1 ;cp --update=none config.json data/config.json; cp --update=none genesis/aramidmain/genesis.json data/genesis.json; cp --update=none consensus.json data/consensus.json; date; goal node start; date; while :; do date; sleep 600 ; done ",
-            ]
-          # command: ["goal", "node", "start"]
-          # command: ["/bin/bash", "-ec", "while :; do date; sleep 600 ; done"]
-          # lifecycle:
-          #   postStart:
-          #     exec:
-          #       command: ["goal", "node", "start"]
-          imagePullPolicy: Always
-          resources:
-            requests:
-              memory: "4000Mi"
-              cpu: "2000m"
-            limits:
-              memory: "20000Mi"
-              cpu: "16000m"
-          ports:
-            - containerPort: 8080
-              protocol: TCP
-          # readinessProbe:
-          #   tcpSocket:
-          #     port: 8080
-          #   initialDelaySeconds: 10
-          #   timeoutSeconds: 10
-          #   failureThreshold: 20
-          # livenessProbe:
-          #   tcpSocket:
-          #     port: 8080
-          #   initialDelaySeconds: 20
-          #   timeoutSeconds: 5
-          #   failureThreshold: 5
-          #   terminationGracePeriodSeconds: 1
-          securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
-          volumeMounts:
-            - name: i3-1-aramid-follow-main-vol-root-1
-              mountPath: /app/data
-            - name: i3-1-aramid-follow-main-vol-net-1
-              mountPath: /app/data/aramidmain-v1.0
-            - name: i3-1-aramid-indexer-secret
-              subPath: INDEXER_ALGOD_TOKEN
-              mountPath: /app/data/algod.token
-            - name: i3-1-aramid-indexer-secret
-              subPath: INDEXER_API_TOKEN
-              mountPath: /app/data/algod.admin.token
         - name: i3-1-db
           image: postgres:14
           imagePullPolicy: IfNotPresent
           #command: ["/bin/sh", "-ec", "while :; do date; sleep 60 ; done"]
           resources:
             requests:
-              memory: "10000Mi"
-              cpu: "1000m"
+              memory: '10000Mi'
+              cpu: '1000m'
             limits:
-              memory: "20000Mi"
-              cpu: "8000m"
+              memory: '20000Mi'
+              cpu: '8000m'
           env:
             - name: PGDATA
               value: /data
@@ -123,7 +53,7 @@ spec:
                   key: POSTGRES_DB
           ports:
             - containerPort: 5432
-              protocol: "TCP"
+              protocol: 'TCP'
           readinessProbe:
             tcpSocket:
               port: 5432
@@ -135,73 +65,142 @@ spec:
           lifecycle:
             preStop:
               exec:
-                command: ["sleep", "10"]
+                command: ['sleep', '10']
           volumeMounts:
             - name: i3-1-aramid-indexer-db-mainnet-pvc
               mountPath: /data
 
-        - name: i3-1-indexer
-          image: scholtz2/aramid-indexer:v3.5.0-stable
-          imagePullPolicy: Always
-          #command: ["/bin/bash", "-ec", "while :; do date; sleep 60 ; done"]
-          command: ["/bin/bash", "-c", "algorand-indexer daemon"]
+      volumes:
+        - name: i3-1-aramid-indexer-db-mainnet-pvc
+          persistentVolumeClaim:
+            claimName: i3-1-aramid-indexer-db-mainnet-pvc
 
-          ports:
-            - containerPort: 8980
-              protocol: TCP
-          readinessProbe:
-              tcpSocket:
-                port: 8980
-              initialDelaySeconds: 10
-              timeoutSeconds: 5
-              failureThreshold: 2
-          livenessProbe:
-              tcpSocket:
-                port: 8980
-              initialDelaySeconds: 20
-              timeoutSeconds: 5
-              failureThreshold: 2
-              terminationGracePeriodSeconds: 1
-          env:
-            - name: INDEXER_POSTGRES_CONNECTION_STRING
-              valueFrom:
-                secretKeyRef:
-                  name: i3-1-aramid-indexer-secret
-                  key: INDEXER_POSTGRES_CONNECTION_STRING
-            - name: INDEXER_ALGOD_ADDRESS
-              value: "localhost:8080"
-            - name: INDEXER_ALGOD_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: i3-1-aramid-indexer-secret
-                  key: INDEXER_ALGOD_TOKEN
-            - name: INDEXER_API_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: i3-1-aramid-indexer-secret
-                  key: INDEXER_API_TOKEN
-            - name: INDEXER_GENESIS
-              value: "/app/genesis/aramidmain/genesis.json"
-            - name: INDEXER_DEV_MODE
-              value: "0"
-            - name: INDEXER_METRICS_MODE
-              value: "1"
-            - name: INDEXER_ENABLE_ALL_PARAMETERS
-              value: "1"
-            - name: INDEXER_DATA
-              value: "/app"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: i3-1-aramid-indexer-mainnet-db-service
+  namespace: aramid-indexer-mainnet
+spec:
+  type: ClusterIP
+  selector:
+    app: i3-1-aramid-indexer-mainnet-db
+  ports:
+    - name: algoclient
+      protocol: TCP
+      appProtocol: http
+      port: 5432
+      targetPort: 5432
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: i3-1-aramid-indexer-mainnet-conduit-deployment
+  namespace: aramid-indexer-mainnet
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: i3-1-aramid-indexer-mainnet-conduit
+  template:
+    metadata:
+      labels:
+        app: i3-1-aramid-indexer-mainnet-conduit
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      terminationGracePeriodSeconds: 3
+      nodeName: sch-g-01
+      initContainers:
+        - name: wait-for-db-before-starup
+          image: busybox
+          command:
+            [
+              'sh',
+              '-c',
+              'echo -e "Checking for the availability of DB Server deployment"; while ! nc -z i3-1-aramid-indexer-mainnet-db-service.aramid-indexer-mainnet 5432; do sleep 1; printf "-"; done; echo -e "  >> DB Server has started";',
+            ]
+
+      containers:
+        - name: i3-1-conduit
+          image: scholtz2/aramid-conduit:v1.7.0-stable
+          imagePullPolicy: Always
+          # command:
+          #   [
+          #     "/bin/bash",
+          #     "-ec",
+          #     "date; sleep 10; date; conduit; sleep 100 ; date; ",
+          #   ]
+          #while ! timeout 1 bash -c "echo > /dev/tcp/localhost/8080";  do sleep 1 && echo -n .; done
+          # command: ['/bin/bash', '-ec', 'while :; do date; sleep 60 ; done']
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
-
           volumeMounts:
-            - name: aramidmain-indexer-conf
-              mountPath: /app/consensus.json
-              subPath: consensus.json
+            - name: i3-1-conduit-conf
+              mountPath: /app/data/conduit.yml
+              subPath: conduit.yml
+            - name: i3-1-aramid-conduit-1-pvc
+              mountPath: /app/data
+        - name: i3-1-follow-node
+          image: scholtz2/aramid-algo-follow-node:v3.25.0-stable
+          # command:
+          #   [
+          #     '/bin/bash',
+          #     '-ec',
+          #     'date; sleep 1 ;cp --update=none config.json data/config.json; cp --update=none genesis/aramidmain/genesis.json data/genesis.json; cp --update=none consensus.json data/consensus.json; date; goal node start; date; while :; do date; sleep 600 ; done ',
+          #   ]
+          # command: ["goal", "node", "start"]
+          # command: ["/bin/bash", "-ec", "while :; do date; sleep 600 ; done"]
+          lifecycle:
+            preStop:
+              exec:
+                command: ['goal', 'node', 'stop']
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: '4000Mi'
+              cpu: '2000m'
+            limits:
+              memory: '20000Mi'
+              cpu: '16000m'
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 10
+            timeoutSeconds: 10
+            failureThreshold: 20
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 5
+            terminationGracePeriodSeconds: 3
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+          volumeMounts:
+            - name: i3-1-aramid-follow-main-vol-root-1
+              mountPath: /app/data
+            - name: i3-1-aramid-follow-main-vol-net-1
+              mountPath: /app/data/aramidmain-v1.0
+            - name: i3-1-aramid-indexer-secret
+              subPath: INDEXER_ALGOD_TOKEN
+              mountPath: /app/data/algod.token
+            - name: i3-1-aramid-indexer-secret
+              subPath: INDEXER_API_TOKEN
+              mountPath: /app/data/algod.admin.token
+
       volumes:
-        - name: aramidmain-indexer-conf
-          configMap:
-            name: aramidmain-indexer-conf
         - name: i3-1-conduit-conf
           configMap:
             name: i3-1-conduit-conf
@@ -220,6 +219,98 @@ spec:
         - name: i3-1-aramid-indexer-secret
           secret:
             secretName: i3-1-aramid-indexer-secret
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: i3-1-aramid-indexer-mainnet-indexer-deployment
+  namespace: aramid-indexer-mainnet
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      appId: i3-1-aramid-indexer-mainnet
+  template:
+    metadata:
+      labels:
+        appId: i3-1-aramid-indexer-mainnet
+        app: aramid-indexer-mainnet
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      terminationGracePeriodSeconds: 3
+      initContainers:
+        - name: wait-for-db-before-starup
+          image: busybox
+          command:
+            [
+              'sh',
+              '-c',
+              'echo -e "Checking for the availability of DB Server deployment"; while ! nc -z i3-1-aramid-indexer-mainnet-db-service.aramid-indexer-mainnet 5432; do sleep 1; printf "-"; done; echo -e "  >> DB Server has started";',
+            ]
+
+      containers:
+        - name: i3-1-indexer
+          image: scholtz2/aramid-indexer:v3.5.0-stable
+          imagePullPolicy: Always
+          # command: ['/bin/bash', '-ec', 'while :; do date; sleep 60 ; done']
+          #command: ['/bin/bash', '-c', 'algorand-indexer daemon']
+          # command: [
+          #     '/bin/bash',
+          #     '-ec',
+          #     'date;
+          #     cp -f /app/genesis/aramidmain/consensus.json /app/consensus.json
+          #     algorand-indexer daemon',
+          #   ]
+
+          ports:
+            - containerPort: 8980
+              protocol: TCP
+          readinessProbe:
+            tcpSocket:
+              port: 8980
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 2
+          livenessProbe:
+            tcpSocket:
+              port: 8980
+            initialDelaySeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 2
+            terminationGracePeriodSeconds: 1
+          env:
+            - name: INDEXER_POSTGRES_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: i3-1-aramid-indexer-secret
+                  key: INDEXER_POSTGRES_CONNECTION_STRING
+            - name: INDEXER_ALGOD_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: i3-1-aramid-indexer-secret
+                  key: INDEXER_ALGOD_TOKEN
+            - name: INDEXER_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: i3-1-aramid-indexer-secret
+                  key: INDEXER_API_TOKEN
+            - name: INDEXER_GENESIS
+              value: '/app/genesis/aramidmain/genesis.json'
+            - name: INDEXER_DEV_MODE
+              value: '0'
+            - name: INDEXER_METRICS_MODE
+              value: '1'
+            - name: INDEXER_ENABLE_ALL_PARAMETERS
+              value: '1'
+            - name: INDEXER_DATA
+              value: '/app/data'
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
 
 ---
 apiVersion: v1
@@ -288,7 +379,7 @@ spec:
   accessModes:
     - ReadWriteMany
   hostPath:
-    path: "/mnt/14tb/aramid/i3-1-mainnet-db"
+    path: '/mnt/14tb/aramid/i3-1-mainnet-db'
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -309,7 +400,7 @@ spec:
   accessModes:
     - ReadWriteMany
   hostPath:
-    path: "/mnt/14tb/aramid/i3-1-mainnet-follow/root"
+    path: '/mnt/14tb/aramid/i3-1-mainnet-follow/root'
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -330,7 +421,7 @@ spec:
   accessModes:
     - ReadWriteMany
   hostPath:
-    path: "/mnt/14tb/aramid/i3-1-mainnet-follow/net"
+    path: '/mnt/14tb/aramid/i3-1-mainnet-follow/net'
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -352,7 +443,7 @@ spec:
   accessModes:
     - ReadWriteMany
   hostPath:
-    path: "/mnt/14tb/aramid/i3-1-mainnet-conduit"
+    path: '/mnt/14tb/aramid/i3-1-mainnet-conduit'
   nodeAffinity:
     required:
       nodeSelectorTerms:

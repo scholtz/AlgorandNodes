@@ -1,0 +1,18 @@
+{
+  "debug": false,
+  "soldierId": "s3-1",
+  "mainNetwork": 101003,
+  "mainToken": 100,
+  "configurationAddress": "EGRNQAIVBY4O47XJNCLIYZGSHBQIKYC25VWEHBQVFRUACCXBR7TDSKISSA",
+  "useFilesystemPublicConfiguration": true,
+  "encryptionKey": "",
+  "useLibP2P": false,
+  "useBlockchainComm": true,
+  "claimsToIPFS": false,
+  "claimsPublishMeta": false,
+  "ipfs": [
+    "https://cloudflare-ipfs.com/ipfs/%hash",
+    "https://gateway.ipfs.io/ipfs/%hash",
+    "https://dweb.link/ipfs/%hash"
+  ]
+}

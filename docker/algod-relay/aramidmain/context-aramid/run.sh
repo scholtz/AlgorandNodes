@@ -1,9 +1,8 @@
 #!/bin/bash
 
-#apt update && apt dist-upgrade -y 
-cp -n config.json data/config.json
-cp -n genesis/aramidmain/genesis.json data/genesis.json
-cp -n consensus.json data/consensus.json
+cp --update=none config.json data/config.json
+cp -f genesis/aramidmain/genesis.json data/genesis.json
+cp -f consensus.json data/consensus.json
 
 goal node start  || error_code=$?
 error_code_int=$(($error_code + 0))
