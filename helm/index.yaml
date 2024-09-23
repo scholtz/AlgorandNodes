@@ -9,6 +9,6 @@ entries:
     name: aramid-relay
     type: application
     urls:
-    - https://scholtz.github.io/AlgorandNodes/charts/aramid-relay-1.0.0.tgz
+    - https://scholtz.github.io/AlgorandNodes/helm/aramid-relay-1.0.0.tgz
     version: 1.0.0
 generated: "2024-09-23T23:07:56.345236841+02:00"
