@@ -1,0 +1,55 @@
+# Default values for aramid-relay.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: nginx
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ''
+
+debug: false
+prefix: "r-1-"
+
+serviceAVMProtocol:
+  name: 'aramid-avm-protocol-service'
+  type: 'NodePort'
+  port:
+    service: 14160
+    node: 14160
+    target: 14160
+
+serviceAlgodProtocol:
+  name: 'aramid-algod-protocol-service'
+  type: 'ClusterIP'
+  port:
+    service: 14160
+    target: 14160
+
+pvcRoot:
+  name: "aramid-relay-mainnet-root-pvc"
+  storageClassName: "linode-block-storage-retain"
+  accessMode: "ReadWriteOnce"
+  resources:
+    requests:
+      storage: 50Gi
+
+
+deployment:
+  name: "aramid-relay-mainnet-deployment"
+  replicas: 1
+  label:
+    key: 'app'
+    value: 'aramid-relay-mainnet'
+  image: scholtz2/aramid-algo-node
+  tag: v3.25.0-stable
+  imagePullPolicy: IfNotPresent
+  resources:
+    requests:
+      memory: '4000Mi'
+      cpu: '2000m'
+    limits:
+      memory: '20000Mi'
+      cpu: '16000m'
