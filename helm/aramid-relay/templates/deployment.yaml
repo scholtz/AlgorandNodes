@@ -16,7 +16,9 @@ spec:
       labels:
         {{ .Values.deployment.label.key }}: {{ .Values.prefix }}{{ .Values.deployment.label.value }}
     spec:
-      nodeName: sch-g-01
+      {{- if .Values.deployment.nodeSelector }}
+      nodeName: {{ .Values.deployment.nodeSelector }}
+      {{- end }}
       terminationGracePeriodSeconds: 3
       containers:
         - name: aramid-relay-mainnet
