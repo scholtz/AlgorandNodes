@@ -20,6 +20,10 @@ spec:
       nodeName: {{ .Values.deployment.nodeSelector }}
       {{- end }}
       terminationGracePeriodSeconds: 3
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+        runAsGroup: 1000
       containers:
         - name: aramid-relay-mainnet
           image: {{ .Values.deployment.image }}:{{ .Values.deployment.tag }}
@@ -34,6 +38,7 @@ spec:
           {{- if (eq .Values.debug true) }}
           command: ['/bin/bash', '-ec', 'while :; do date; sleep 60 ; done']
           {{- end }}
+          {{- if (eq .Values.debug false) }}
           startupProbe:
             exec:
               command:
@@ -59,7 +64,7 @@ spec:
             timeoutSeconds: 10
             failureThreshold: 6
             terminationGracePeriodSeconds: 60
-
+          {{- end }}
           ports:
             - containerPort: 14160
               protocol: TCP

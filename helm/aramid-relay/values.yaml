@@ -18,7 +18,7 @@ serviceAVMProtocol:
   type: 'NodePort'
   port:
     service: 14160
-    node: 14160
+    node: 30160
     target: 14160
 
 serviceAlgodProtocol:
