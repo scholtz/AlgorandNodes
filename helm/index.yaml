@@ -3,7 +3,17 @@ entries:
   aramid-relay:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2024-09-23T23:53:40.245385939+02:00"
+    created: "2024-09-24T00:15:09.335512319+02:00"
+    description: Aramid relay node for aramidmain-1.0 blockchain.
+    digest: 2610602c38475043956b746d363d30964b689abebc87953ab8663f8be5932eb4
+    name: aramid-relay
+    type: application
+    urls:
+    - https://scholtz.github.io/AlgorandNodes/helm/aramid-relay-1.0.2.tgz
+    version: 1.0.2
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2024-09-24T00:15:09.335300211+02:00"
     description: Aramid relay node for aramidmain-1.0 blockchain.
     digest: 00676d6bbc23f749ddf36759597db1d834fd6ce394e82d6f1d7c3492f77815d0
     name: aramid-relay
@@ -13,7 +23,7 @@ entries:
     version: 1.0.1
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2024-09-23T23:53:40.245026045+02:00"
+    created: "2024-09-24T00:15:09.335100437+02:00"
     description: Aramid relay node for aramidmain-1.0 blockchain.
     digest: 3891a4c8484efc7a2579bd5cc19fd99ff8fba2677ab35f40f3466a1b125de318
     name: aramid-relay
@@ -21,4 +31,4 @@ entries:
     urls:
     - https://scholtz.github.io/AlgorandNodes/helm/aramid-relay-1.0.0.tgz
     version: 1.0.0
-generated: "2024-09-23T23:53:40.244524075+02:00"
+generated: "2024-09-24T00:15:09.334725044+02:00"

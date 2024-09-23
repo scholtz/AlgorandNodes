@@ -7,7 +7,7 @@ spec:
   selector:
     {{ .Values.deployment.label.key }}: {{ .Values.prefix }}{{ .Values.deployment.label.value }}
   ports:
-    - name: relayPort
+    - name: avm-port
       protocol: TCP
       appProtocol: http
       port: {{ .Values.serviceAVMProtocol.port.service }}

@@ -7,7 +7,7 @@ spec:
   selector:
     {{ .Values.deployment.label.key }}: {{ .Values.prefix }}{{ .Values.deployment.label.value }}
   ports:
-    - name: relayPort
+    - name: algod-port
       protocol: TCP
       appProtocol: http
       port: {{ .Values.serviceAlgodProtocol.port.service }}
