@@ -1,12 +1,14 @@
 {
-	"Version": 22,
-	"Archival": true,
-	"EnableMetricReporting": false,
-	"EnableLedgerService": true,
-	"EnableBlockService": true,
-	"DNSSecurityFlags": 0,
-    "DNSBootstrapID": "aramidmain.a-wallet.net",
-	"NetAddress": ":14160",
-	"EndpointAddress": "0.0.0.0:18080",
-    "FallbackDNSResolverAddress": "aramidmain.a-wallet.net"
+  "Version": 22,
+  "Archival": false,
+  "CatchpointTracking": 2,
+  "CatchpointFileHistoryLength": 20,
+  "CatchpointInterval": 500,
+  "CatchpointDir": "/app/data/catchpoints",
+  "EnableMetricReporting": false,
+  "EnableLedgerService": true,
+  "EnableBlockService": true,
+  "DNSBootstrapID": "aramidmain.a-wallet.net",
+  "NetAddress": ":14160",
+  "EndpointAddress": "0.0.0.0:18080"
 }

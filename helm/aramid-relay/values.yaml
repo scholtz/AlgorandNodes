@@ -15,7 +15,7 @@ prefix: "r-1-"
 
 serviceAVMProtocol:
   name: 'aramid-avm-protocol-service'
-  type: 'NodePort'
+  type: 'LoadBalancer'
   port:
     service: 14160
     node: 30160
@@ -25,8 +25,8 @@ serviceAlgodProtocol:
   name: 'aramid-algod-protocol-service'
   type: 'ClusterIP'
   port:
-    service: 14160
-    target: 14160
+    service: 18080
+    target: 18080
 
 pvcRoot:
   name: "aramid-relay-mainnet-root-pvc"
@@ -49,8 +49,8 @@ deployment:
   imagePullPolicy: IfNotPresent
   resources:
     requests:
-      memory: '4000Mi'
-      cpu: '2000m'
+      memory: '1000Mi'
+      cpu: '1000m'
     limits:
-      memory: '20000Mi'
-      cpu: '16000m'
+      memory: '16000Mi'
+      cpu: '8000m'
