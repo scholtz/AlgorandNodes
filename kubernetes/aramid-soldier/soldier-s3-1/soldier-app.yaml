@@ -22,7 +22,7 @@ spec:
       nodeName: sch-g-01
       containers:
         - name: aramid-s31-soldier-app-deployment
-          image: scholtz2/zerobridge-soldier-app:1.2024.09.14-beta
+          image: scholtz2/zerobridge-soldier-app:1.2024.09.27-beta
           imagePullPolicy: Always
           volumeMounts:
             - name: aramid-s31-soldier-app-conf
