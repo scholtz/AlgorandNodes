@@ -286,17 +286,24 @@ cd /home/scholtz/AlgorandNodes/kubernetes/algod-participation/mainnet-participat
 f1=h2-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
-# cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/voimain-relay/fi-1-voimain-relay
-# f1=s3-k1-fi-deployment.yaml
-# sed -i "s~$base~$produce~g" $f1
-# f1=s2-k1-fi-deployment.yaml
-# sed -i "s~$base~$produce~g" $f1
+################### VOIMAIN
+cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/voimain-relay/de-1-voimain-relay
+f1=s1-k1-de-deployment.yaml
+sed -i "s~$base~$produce~g" $f1
+f1=s2-k1-de-deployment.yaml
+sed -i "s~$base~$produce~g" $f1
+f1=s3-k1-de-deployment.yaml
+sed -i "s~$base~$produce~g" $f1
 
-# cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/voimain-relay/de-1-voimain-relay
-# f1=s2-k1-de-deployment.yaml
-# sed -i "s~$base~$produce~g" $f1
-# f1=s3-k1-de-deployment.yaml
-# sed -i "s~$base~$produce~g" $f1
+cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/voimain-relay/fi-1-voimain-relay
+f1=s1-k1-fi-deployment.yaml
+sed -i "s~$base~$produce~g" $f1
+f1=s2-k1-fi-deployment.yaml
+sed -i "s~$base~$produce~g" $f1
+
+cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/voimain-relay/in-1-voimain-relay
+f1=h1-deployment.yaml
+sed -i "s~$base~$produce~g" $f1
 
 cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/testnet-relay/de-1-testnet-relay
 f1=statefulset.yaml
@@ -310,18 +317,21 @@ sed -i "s~$base~$produce~g" $f1
 # sed -i "s~$base~$produce~g" $f1
 
 
+################### ARAMIDMAIN
 cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/aramid-relay/fi-1-aramid-relay
 f1=h1-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
-
 f1=h2-deployment.yaml
+sed -i "s~$base~$produce~g" $f1
+f1=a1-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
 cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/aramid-relay/de-1-aramid-relay
 f1=h1-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
-
 f1=h2-deployment.yaml
+sed -i "s~$base~$produce~g" $f1
+f1=h3-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
 cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/aramid-relay/linode-example
@@ -329,6 +339,26 @@ cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/aramid-relay/linode-exampl
 f1=statefulset.yaml
 sed -i "s~$base~$produce~g" $f1
 
+cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/aramid-relay/aws
+f1=deployment.yaml
+sed -i "s~$base~$produce~g" $f1
+
+cd /home/scholtz/AlgorandNodes/kubernetes/algod-participation/aramid-participation/de-1-participation
+f1=deployment.yaml
+sed -i "s~$base~$produce~g" $f1
+cd /home/scholtz/AlgorandNodes/kubernetes/algod-participation/aramid-participation/fi-1-participation
+f1=deployment.yaml
+sed -i "s~$base~$produce~g" $f1
+
+################### HELM CHARTS
+cd /home/scholtz/AlgorandNodes/helm/aramid-relay
+f1=values.yaml
+sed -i "s~$base~$produce~g" $f1
+
+helm package aramid-relay/
+helm repo index --url https://scholtz.github.io/AlgorandNodes/helm/ .
+
+################### FINISH
 cd /home/scholtz/AlgorandNodes/docker
 
 echo $produce > $currentFile
