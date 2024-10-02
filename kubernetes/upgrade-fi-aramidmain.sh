@@ -28,4 +28,4 @@ date
 kubectl apply -f deployment.yaml
 sleep 1
 echo "waiting for pods to be live"
-kubectl rollout status deployment participation-node-1 -n algo-participation-aramidmain -w
+kubectl rollout status deployment aramid-archival-mainnet-a1 -n aramid-relay-mainnet -w

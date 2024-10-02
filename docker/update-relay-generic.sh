@@ -371,6 +371,8 @@ sed -i "s~$base~$produce~g" $f1
 
 ################### HELM CHARTS
 cd /home/scholtz/AlgorandNodes/helm/aramid-relay
+f1=Chart.yaml
+sed -i "s~$base~$produce~g" $f1
 f1=values.yaml
 sed -i "s~$base~$produce~g" $f1
 

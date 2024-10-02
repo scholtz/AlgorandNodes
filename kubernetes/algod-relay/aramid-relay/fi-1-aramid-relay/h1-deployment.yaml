@@ -62,12 +62,12 @@ spec:
           imagePullPolicy: Always
           resources:
             requests:
-              memory: '5000Mi'
-              cpu: '5000m'
+              memory: "5000Mi"
+              cpu: "5000m"
             limits:
-              memory: '20000Mi'
-              cpu: '32000m'
-          command: ['/bin/sh', '-ec', "while :; do echo '.'; sleep 5 ; done"]
+              memory: "20000Mi"
+              cpu: "32000m"
+          #command: ['/bin/sh', '-ec', "while :; do echo '.'; sleep 5 ; done"]
           startupProbe:
             exec:
               command:
@@ -171,7 +171,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: '/mnt/k8s/aramid/mainnet/root'
+    path: "/mnt/k8s/aramid/mainnet/root"
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -192,7 +192,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: '/mnt/k8s/aramid/mainnet/net'
+    path: "/mnt/k8s/aramid/mainnet/net"
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -213,7 +213,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: '/mnt/k8s/aramid/mainnet/catchpoints'
+    path: "/mnt/k8s/aramid/mainnet/catchpoints"
   nodeAffinity:
     required:
       nodeSelectorTerms:
