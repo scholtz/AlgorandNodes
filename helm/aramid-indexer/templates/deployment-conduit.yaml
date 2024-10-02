@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.prefix }}{{ .Values.deploymentDB.name }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{ .Values.deploymentDB.label.key }}: {{ .Values.prefix }}{{ .Values.deploymentDB.label.value }}
+  template:
+    metadata:
+      labels:
+        {{ .Values.deploymentDB.label.key }}: {{ .Values.prefix }}{{ .Values.deploymentDB.label.value }}
+    spec:
+      securityContext:
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+      terminationGracePeriodSeconds: 3
+      containers:
+        - name: {{ .Values.prefix }}{{ .Values.deploymentDB.label.value }}
+          image: {{ .Values.deploymentDB.image }}:{{ .Values.deploymentDB.tag }}
+          imagePullPolicy: {{ .Values.deploymentDB.imagePullPolicy }}+
+          
+          {{- if (eq .Values.debug true) }}
+          command: ['/bin/bash', '-ec', 'while :; do date; sleep 60 ; done']
+          {{- end }}
+          
+          resources:
+            requests:
+              memory: {{ .Values.deploymentDB.resources.requests.memory }}
+              cpu:  {{ .Values.deploymentDB.resources.requests.cpu }}
+            limits:
+              memory: {{ .Values.deploymentDB.resources.limits.memory }}
+              cpu: {{ .Values.deploymentDB.resources.limits.cpu }}
+
+          env:
+            - name: PGDATA
+              value: /data
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.prefix }}{{ .Values.deploymentDB.secretName }}
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.prefix }}{{ .Values.deploymentDB.secretName }}
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.prefix }}{{ .Values.deploymentDB.secretName }}
+                  key: POSTGRES_DB
+          ports:
+            - containerPort: 5432
+              protocol: 'TCP'
+          readinessProbe:
+            tcpSocket:
+              port: 5432
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 5432
+            initialDelaySeconds: 1
+            periodSeconds: 10
+          securityContext:
+            runAsUser: 999
+            runAsGroup: 999
+          lifecycle:
+            preStop:
+              exec:
+                command: ['sleep', '3']
+          volumeMounts:
+            - name: {{ .Values.prefix }}{{ .Values.pvcDB.name }}
+              mountPath: /data
+
+      volumes:
+        - name: {{ .Values.prefix }}{{ .Values.pvcDB.name }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.prefix }}{{ .Values.pvcDB.name }}

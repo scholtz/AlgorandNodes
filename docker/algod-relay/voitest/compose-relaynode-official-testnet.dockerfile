@@ -14,7 +14,7 @@ COPY voitest/genesis.json /app/data/genesis.json
 ENV PATH=/node:$PATH
 WORKDIR /app
 COPY . . 
-RUN userdel -rf ubuntu && useradd -ms /bin/bash -u 1000 algo
+RUN useradd -ms /bin/bash -u 1000 algo
 RUN chown algo:algo /app -R
 RUN chown algo:algo /node -R
 RUN chmod 0700 /app/health.sh
