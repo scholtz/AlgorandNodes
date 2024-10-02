@@ -181,6 +181,25 @@ if [ $error_code_int -ne 0 ]; then
 	exit 1;
 fi
 
+
+cd /home/scholtz/AlgorandKMDServer/docker/aramidmain
+echo "AlgorandKMDServer/docker/aramidmain"
+
+f1base="compose-algorand-participation-aramidmain-extended-${base}.sh"
+f1="compose-algorand-participation-aramidmain-extended-${produce}.sh"
+if [ ! -f "$f1" ]; then
+    cp $f1base $f1
+    sed -i "s~$base~$produce~g" $f1
+fi
+
+echo "Processing ${f1}"
+bash $f1 || error_code=$?
+error_code_int=$(($error_code + 0))
+if [ $error_code_int -ne 0 ]; then
+    echo "$f1 failed";
+	exit 1;
+fi
+
 cd /home/scholtz/AlgorandKMDServer/
 
 git add .
