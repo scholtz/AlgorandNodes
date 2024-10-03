@@ -376,7 +376,7 @@ sed -i "s~$base~$produce~g" $f1
 f1=values.yaml
 sed -i "s~$base~$produce~g" $f1
 
-cd cd /home/scholtz/AlgorandNodes/helm/
+cd /home/scholtz/AlgorandNodes/helm/
 
 helm package aramid-relay/
 helm repo index --url https://scholtz.github.io/AlgorandNodes/helm/ .

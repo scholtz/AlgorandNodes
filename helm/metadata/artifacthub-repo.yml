@@ -11,5 +11,7 @@
 #
 repositoryID: biatec-repo
 owners: # (optional, used to claim repository ownership)
+  - name: Scholtz & Co
+    email: scholtzandcojsa@gmail.com
   - name: Ludovit Scholtz
     email: ludko2@gmail.com
