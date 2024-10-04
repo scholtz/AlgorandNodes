@@ -1,84 +1,124 @@
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.prefix }}{{ .Values.deploymentDB.name }}
+  name: {{ .Values.prefix }}{{ .Values.deploymentConduit.name }}
 spec:
   replicas: 1
   strategy:
     type: Recreate
   selector:
     matchLabels:
-      {{ .Values.deploymentDB.label.key }}: {{ .Values.prefix }}{{ .Values.deploymentDB.label.value }}
+      {{ .Values.deploymentConduit.label.key }}: {{ .Values.prefix }}{{ .Values.deploymentConduit.label.value }}
   template:
     metadata:
       labels:
-        {{ .Values.deploymentDB.label.key }}: {{ .Values.prefix }}{{ .Values.deploymentDB.label.value }}
+        {{ .Values.deploymentConduit.label.key }}: {{ .Values.prefix }}{{ .Values.deploymentConduit.label.value }}
     spec:
       securityContext:
-        runAsUser: 999
-        runAsGroup: 999
-        fsGroup: 999
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
       terminationGracePeriodSeconds: 3
+      initContainers:
+        - name: wait-for-db-before-starup
+          image: busybox
+          command:
+            [
+              'sh',
+              '-c',
+              'echo -e "Checking for the availability of DB Server deployment"; while ! nc -z {{ .Values.prefix }}aramid-indexer-mainnet-db-service.aramid-indexer-mainnet 5432; do sleep 1; printf "-"; done; echo -e "  >> DB Server has started";',
+            ]
+
       containers:
-        - name: {{ .Values.prefix }}{{ .Values.deploymentDB.label.value }}
-          image: {{ .Values.deploymentDB.image }}:{{ .Values.deploymentDB.tag }}
-          imagePullPolicy: {{ .Values.deploymentDB.imagePullPolicy }}+
-          
-          {{- if (eq .Values.debug true) }}
-          command: ['/bin/bash', '-ec', 'while :; do date; sleep 60 ; done']
-          {{- end }}
-          
+        - name: {{ .Values.prefix }}conduit
+          image: {{ .Values.deploymentConduit.conduit.image }}:{{ .Values.deploymentConduit.conduit.image }}
+          imagePullPolicy: {{ .Values.deploymentConduit.conduit.imagePullPolicy }}
           resources:
             requests:
-              memory: {{ .Values.deploymentDB.resources.requests.memory }}
-              cpu:  {{ .Values.deploymentDB.resources.requests.cpu }}
+              memory: {{ .Values.deploymentConduit.conduit.resources.requests.memory }}
+              cpu:  {{ .Values.deploymentConduit.conduit.resources.requests.cpu }}
             limits:
-              memory: {{ .Values.deploymentDB.resources.limits.memory }}
-              cpu: {{ .Values.deploymentDB.resources.limits.cpu }}
-
-          env:
-            - name: PGDATA
-              value: /data
-            - name: POSTGRES_USER
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.prefix }}{{ .Values.deploymentDB.secretName }}
-                  key: POSTGRES_USER
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.prefix }}{{ .Values.deploymentDB.secretName }}
-                  key: POSTGRES_PASSWORD
-            - name: POSTGRES_DB
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.prefix }}{{ .Values.deploymentDB.secretName }}
-                  key: POSTGRES_DB
-          ports:
-            - containerPort: 5432
-              protocol: 'TCP'
-          readinessProbe:
-            tcpSocket:
-              port: 5432
-            initialDelaySeconds: 5
-            periodSeconds: 10
-          livenessProbe:
-            tcpSocket:
-              port: 5432
-            initialDelaySeconds: 1
-            periodSeconds: 10
+              memory: {{ .Values.deploymentConduit.conduit.resources.limits.memory }}
+              cpu: {{ .Values.deploymentConduit.conduit.resources.limits.cpu }}
+          # command:
+          #   [
+          #     "/bin/bash",
+          #     "-ec",
+          #     "date; sleep 10; date; conduit; sleep 100 ; date; ",
+          #   ]
+          #while ! timeout 1 bash -c "echo > /dev/tcp/localhost/8080";  do sleep 1 && echo -n .; done
+          # command: ['/bin/bash', '-ec', 'while :; do date; sleep 60 ; done']
           securityContext:
-            runAsUser: 999
-            runAsGroup: 999
+            runAsUser: 1000
+            runAsGroup: 1000
+          volumeMounts:
+            - name: {{ .Values.prefix }}conduit-conf
+              mountPath: /app/data/conduit.yml
+              subPath: conduit.yml
+            - name: {{ .Values.prefix }}aramid-conduit-pvc
+              mountPath: /app/data
+        - name: {{ .Values.prefix }}follow-node
+          image: {{ .Values.deploymentConduit.node.image }}:{{ .Values.deploymentConduit.node.image }}
+          imagePullPolicy: {{ .Values.deploymentConduit.node.imagePullPolicy }}
+          # command:
+          #   [
+          #     '/bin/bash',
+          #     '-ec',
+          #     'date; sleep 1 ;cp --update=none config.json data/config.json; cp --update=none genesis/aramidmain/genesis.json data/genesis.json; cp --update=none consensus.json data/consensus.json; date; goal node start; date; while :; do date; sleep 600 ; done ',
+          #   ]
+          # command: ["goal", "node", "start"]
+          # command: ["/bin/bash", "-ec", "while :; do date; sleep 600 ; done"]
           lifecycle:
             preStop:
               exec:
-                command: ['sleep', '3']
+                command: ['goal', 'node', 'stop']
+          resources:
+            requests:
+              memory: {{ .Values.deploymentConduit.node.resources.requests.memory }}
+              cpu:  {{ .Values.deploymentConduit.node.resources.requests.cpu }}
+            limits:
+              memory: {{ .Values.deploymentConduit.node.resources.limits.memory }}
+              cpu: {{ .Values.deploymentConduit.node.resources.limits.cpu }}
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 10
+            timeoutSeconds: 10
+            failureThreshold: 20
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 5
+            terminationGracePeriodSeconds: 3
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
           volumeMounts:
-            - name: {{ .Values.prefix }}{{ .Values.pvcDB.name }}
-              mountPath: /data
+            - name: {{ .Values.prefix }}aramid-follow-node-pvc
+              mountPath: /app/data
+            - name: {{ .Values.prefix }}aramid-indexer-secret
+              subPath: INDEXER_ALGOD_TOKEN
+              mountPath: /app/data/algod.token
+            - name: {{ .Values.prefix }}aramid-indexer-secret
+              subPath: INDEXER_API_TOKEN
+              mountPath: /app/data/algod.admin.token
 
       volumes:
-        - name: {{ .Values.prefix }}{{ .Values.pvcDB.name }}
+        - name: {{ .Values.prefix }}conduit-conf
+          configMap:
+            name: {{ .Values.prefix }}conduit-conf
+        - name: {{ .Values.prefix }}aramid-follow-node-pvc
           persistentVolumeClaim:
-            claimName: {{ .Values.prefix }}{{ .Values.pvcDB.name }}
+            claimName: {{ .Values.prefix }}aramid-follow-node-pvc
+        - name: {{ .Values.prefix }}aramid-conduit-pvc
+          persistentVolumeClaim:
+            claimName: {{ .Values.prefix }}aramid-conduit-pvc
+        - name: {{ .Values.prefix }}aramid-indexer-secret
+          secret:
+            secretName: {{ .Values.prefix }}aramid-indexer-secret

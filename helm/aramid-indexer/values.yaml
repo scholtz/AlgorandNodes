@@ -5,81 +5,89 @@
 replicaCount: 1
 
 debug: false
-prefix: 'i-1-'
+prefix: "i-1-"
+
+secretIndexer:
+  name: indexer-secret
+  algodToken: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+  indexerToken: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+  dbUser: postgres
+  dbPassword: postgresPassword
+  dbName: indexerdb
 
 pvcDB:
-  name: 'indexer-db-aramidmain-pvc'
-  storageClassName: 'linode-block-storage-retain'
-  accessMode: 'ReadWriteOnce'
+  name: "indexer-db-aramidmain-pvc"
+  storageClassName: "linode-block-storage-retain"
+  accessMode: "ReadWriteOnce"
   resources:
     requests:
       storage: 50Gi
 
 deploymentDB:
-  name: 'indexer-aramidmain-db-deployment'
+  name: "indexer-aramidmain-db-deployment"
   label:
-    key: 'app'
-    value: 'indexer-aramidmain-db'
+    key: "app"
+    value: "indexer-aramidmain-db"
   image: postgres
   tag: 14
   imagePullPolicy: IfNotPresent
-  secretName: 'indexer-secret'
+  secretName: "indexer-secret"
   resources:
     requests:
-      memory: '1000Mi'
-      cpu: '1000m'
+      memory: "1000Mi"
+      cpu: "1000m"
     limits:
-      memory: '16000Mi'
-      cpu: '8000m'
+      memory: "16000Mi"
+      cpu: "8000m"
 
 serviceDB:
-  name: 'indexer-aramidmain-db-service'
-  type: 'ClusterIP'
+  name: "indexer-aramidmain-db-service"
+  type: "ClusterIP"
   port:
     service: 5432
     target: 5432
 
-deploymentConduit:
-  name: 'indexer-aramidmain-conduit-deployment'
-  label:
-    key: 'app'
-    value: 'indexer-aramidmain-conduit'
-  conduit:
-    image: 'scholtz2/aramid-conduit'
-    tag: 'v1.7.0-stable'
-    imagePullPolicy: IfNotPresent
-    secretName: 'indexer-secret'
-    resources:
-      requests:
-        memory: '1000Mi'
-        cpu: '1000m'
-      limits:
-        memory: '16000Mi'
-        cpu: '8000m'
-
-
-
-serviceAlgodProtocol:
-  name: 'algod-protocol-service'
-  type: 'ClusterIP'
-  port:
-    service: 18080
-    target: 18080
-
-deployment:
-  name: 'relay-aramidmain-deployment'
-  replicas: 1
-  label:
-    key: 'app'
-    value: 'relay-aramidmain'
-  nodeSelector: ''
-  image: scholtz2/algo-node
-  tag: v3.25.0-stable
-  imagePullPolicy: IfNotPresent
+pvcConduit:
+  name: "aramid-conduit-pvc"
+  storageClassName: "linode-block-storage-retain"
+  accessMode: "ReadWriteOnce"
   resources:
     requests:
-      memory: '1000Mi'
-      cpu: '1000m'
-    limits:
-      memory: '16000Mi'
-      cpu: '8000m'
+      storage: 10Gi
+
+pvcFollowNode:
+  name: "aramid-follow-node-pvc"
+  storageClassName: "linode-block-storage-retain"
+  accessMode: "ReadWriteOnce"
+  resources:
+    requests:
+      storage: 10Gi
+
+deploymentConduit:
+  name: "indexer-aramidmain-conduit-deployment"
+  label:
+    key: "app"
+    value: "indexer-aramidmain-conduit"
+  conduit:
+    image: "scholtz2/aramid-conduit"
+    tag: "v1.7.0-stable"
+    imagePullPolicy: IfNotPresent
+    secretName: "indexer-secret"
+    resources:
+      requests:
+        memory: "1000Mi"
+        cpu: "1000m"
+      limits:
+        memory: "16000Mi"
+        cpu: "8000m"
+  node:
+    image: "scholtz2/aramid-algo-follow-node"
+    tag: "v3.26.0-stable"
+    imagePullPolicy: IfNotPresent
+    resources:
+      requests:
+        memory: "4000Mi"
+        cpu: "2000m"
+      limits:
+        memory: "16000Mi"
+        cpu: "8000m"

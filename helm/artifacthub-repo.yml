@@ -9,7 +9,7 @@
 # when the hash of the last commit in the branch you set up changes. This does
 # NOT apply to ownership claim operations, which are processed immediately.
 #
-repositoryID: biatec-repo
+repositoryID: 0f7169a2-7c11-43aa-914a-8fe0b2d8ca6d
 owners: # (optional, used to claim repository ownership)
   - name: Scholtz & Co
     email: scholtzandcojsa@gmail.com

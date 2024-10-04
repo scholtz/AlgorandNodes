@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.prefix }}{{ .Values.pvcFollowNode.name }}
+spec:
+  storageClassName: {{ .Values.pvcFollowNode.storageClassName }}
+  accessModes:
+    - {{ .Values.pvcFollowNode.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.pvcFollowNode.resources.requests.storage }}
