@@ -200,6 +200,43 @@ if [ $error_code_int -ne 0 ]; then
 	exit 1;
 fi
 
+
+cd /home/scholtz/AlgorandNodes/docker/algod-follow/aramidmain
+echo "AlgorandNodes/docker/algod-follow/aramidmain"
+
+f1base="aramid-follow-node-${base}-stable.sh"
+f1="aramid-follow-node-${produce}-stable.sh"
+if [ ! -f "$f1" ]; then
+    cp $f1base $f1
+    sed -i "s~$base~$produce~g" $f1
+fi
+
+echo "Processing ${f1}"
+bash $f1 || error_code=$?
+error_code_int=$(($error_code + 0))
+if [ $error_code_int -ne 0 ]; then
+    echo "$f1 failed";
+	exit 1;
+fi
+
+cd /home/scholtz/AlgorandNodes/docker/algod-follow/voimain
+echo "AlgorandNodes/docker/algod-follow/voimain"
+
+f1base="voimain-follow-node-${base}-stable.sh"
+f1="voimain-follow-node-${produce}-stable.sh"
+if [ ! -f "$f1" ]; then
+    cp $f1base $f1
+    sed -i "s~$base~$produce~g" $f1
+fi
+
+echo "Processing ${f1}"
+bash $f1 || error_code=$?
+error_code_int=$(($error_code + 0))
+if [ $error_code_int -ne 0 ]; then
+    echo "$f1 failed";
+	exit 1;
+fi
+
 cd /home/scholtz/AlgorandKMDServer/
 
 git add .

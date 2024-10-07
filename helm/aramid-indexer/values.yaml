@@ -7,13 +7,18 @@ replicaCount: 1
 debug: false
 prefix: "i-1-"
 
+db:
+  user: dbuser
+  password: postgresPassword
+  dbName: indexerdb
+
 secretIndexer:
   name: indexer-secret
   algodToken: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
   indexerToken: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-  dbUser: postgres
-  dbPassword: postgresPassword
-  dbName: indexerdb
+
+secretConduit:
+  name: conduit-secret
 
 pvcDB:
   name: "indexer-db-aramidmain-pvc"
@@ -34,8 +39,8 @@ deploymentDB:
   secretName: "indexer-secret"
   resources:
     requests:
-      memory: "1000Mi"
-      cpu: "1000m"
+      memory: "100Mi"
+      cpu: "100m"
     limits:
       memory: "16000Mi"
       cpu: "8000m"
@@ -75,8 +80,8 @@ deploymentConduit:
     secretName: "indexer-secret"
     resources:
       requests:
-        memory: "1000Mi"
-        cpu: "1000m"
+        memory: "100Mi"
+        cpu: "100m"
       limits:
         memory: "16000Mi"
         cpu: "8000m"
@@ -86,8 +91,8 @@ deploymentConduit:
     imagePullPolicy: IfNotPresent
     resources:
       requests:
-        memory: "4000Mi"
-        cpu: "2000m"
+        memory: "100Mi"
+        cpu: "100m"
       limits:
         memory: "16000Mi"
         cpu: "8000m"

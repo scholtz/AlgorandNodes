@@ -38,7 +38,7 @@ spec:
 
           env:
             - name: PGDATA
-              value: /data
+              value: /data/pgdata
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
