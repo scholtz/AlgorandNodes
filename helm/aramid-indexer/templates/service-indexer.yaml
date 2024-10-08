@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.prefix }}{{ .Values.serviceIndexer.name }}
+spec:
+  type: {{ .Values.serviceIndexer.type }}
+  selector:
+    {{ .Values.deploymentIndexer.label2.key }}: {{ .Values.deploymentIndexer.label2.value }}
+  ports:
+    - name: algod-port
+      protocol: TCP
+      appProtocol: http
+      port: {{ .Values.serviceIndexer.port.service }}
+      {{- if and (or (eq .Values.serviceIndexer.type "NodePort") (eq .Values.serviceIndexer.type "LoadBalancer")) (not (empty .Values.serviceIndexer.port.node)) }}
+      nodePort: {{ .Values.serviceIndexer.port.node }}
+      {{- end }}
+      targetPort: {{ .Values.serviceIndexer.port.target }}

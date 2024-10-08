@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.prefix }}{{ .Values.serviceFollowerNode.name }}
+spec:
+  type: {{ .Values.serviceFollowerNode.type }}
+  selector:
+    {{ .Values.deploymentFollowerNode.label.key }}: {{ .Values.prefix }}{{ .Values.deploymentFollowerNode.label.value }}
+  ports:
+    - name: algod-port
+      protocol: TCP
+      appProtocol: http
+      port: {{ .Values.serviceFollowerNode.port.service }}
+      {{- if and (or (eq .Values.serviceFollowerNode.type "NodePort") (eq .Values.serviceFollowerNode.type "LoadBalancer")) (not (empty .Values.serviceFollowerNode.port.node)) }}
+      nodePort: {{ .Values.serviceFollowerNode.port.node }}
+      {{- end }}
+      targetPort: {{ .Values.serviceFollowerNode.port.target }}

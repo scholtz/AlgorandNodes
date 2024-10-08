@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.prefix }}{{ .Values.deploymentIndexer.name }}
+spec:
+  replicas: {{ .Values.deploymentIndexer.replicas }}
+  selector:
+    matchLabels:
+      {{ .Values.deploymentIndexer.label.key }}: {{ .Values.prefix }}{{ .Values.deploymentIndexer.label.value }}
+  template:
+    metadata:
+      labels:
+        {{ .Values.deploymentIndexer.label.key }}: {{ .Values.prefix }}{{ .Values.deploymentIndexer.label.value }}
+        {{ .Values.deploymentIndexer.label2.key }}: {{ .Values.deploymentIndexer.label2.value }}
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      terminationGracePeriodSeconds: 3
+      initContainers:
+        - name: wait-for-db-before-starup
+          image: busybox
+          command:
+            [
+              'sh',
+              '-c',
+              'echo -e "Checking for the availability of DB Server deployment"; while ! nc -z {{ .Values.prefix }}{{ .Values.serviceDB.name }} 5432; do sleep 1; printf "-"; done; echo -e "  >> DB Server has started";',
+            ]
+
+      containers:
+        - name: {{ .Values.prefix }}indexer
+          image: {{ .Values.deploymentIndexer.image }}:{{ .Values.deploymentIndexer.tag }}
+          imagePullPolicy: {{ .Values.deploymentIndexer.imagePullPolicy }}
+          # command: ['/bin/bash', '-ec', 'while :; do date; sleep 60 ; done']
+          #command: ['/bin/bash', '-c', 'algorand-indexer daemon']
+          # command: [
+          #     '/bin/bash',
+          #     '-ec',
+          #     'date;
+          #     cp -f /app/genesis/aramidmain/consensus.json /app/consensus.json
+          #     algorand-indexer daemon',
+          #   ]
+
+          ports:
+            - containerPort: 8980
+              protocol: TCP
+          readinessProbe:
+            tcpSocket:
+              port: 8980
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 2
+          livenessProbe:
+            tcpSocket:
+              port: 8980
+            initialDelaySeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 2
+            terminationGracePeriodSeconds: 1
+          env:
+            - name: INDEXER_POSTGRES_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.prefix }}{{ .Values.secretIndexer.name }}
+                  key: INDEXER_POSTGRES_CONNECTION_STRING
+            - name: INDEXER_ALGOD_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.prefix }}{{ .Values.secretIndexer.name }}
+                  key: INDEXER_ALGOD_TOKEN
+            - name: INDEXER_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.prefix }}{{ .Values.secretIndexer.name }}
+                  key: INDEXER_API_TOKEN
+            - name: INDEXER_GENESIS
+              value: '/app/genesis/aramidmain/genesis.json'
+            - name: INDEXER_DEV_MODE
+              value: '0'
+            - name: INDEXER_METRICS_MODE
+              value: '1'
+            - name: INDEXER_ENABLE_ALL_PARAMETERS
+              value: '1'
+            - name: INDEXER_DATA
+              value: '/app/data'
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000

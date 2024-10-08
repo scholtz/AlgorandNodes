@@ -27,20 +27,19 @@ spec:
             [
               'sh',
               '-c',
-              'echo -e "Checking for the availability of DB Server deployment"; while ! nc -z {{ .Values.prefix }}{{ .Values.serviceDB.name }} 5432; do sleep 1; printf "-"; done; echo -e "  >> DB Server has started";',
+              'echo -e "Checking for the availability of Follower Node deployment at {{ .Values.prefix }}{{ .Values.serviceFollowerNode.name }}"; while ! nc -z {{ .Values.prefix }}{{ .Values.serviceFollowerNode.name }} 8080; do sleep 1; printf "-"; done; echo -e "  >> Follower node has started";',
             ]
-
       containers:
         - name: {{ .Values.prefix }}conduit
-          image: {{ .Values.deploymentConduit.conduit.image }}:{{ .Values.deploymentConduit.conduit.tag }}
-          imagePullPolicy: {{ .Values.deploymentConduit.conduit.imagePullPolicy }}
+          image: {{ .Values.deploymentConduit.image }}:{{ .Values.deploymentConduit.tag }}
+          imagePullPolicy: {{ .Values.deploymentConduit.imagePullPolicy }}
           resources:
             requests:
-              memory: {{ .Values.deploymentConduit.conduit.resources.requests.memory }}
-              cpu:  {{ .Values.deploymentConduit.conduit.resources.requests.cpu }}
+              memory: {{ .Values.deploymentConduit.resources.requests.memory }}
+              cpu:  {{ .Values.deploymentConduit.resources.requests.cpu }}
             limits:
-              memory: {{ .Values.deploymentConduit.conduit.resources.limits.memory }}
-              cpu: {{ .Values.deploymentConduit.conduit.resources.limits.cpu }}
+              memory: {{ .Values.deploymentConduit.resources.limits.memory }}
+              cpu: {{ .Values.deploymentConduit.resources.limits.cpu }}
           # command:
           #   [
           #     "/bin/bash",
@@ -58,67 +57,11 @@ spec:
               subPath: conduit.yml
             - name: {{ .Values.prefix }}aramid-conduit-pvc
               mountPath: /app/data
-        - name: {{ .Values.prefix }}follow-node
-          image: {{ .Values.deploymentConduit.node.image }}:{{ .Values.deploymentConduit.node.tag }}
-          imagePullPolicy: {{ .Values.deploymentConduit.node.imagePullPolicy }}
-          # command:
-          #   [
-          #     '/bin/bash',
-          #     '-ec',
-          #     'date; sleep 1 ;cp --update=none config.json data/config.json; cp --update=none genesis/aramidmain/genesis.json data/genesis.json; cp --update=none consensus.json data/consensus.json; date; goal node start; date; while :; do date; sleep 600 ; done ',
-          #   ]
-          # command: ["goal", "node", "start"]
-          # command: ["/bin/bash", "-ec", "while :; do date; sleep 600 ; done"]
-          lifecycle:
-            preStop:
-              exec:
-                command: ['goal', 'node', 'stop']
-          resources:
-            requests:
-              memory: {{ .Values.deploymentConduit.node.resources.requests.memory }}
-              cpu:  {{ .Values.deploymentConduit.node.resources.requests.cpu }}
-            limits:
-              memory: {{ .Values.deploymentConduit.node.resources.limits.memory }}
-              cpu: {{ .Values.deploymentConduit.node.resources.limits.cpu }}
-          ports:
-            - containerPort: 8080
-              protocol: TCP
-          readinessProbe:
-            tcpSocket:
-              port: 8080
-            initialDelaySeconds: 10
-            timeoutSeconds: 10
-            failureThreshold: 20
-          livenessProbe:
-            tcpSocket:
-              port: 8080
-            initialDelaySeconds: 20
-            timeoutSeconds: 5
-            failureThreshold: 5
-            terminationGracePeriodSeconds: 3
-          securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
-          volumeMounts:
-            - name: {{ .Values.prefix }}aramid-follow-node-pvc
-              mountPath: /app/data
-            - name: {{ .Values.prefix }}{{ .Values.secretIndexer.name }}
-              subPath: INDEXER_ALGOD_TOKEN
-              mountPath: /app/data/algod.token
-            - name: {{ .Values.prefix }}{{ .Values.secretIndexer.name }}
-              subPath: INDEXER_API_TOKEN
-              mountPath: /app/data/algod.admin.token
 
       volumes:
         - name: {{ .Values.prefix }}{{ .Values.secretConduit.name }}
           secret:
             secretName: {{ .Values.prefix }}{{ .Values.secretConduit.name }}
-        - name: {{ .Values.prefix }}{{ .Values.secretIndexer.name }}
-          secret:
-            secretName: {{ .Values.prefix }}{{ .Values.secretIndexer.name }}
-        - name: {{ .Values.prefix }}aramid-follow-node-pvc
-          persistentVolumeClaim:
-            claimName: {{ .Values.prefix }}aramid-follow-node-pvc
         - name: {{ .Values.prefix }}aramid-conduit-pvc
           persistentVolumeClaim:
             claimName: {{ .Values.prefix }}aramid-conduit-pvc

@@ -52,6 +52,20 @@ serviceDB:
     service: 5432
     target: 5432
 
+serviceFollowerNode:
+  name: "indexer-aramidmain-follower-node-service"
+  type: "ClusterIP"
+  port:
+    service: 8080
+    target: 8080
+
+serviceIndexer:
+  name: "indexer-aramidmain-indexer-service"
+  type: "ClusterIP"
+  port:
+    service: 8980
+    target: 8980
+
 pvcConduit:
   name: "aramid-conduit-pvc"
   storageClassName: "linode-block-storage-retain"
@@ -68,31 +82,64 @@ pvcFollowNode:
     requests:
       storage: 10Gi
 
+deploymentFollowerNode:
+  name: "indexer-aramidmain-follower-node-deployment"
+  label:
+    key: "app"
+    value: "indexer-aramidmain-follower-node"
+  image: "scholtz2/aramid-algo-follow-node"
+  tag: "v3.26.0-stable"
+  imagePullPolicy: Always
+  resources:
+    requests:
+      memory: "100Mi"
+      cpu: "100m"
+    limits:
+      memory: "6000Mi"
+      cpu: "4000m"
+
+
 deploymentConduit:
   name: "indexer-aramidmain-conduit-deployment"
   label:
     key: "app"
     value: "indexer-aramidmain-conduit"
-  conduit:
-    image: "scholtz2/aramid-conduit"
-    tag: "v1.7.0-stable"
-    imagePullPolicy: IfNotPresent
-    secretName: "indexer-secret"
-    resources:
-      requests:
-        memory: "100Mi"
-        cpu: "100m"
-      limits:
-        memory: "16000Mi"
-        cpu: "8000m"
-  node:
-    image: "scholtz2/aramid-algo-follow-node"
-    tag: "v3.26.0-stable"
-    imagePullPolicy: IfNotPresent
-    resources:
-      requests:
-        memory: "100Mi"
-        cpu: "100m"
-      limits:
-        memory: "16000Mi"
-        cpu: "8000m"
+  image: "scholtz2/aramid-conduit"
+  tag: "v1.7.0-stable"
+  imagePullPolicy: IfNotPresent
+  secretName: "indexer-secret"
+  resources:
+    requests:
+      memory: "100Mi"
+      cpu: "100m"
+    limits:
+      memory: "6000Mi"
+      cpu: "4000m"
+
+deploymentIndexer:
+  name: "indexer-aramidmain-indexer-deployment"
+  replicas: 2
+  label:
+    key: "appId"
+    value: "indexer-aramidmain-indexer"
+  label2:
+    key: "app"
+    value: "indexer-aramidmain"
+  image: "scholtz2/aramid-indexer"
+  tag: "v3.5.0-stable"
+  imagePullPolicy: IfNotPresent
+  secretName: "indexer-secret"
+  resources:
+    requests:
+      memory: "100Mi"
+      cpu: "100m"
+    limits:
+      memory: "3000Mi"
+      cpu: "3000m"
+
+ingress:
+  enabled: true
+  name: "indexer-aramidmain-ingress"
+  host: ""
+  #host: "aramidmain-indexer.us.biatec.io"
+  clusterIssuer: "letsencrypt-prod"

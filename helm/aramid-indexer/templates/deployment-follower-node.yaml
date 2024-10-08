@@ -1,0 +1,90 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.prefix }}{{ .Values.deploymentFollowerNode.name }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{ .Values.deploymentFollowerNode.label.key }}: {{ .Values.prefix }}{{ .Values.deploymentFollowerNode.label.value }}
+  template:
+    metadata:
+      labels:
+        {{ .Values.deploymentFollowerNode.label.key }}: {{ .Values.prefix }}{{ .Values.deploymentFollowerNode.label.value }}
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      terminationGracePeriodSeconds: 3
+      initContainers:
+        - name: wait-for-db-before-starup
+          image: busybox
+          command:
+            [
+              'sh',
+              '-c',
+              'echo -e "Checking for the availability of DB Server deployment"; while ! nc -z {{ .Values.prefix }}{{ .Values.serviceDB.name }} 5432; do sleep 1; printf "-"; done; echo -e "  >> DB Server has started";',
+            ]
+
+      containers:
+        - name: {{ .Values.prefix }}follow-node
+          image: {{ .Values.deploymentFollowerNode.image }}:{{ .Values.deploymentFollowerNode.tag }}
+          imagePullPolicy: {{ .Values.deploymentFollowerNode.imagePullPolicy }}
+          # command:
+          #   [
+          #     '/bin/bash',
+          #     '-ec',
+          #     'date; sleep 1 ;cp --update=none config.json data/config.json; cp --update=none genesis/aramidmain/genesis.json data/genesis.json; cp --update=none consensus.json data/consensus.json; date; goal node start; date; while :; do date; sleep 600 ; done ',
+          #   ]
+          # command: ["goal", "node", "start"]
+          # command: ["/bin/bash", "-ec", "while :; do date; sleep 600 ; done"]
+          lifecycle:
+            preStop:
+              exec:
+                command: ['goal', 'node', 'stop']
+          resources:
+            requests:
+              memory: {{ .Values.deploymentFollowerNode.resources.requests.memory }}
+              cpu:  {{ .Values.deploymentFollowerNode.resources.requests.cpu }}
+            limits:
+              memory: {{ .Values.deploymentFollowerNode.resources.limits.memory }}
+              cpu: {{ .Values.deploymentFollowerNode.resources.limits.cpu }}
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 10
+            timeoutSeconds: 10
+            failureThreshold: 20
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 5
+            terminationGracePeriodSeconds: 3
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+          volumeMounts:
+            - name: {{ .Values.prefix }}aramid-follow-node-pvc
+              mountPath: /app/data
+            - name: {{ .Values.prefix }}{{ .Values.secretIndexer.name }}
+              subPath: INDEXER_ALGOD_TOKEN
+              mountPath: /app/data/algod.token
+            - name: {{ .Values.prefix }}{{ .Values.secretIndexer.name }}
+              subPath: INDEXER_API_TOKEN
+              mountPath: /app/data/algod.admin.token
+      volumes:
+        - name: {{ .Values.prefix }}{{ .Values.secretIndexer.name }}
+          secret:
+            secretName: {{ .Values.prefix }}{{ .Values.secretIndexer.name }}
+        - name: {{ .Values.prefix }}aramid-follow-node-pvc
+          persistentVolumeClaim:
+            claimName: {{ .Values.prefix }}aramid-follow-node-pvc
