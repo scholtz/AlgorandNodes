@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cp --update=none config.json data/config.json; 
+cp -n config.json data/config.json; 
 cp -f genesis/aramidmain/genesis.json data/genesis.json; 
 cp -f consensus.json data/consensus.json; 
 date; 

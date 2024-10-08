@@ -1,0 +1,60 @@
+# Default values for aramid-participation.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+debug: false
+prefix: 'p-1-'
+
+pvcParticipationNode:
+  name: "aramidmain-participation-node-pvc"
+  storageClassName: "linode-block-storage-retain"
+  accessMode: "ReadWriteOnce"
+  resources:
+    requests:
+      storage: 20Gi
+
+service18080:
+  name: 'aramidmain-18080-service'
+  type: 'ClusterIP'
+  port:
+    service: 18080
+    target: 18080
+
+service18888:
+  name: 'aramidmain-18888-service'
+  type: 'ClusterIP'
+  port:
+    service: 18888
+    target: 18888
+
+service28081:
+  name: 'aramidmain-28081-service'
+  type: 'ClusterIP'
+  port:
+    service: 28081
+    target: 28081
+
+ingressParticipationNode:
+  name: "aramidmain-participation-node-ingress"
+  host: ""
+  metadata:
+    annotations:
+      clusterIssuer: "letsencrypt-prod"
+      timeout: 120
+
+
+deploymentParticipationNode:
+  name: "aramidmain-participation-node-deployment"
+  label:
+    key: 'app'
+    value: 'aramidmain-participation-node'
+  image: scholtz2/algorand-participation-aramidmain-extended
+  tag: 3.26.0-stable
+  imagePullPolicy: Always
+  resources:
+    requests:
+      memory: '100Mi'
+      cpu: '100m'
+    limits:
+      memory: '4000Mi'
+      cpu: '4000m'

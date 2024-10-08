@@ -1,12 +1,10 @@
 {
 	"Version": 22,
-	"Archival": true,
+    "Archival": false,
+	"EndpointAddress": "0.0.0.0:18080",
+    "EnableCatchupFromArchiveServers": true,
 	"EnableMetricReporting": false,
 	"EnableLedgerService": true,
 	"EnableBlockService": true,
-	"DNSSecurityFlags": 0,
-    "DNSBootstrapID": "aramidmain.a-wallet.net",
-	"EndpointAddress": "0.0.0.0:18080",
-    "FallbackDNSResolverAddress": "aramidmain.a-wallet.net",
-    "EnableCatchupFromArchiveServers": true
+    "DNSBootstrapID": "aramidmain.a-wallet.net"
 }
