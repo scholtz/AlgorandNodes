@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.prefix }}{{ .Values.deploymentParticipationNode.name }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{ .Values.deploymentParticipationNode.label.key }}: {{ .Values.prefix }}{{ .Values.deploymentParticipationNode.label.value }}
+  template:
+    metadata:
+      labels:
+        {{ .Values.deploymentParticipationNode.label.key }}: {{ .Values.prefix }}{{ .Values.deploymentParticipationNode.label.value }}
+    spec:
+      terminationGracePeriodSeconds: 3
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+        runAsGroup: 1000
+      containers:
+        - name: {{ .Values.prefix }}{{ .Values.deploymentParticipationNode.label.value }}
+          image: {{ .Values.deploymentParticipationNode.image }}:{{ .Values.deploymentParticipationNode.tag }}
+          imagePullPolicy: {{ .Values.deploymentParticipationNode.imagePullPolicy }}
+          resources:
+            requests:
+              memory: '{{ .Values.deploymentParticipationNode.resources.requests.memory }}'
+              cpu: '{{ .Values.deploymentParticipationNode.resources.requests.cpu }}'
+            limits:
+              memory: '{{ .Values.deploymentParticipationNode.resources.limits.memory }}'
+              cpu: '{{ .Values.deploymentParticipationNode.resources.limits.cpu }}'
+          #command: ["/bin/sh", "-ec", "while :; do date; sleep 60 ; done"]
+          command: ['/bin/bash', '/app/run-participation-voimain.sh']
+          ports:
+            - containerPort: 28081
+              protocol: TCP
+            - containerPort: 18888
+              protocol: TCP
+            - containerPort: 18080
+              protocol: TCP
+
+          startupProbe:
+            exec:
+              command:
+                - /bin/bash
+                - /app/health.sh
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 1000
+          readinessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - /app/health.sh
+            initialDelaySeconds: 10
+            timeoutSeconds: 10
+            failureThreshold: 100
+          livenessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - /app/health.sh
+            initialDelaySeconds: 10
+            timeoutSeconds: 10
+            failureThreshold: 6
+            terminationGracePeriodSeconds: 60
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+          volumeMounts:
+            - name: {{ .Values.prefix }}{{ .Values.pvcParticipationNode.name }}
+              mountPath: /app/data
+      volumes:
+        - name: {{ .Values.prefix }}{{ .Values.pvcParticipationNode.name }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.prefix }}{{ .Values.pvcParticipationNode.name }}
