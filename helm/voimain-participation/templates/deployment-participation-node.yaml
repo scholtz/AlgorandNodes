@@ -14,6 +14,9 @@ spec:
       labels:
         {{ .Values.deploymentParticipationNode.label.key }}: {{ .Values.prefix }}{{ .Values.deploymentParticipationNode.label.value }}
     spec:
+      {{- if .Values.nodeName }}
+      nodeName: {{ .Values.nodeName }}
+      {{- end }}
       terminationGracePeriodSeconds: 3
       securityContext:
         fsGroup: 1000

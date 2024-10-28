@@ -5,6 +5,8 @@
 debug: false
 prefix: "p-1-"
 
+nodeName: ""
+
 pvcParticipationNode:
   name: "voimain-participation-node-pvc"
   storageClassName: "linode-block-storage-retain"
@@ -12,6 +14,11 @@ pvcParticipationNode:
   resources:
     requests:
       storage: 20Gi
+
+pvParticipationNode:
+  name: "voimain-participation-node-pv"
+  hostPath: ""
+
 
 service18080:
   name: "voimain-18080-service"

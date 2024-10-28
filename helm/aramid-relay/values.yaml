@@ -36,7 +36,6 @@ pvcRoot:
     requests:
       storage: 50Gi
 
-
 deployment:
   name: "aramid-relay-mainnet-deployment"
   replicas: 1
