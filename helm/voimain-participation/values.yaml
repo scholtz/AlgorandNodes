@@ -19,7 +19,6 @@ pvParticipationNode:
   name: "voimain-participation-node-pv"
   hostPath: ""
 
-
 service18080:
   name: "voimain-18080-service"
   type: "ClusterIP"

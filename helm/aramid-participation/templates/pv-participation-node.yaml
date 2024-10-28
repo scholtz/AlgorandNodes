@@ -1,0 +1,24 @@
+{{- if .Values.pvParticipationNode.hostPath }}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Values.prefix }}{{ .Values.pvParticipationNode.name }}
+spec:
+  {{- if .Values.nodeName }}
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - {{ .Values.nodeName }}
+  {{- end }}
+  storageClassName: {{ .Values.prefix }}{{ .Values.pvcParticipationNode.storageClassName }}
+  capacity:
+    storage: {{ .Values.pvcParticipationNode.resources.requests.storage }}
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: {{ .Values.pvParticipationNode.hostPath }}
+{{- end }}
