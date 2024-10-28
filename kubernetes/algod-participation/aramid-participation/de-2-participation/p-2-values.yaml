@@ -1,0 +1,14 @@
+
+prefix: "p-2-"
+
+ingressParticipationNode:
+  host: "aramidmain-participation-2.de.biatec.io"
+
+nodeName: "sch-g-02"
+
+pvcParticipationNode:
+  storageClassName: "algo-aramidmainmain-participation-root-1"
+
+pvParticipationNode:
+  name: "aramidmain-participation-node-pv"
+  hostPath: "/mnt/k8s/algo/aramidmain-participation-2"

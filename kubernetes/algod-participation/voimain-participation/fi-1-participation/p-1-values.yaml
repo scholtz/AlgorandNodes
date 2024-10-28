@@ -1,0 +1,14 @@
+
+prefix: "p-1-"
+
+ingressParticipationNode:
+  host: "voimain-participation-1.fi.biatec.io"
+
+nodeName: "s1-k1-fi.a-wallet.net"
+
+pvcParticipationNode:
+  storageClassName: "algo-voimainmain-participation-root-1"
+
+pvParticipationNode:
+  name: "voimain-participation-node-pv"
+  hostPath: "/mnt/k8s/algo/voimain-participation"

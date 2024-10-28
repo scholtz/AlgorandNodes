@@ -1,0 +1,14 @@
+
+prefix: "p-1-"
+
+ingressParticipationNode:
+  host: "voimain-participation-1.de.biatec.io"
+
+nodeName: "sch-g-01"
+
+pvcParticipationNode:
+  storageClassName: "algo-voimainmain-participation-root-1"
+
+pvParticipationNode:
+  name: "voimain-participation-node-pv"
+  hostPath: "/mnt/k8s/algo/voimain-participation"
