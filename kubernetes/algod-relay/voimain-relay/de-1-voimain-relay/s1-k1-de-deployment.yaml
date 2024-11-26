@@ -19,22 +19,22 @@ spec:
     metadata:
       labels:
         app: algo-relay-voimain
-        server: 00-htz-de-fal-001
+        server: 00-htz-de-nue-001
     spec:
       nodeName: sch-g-01
-      hostname: 00-htz-de-fal-001
+      hostname: 00-htz-de-nue-001
       terminationGracePeriodSeconds: 3
       containers:
         - name: algo-relay-voimain
-          image: scholtz2/algorand-relay-voimain:3.26.0-stable
+          image: scholtz2/algorand-relay-voimain:3.27.0-stable
           imagePullPolicy: IfNotPresent
           resources:
             requests:
-              memory: '8000Mi'
-              cpu: '1000m'
+              memory: "8000Mi"
+              cpu: "1000m"
             limits:
-              memory: '16000Mi'
-              cpu: '16000m'
+              memory: "16000Mi"
+              cpu: "16000m"
           command:
             - /bin/bash
             - /app/run.sh
@@ -143,7 +143,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: '/mnt/k8s/algo/voimain/root'
+    path: "/mnt/k8s/algo/voimain/root"
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -164,7 +164,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: '/mnt/k8s/algo/voimain/net'
+    path: "/mnt/k8s/algo/voimain/net"
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -185,7 +185,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: '/mnt/k8s/algo/voimain/catchpoints'
+    path: "/mnt/k8s/algo/voimain/catchpoints"
   nodeAffinity:
     required:
       nodeSelectorTerms:

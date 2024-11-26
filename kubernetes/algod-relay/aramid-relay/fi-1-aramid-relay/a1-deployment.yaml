@@ -56,7 +56,7 @@ spec:
       terminationGracePeriodSeconds: 3
       containers:
         - name: aramid-archival-mainnet-a1
-          image: scholtz2/aramid-algo-node:v3.26.0-stable
+          image: scholtz2/aramid-algo-node:v3.27.0-stable
           imagePullPolicy: Always
           resources:
             requests:
