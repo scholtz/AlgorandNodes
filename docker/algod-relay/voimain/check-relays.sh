@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# mkdir ~/voi-relay-tracking
 # wget https://raw.githubusercontent.com/scholtz/AlgorandNodes/refs/heads/main/docker/algod-relay/voimain/check-relays.sh -O ~/voi-relay-tracking
 # crontab -e
 # 43 * * * * cd ~/voi-relay-tracking && ./check-relays.sh >> out.txt 2>&1
