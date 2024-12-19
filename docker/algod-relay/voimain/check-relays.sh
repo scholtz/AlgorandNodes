@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# wget https://raw.githubusercontent.com/scholtz/AlgorandNodes/refs/heads/main/docker/algod-relay/voimain/check-relays.sh -O ~/voi-relay-tracking
+# crontab -e
+# 43 * * * * cd ~/voi-relay-tracking && ./check-relays.sh >> out.txt 2>&1
+
 # Set the DNS name
 dns_name1="_algobootstrap._tcp.voimain.mainnet-voi.network"
 dns_name2="_archive._tcp.voimain.mainnet-voi.network"
