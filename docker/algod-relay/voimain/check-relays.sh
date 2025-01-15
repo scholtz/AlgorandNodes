@@ -39,6 +39,11 @@ echo "blockchainRound_b36=$blockchainRound_b36"
 # Declare an associative array
 declare -A data
 declare -A times
+current_datetime=$(date --iso-8601=seconds)
+current_date=$(date +%Y-%m-%d)                  # e.g., 2024-11-27
+current_time=$(date +%H-%M-%S)                  # e.g., 15-30-00
+current_year=$(date +%Y)                        # e.g., 2024
+current_month=$(date +%m)                       # e.g., 11
 
 # Process each SRV record without subshell
 while read -r record; do
@@ -108,8 +113,8 @@ NC='\033[0m' # No color
 for key in $(printf "%s\n" "${!data[@]}" | sort); do
     if [[ "${data[$key]}" != "$most_common_value" ]]; then
         echo -e "Key: ${RED}$key${NC}, Value: ${data[$key]}, Time: ${times[$key]}"
-    else
-        echo "Key: $key, Value: ${data[$key]}, Time: ${times[$key]}"
+    # else
+    #     echo "Key: $key, Value: ${data[$key]}, Time: ${times[$key]}"
     fi
 done
 
@@ -123,9 +128,37 @@ IFS=$'\n' sorted_slowest=($(sort -k2 -n <<< "${slowest_results[*]}"))
 unset IFS
 
 # Print the slowest results
-echo -e "\nSlowest Results:"
+#echo -e "\nSlowest Results:"
+json_content="{\"t\":\"${current_datetime}\",\"r\":["
 for result in "${sorted_slowest[@]}"; do
     key=$(echo "$result" | awk '{print $1}')
     time=$(echo "$result" | awk '{print $2}')
-    echo "Key: $key, Time: $time seconds"
+#    echo "Key: $key, Time: $time seconds"
+
+  d=${data[$key]}
+  # Append JSON object to the array
+  json_content+=$(jq -n \
+    --arg node "$(echo "$result" | awk '{print $1}')" \
+    --arg time "$(echo "$result" | awk '{print $2}')" \
+    --arg trimeddata "$(echo ${d:0:4})" \
+    '{
+      n: $node,
+      t: $time,
+      d: $trimeddata
+    }')","
 done
+
+json_content="${json_content%,}]}"
+
+
+
+# Define folder structure and file name
+base_folder="data/$current_year/$current_month"
+file_name="$current_date-$current_time.json"
+file_path="$base_folder/$file_name"
+
+# Create directory structure
+mkdir -p "$base_folder"
+echo "$json_content" | jq > "$file_path"
+gzip $file_path
+echo "$file_path has been compressed."
