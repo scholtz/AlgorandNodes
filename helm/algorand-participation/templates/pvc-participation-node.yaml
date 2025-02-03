@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.prefix }}{{ .Values.pvcParticipationNode.name }}
+spec:
+  {{- if .Values.pvParticipationNode.hostPath }}
+  storageClassName: {{ .Values.prefix }}{{ .Values.pvcParticipationNode.storageClassName }}
+  {{- else }}
+  storageClassName: {{ .Values.pvcParticipationNode.storageClassName }}
+  {{- end }}
+  accessModes:
+    - {{ .Values.pvcParticipationNode.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.pvcParticipationNode.resources.requests.storage }}

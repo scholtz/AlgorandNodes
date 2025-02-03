@@ -1,6 +1,6 @@
 apiVersion: v2
-name: voimain-participation
-description: VOI participation node for voimain-1.0 blockchain.
+name: algorand-participation
+description: Algorand participation node for mainnet-1.0 blockchain.
 
 # A chart can be either an 'application' or a 'library' chart.
 #
