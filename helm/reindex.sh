@@ -1,4 +1,5 @@
 
+helm package algorand-participation/
 helm package aramid-relay/
 helm package aramid-participation/
 helm package voimain-participation/

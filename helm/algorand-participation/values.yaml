@@ -5,43 +5,43 @@
 debug: false
 prefix: "p-1-"
 
-nodeName: ""
+nodeName: "sch-g-04"
 
 pvcParticipationNode:
-  name: "aramidmain-participation-node-pvc"
-  storageClassName: "linode-block-storage-retain"
+  name: "mainnet-participation-node-pvc"
+  storageClassName: "algo-participation-1" #"linode-block-storage-retain"
   accessMode: "ReadWriteOnce"
   resources:
     requests:
       storage: 20Gi
 
 pvParticipationNode:
-  name: "aramidmain-participation-node-pv"
-  hostPath: ""
+  name: "mainnet-participation-node-pv"
+  hostPath: "/mnt/nvme1/algo-participation-1"
 
 service18080:
-  name: "aramidmain-18080-service"
+  name: "mainnet-18080-service"
   type: "ClusterIP"
   port:
     service: 18080
     target: 18080
 
 service18888:
-  name: "aramidmain-18888-service"
+  name: "mainnet-18888-service"
   type: "ClusterIP"
   port:
     service: 18888
     target: 18888
 
 service28081:
-  name: "aramidmain-28081-service"
+  name: "mainnet-28081-service"
   type: "ClusterIP"
   port:
     service: 28081
     target: 28081
 
 ingressParticipationNode:
-  name: "aramidmain-participation-node-ingress"
+  name: "mainnet-participation-node-ingress"
   host: ""
   metadata:
     annotations:
@@ -49,11 +49,11 @@ ingressParticipationNode:
       timeout: 120
 
 deploymentParticipationNode:
-  name: "aramidmain-participation-node-deployment"
+  name: "mainnet-participation-node-deployment"
   label:
     key: "app"
-    value: "aramidmain-participation-node"
-  image: scholtz2/algorand-participation-aramidmain-extended
+    value: "mainnet-participation-node"
+  image: scholtz2/algorand-participation-mainnet-extended
   tag: 4.0.1-stable
   imagePullPolicy: Always
   resources:
@@ -61,5 +61,5 @@ deploymentParticipationNode:
       memory: "100Mi"
       cpu: "100m"
     limits:
-      memory: "4000Mi"
-      cpu: "4000m"
+      memory: "16000Mi"
+      cpu: "8000m"

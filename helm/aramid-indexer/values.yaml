@@ -88,7 +88,7 @@ deploymentFollowerNode:
     key: "app"
     value: "indexer-aramidmain-follower-node"
   image: "scholtz2/aramid-algo-follow-node"
-  tag: "v3.26.0-stable"
+  tag: "v4.0.1-stable"
   imagePullPolicy: Always
   resources:
     requests:

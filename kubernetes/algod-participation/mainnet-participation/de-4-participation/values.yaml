@@ -1,0 +1,17 @@
+# Default values for aramid-participation.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+debug: false
+prefix: "p-1-"
+
+nodeName: "sch-g-04"
+
+pvcParticipationNode:
+  name: "mainnet-participation-node-pvc"
+  storageClassName: "algo-participation-1" 
+
+pvParticipationNode:
+  name: "mainnet-participation-node-pv"
+  hostPath: "/mnt/nvme1/algo-participation-1"
+
