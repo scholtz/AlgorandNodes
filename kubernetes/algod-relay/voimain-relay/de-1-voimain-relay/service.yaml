@@ -24,7 +24,7 @@ metadata:
 spec:
   type: NodePort
   selector:
-    server: 00-htz-de-fal-001
+    server: 00-htz-de-nue-001
   ports:
     - name: algorelay
       protocol: TCP
@@ -41,7 +41,7 @@ metadata:
 spec:
   type: NodePort
   selector:
-    server: 00-htz-de-fal-002
+    server: 00-htz-de-nue-002
   ports:
     - name: algorelay
       protocol: TCP
@@ -58,7 +58,7 @@ metadata:
 spec:
   type: NodePort
   selector:
-    server: 00-htz-de-fal-003
+    server: 00-htz-de-nue-003
   ports:
     - name: algorelay
       protocol: TCP
