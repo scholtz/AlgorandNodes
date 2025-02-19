@@ -24,7 +24,7 @@ spec:
       terminationGracePeriodSeconds: 3
       containers:
         - name: algo-relay-mainnet
-          image: scholtz2/algorand-relay-mainnet:4.0.1-stable
+          image: scholtz2/algorand-relay-mainnet:4.0.2-stable
           imagePullPolicy: IfNotPresent
           resources:
             requests:
