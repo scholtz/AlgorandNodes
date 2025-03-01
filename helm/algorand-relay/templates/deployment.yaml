@@ -1,0 +1,82 @@
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.prefix }}{{ .Values.deployment.name }}
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{ .Values.deployment.label.key }}: {{ .Values.prefix }}{{ .Values.deployment.label.value }}
+  template:
+    metadata:
+      labels:
+        {{ .Values.deployment.label.key }}: {{ .Values.prefix }}{{ .Values.deployment.label.value }}
+    spec:
+      {{- if .Values.deployment.nodeSelector }}
+      nodeName: {{ .Values.deployment.nodeSelector }}
+      {{- end }}
+      terminationGracePeriodSeconds: 3
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+        runAsGroup: 1000
+      containers:
+        - name: aramid-relay-mainnet
+          image: {{ .Values.deployment.image }}:{{ .Values.deployment.tag }}
+          imagePullPolicy: {{ .Values.deployment.imagePullPolicy }}
+          resources:
+            requests:
+              memory: {{ .Values.deployment.resources.requests.memory }}
+              cpu:  {{ .Values.deployment.resources.requests.cpu }}
+            limits:
+              memory: {{ .Values.deployment.resources.limits.memory }}
+              cpu: {{ .Values.deployment.resources.limits.cpu }}
+          {{- if (eq .Values.debug true) }}
+          command: ['/bin/bash', '-ec', 'while :; do date; sleep 60 ; done']
+          {{- end }}
+          {{- if (eq .Values.debug false) }}
+          startupProbe:
+            exec:
+              command:
+                - /bin/bash
+                - /app/health.sh
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 1000
+          readinessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - /app/health.sh
+            initialDelaySeconds: 10
+            timeoutSeconds: 10
+            failureThreshold: 100
+          livenessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - /app/health.sh
+            initialDelaySeconds: 10
+            timeoutSeconds: 10
+            failureThreshold: 6
+            terminationGracePeriodSeconds: 60
+          {{- end }}
+          ports:
+            - containerPort: 14160
+              protocol: TCP
+            - containerPort: 18180
+              protocol: TCP
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+          volumeMounts:
+            - name: {{ .Values.prefix }}{{ .Values.pvcRoot.name }}
+              mountPath: /app/data
+      volumes:
+        - name: {{ .Values.prefix }}{{ .Values.pvcRoot.name }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.prefix }}{{ .Values.pvcRoot.name }}

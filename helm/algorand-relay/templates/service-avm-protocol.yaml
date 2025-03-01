@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.prefix }}{{ .Values.serviceAVMProtocol.name }}
+spec:
+  type: {{ .Values.serviceAVMProtocol.type }}
+  selector:
+    {{ .Values.deployment.label.key }}: {{ .Values.prefix }}{{ .Values.deployment.label.value }}
+  ports:
+    - name: avm-port
+      protocol: TCP
+      appProtocol: http
+      port: {{ .Values.serviceAVMProtocol.port.service }}
+      {{- if and (or (eq .Values.serviceAVMProtocol.type "NodePort") (eq .Values.serviceAVMProtocol.type "LoadBalancer")) (not (empty .Values.serviceAVMProtocol.port.node)) }}
+      nodePort: {{ .Values.serviceAVMProtocol.port.node }}
+      {{- end }}
+      targetPort: {{ .Values.serviceAVMProtocol.port.target }}

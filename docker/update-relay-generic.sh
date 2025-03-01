@@ -426,8 +426,16 @@ sed -i "s~$base~$produce~g" $f1
 f1=values.yaml
 sed -i "s~$base~$produce~g" $f1
 
+cd /home/scholtz/AlgorandNodes/helm/algorand-participation
+f1=Chart.yaml
+sed -i "s~$base~$produce~g" $f1
+f1=values.yaml
+sed -i "s~$base~$produce~g" $f1
+
 cd /home/scholtz/AlgorandNodes/helm/
 
+helm package algorand-relay/
+helm package algorand-participation/
 helm package aramid-relay/
 helm package aramid-participation/
 helm package voimain-participation/

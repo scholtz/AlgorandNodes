@@ -1,0 +1,55 @@
+# Default values for algorand-relay.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: nginx
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ''
+
+debug: false
+prefix: "r-1-"
+
+serviceAVMProtocol:
+  name: 'algorand-avm-protocol-service'
+  type: 'LoadBalancer'
+  port:
+    service: 14160
+    node: 30160
+    target: 14160
+
+serviceAlgodProtocol:
+  name: 'algorand-algod-protocol-service'
+  type: 'ClusterIP'
+  port:
+    service: 18080
+    target: 18080
+
+pvcRoot:
+  name: "algorand-relay-mainnet-root-pvc"
+  storageClassName: "linode-block-storage-retain"
+  accessMode: "ReadWriteOnce"
+  resources:
+    requests:
+      storage: 50Gi
+
+deployment:
+  name: "algorand-relay-mainnet-deployment"
+  replicas: 1
+  label:
+    key: 'app'
+    value: 'algorand-relay-mainnet'
+  nodeSelector: ""
+  image: scholtz2/algorand-relay-mainnet
+  tag: 4.0.2-stable
+  imagePullPolicy: IfNotPresent
+  resources:
+    requests:
+      memory: '1000Mi'
+      cpu: '1000m'
+    limits:
+      memory: '16000Mi'
+      cpu: '8000m'

@@ -54,7 +54,7 @@ deploymentParticipationNode:
     key: "app"
     value: "mainnet-participation-node"
   image: scholtz2/algorand-participation-mainnet-extended
-  tag: 4.0.1-stable
+  tag: 4.0.2-stable
   imagePullPolicy: Always
   resources:
     requests:
