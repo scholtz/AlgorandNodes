@@ -1,0 +1,1 @@
+helm upgrade --install --create-namespace aramid-participation biatec-repo/aramid-participation --values ./p1.yaml --namespace aramid

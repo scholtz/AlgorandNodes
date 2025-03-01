@@ -1,0 +1,17 @@
+pvcParticipationNode:
+  storageClassName: "nfs-fast-retain"
+    
+deploymentParticipationNode:
+  resources:
+    requests:
+      memory: '1000Mi'
+      cpu: '1000m'
+    limits:
+      memory: '16000Mi'
+      cpu: '8000m'
+
+ingressParticipationNode:
+  host: "aramid-participation-1.de-4.a-wallet.net"
+  metadata:
+    annotations:
+      clusterIssuer: "letsencrypt"
