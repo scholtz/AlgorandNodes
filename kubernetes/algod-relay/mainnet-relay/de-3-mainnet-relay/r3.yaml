@@ -1,0 +1,29 @@
+debug: true
+prefix: "r-3-"
+
+nodeName: "sch-g-03"
+
+pvcRoot:
+  storageClassName: "algo-relay-r3-root"
+
+pvRoot:
+  hostPath: /mnt/nvme2/algo/r3
+
+deployment:
+  resources:
+    requests:
+      memory: '8000Mi'
+      cpu: '8000m'
+    limits:
+      memory: '32000Mi'
+      cpu: '16000m'
+
+serviceAVMProtocol:
+  type: 'ClusterIP'
+  # port: 
+  #   node: 4180
+
+serviceMetricsProtocol:
+  type: 'NodePort'
+  port: 
+    node: 9103
