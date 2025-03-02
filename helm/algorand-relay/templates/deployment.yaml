@@ -15,9 +15,6 @@ spec:
     metadata:
       labels:
         {{ .Values.deployment.label.key }}: {{ .Values.prefix }}{{ .Values.deployment.label.value }}
-        {{- if .Values.deployment.label2.key }}
-        {{ .Values.deployment.label2.key }}: {{ .Values.deployment.label2.value }}
-        {{- end }}
     spec:
       {{- if .Values.deployment.nodeSelector }}
       nodeName: {{ .Values.deployment.nodeSelector }}

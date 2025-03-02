@@ -52,10 +52,6 @@ deployment:
   name: "algorand-relay-mainnet-deployment"
   replicas: 1
   label:
-    key: 'app-instance'
-    value: 'algorand-relay-mainnet'
-# label key without the prefix
-  label2:
     key: 'app'
     value: 'algorand-relay-mainnet'
   nodeSelector: ""
