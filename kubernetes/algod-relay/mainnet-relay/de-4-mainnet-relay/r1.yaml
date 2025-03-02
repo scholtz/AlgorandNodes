@@ -19,9 +19,9 @@ deployment:
       cpu: '20000m'
 
 serviceAVMProtocol:
-  type: 'NodePort'
-  port: 
-    node: 4160
+  type: 'ClusterIP'
+#   port: 
+#     node: 4160
 
 serviceMetricsProtocol:
   type: 'NodePort'
