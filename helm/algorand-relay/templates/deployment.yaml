@@ -25,7 +25,7 @@ spec:
         runAsUser: 1000
         runAsGroup: 1000
       containers:
-        - name: aramid-relay-mainnet
+        - name: relay-mainnet
           image: {{ .Values.deployment.image }}:{{ .Values.deployment.tag }}
           imagePullPolicy: {{ .Values.deployment.imagePullPolicy }}
           resources:
@@ -37,6 +37,8 @@ spec:
               cpu: {{ .Values.deployment.resources.limits.cpu }}
           {{- if (eq .Values.debug true) }}
           command: ['/bin/bash', '-ec', 'while :; do date; sleep 60 ; done']
+          {{- else }}
+          command: ['/bin/bash', './run.sh']
           {{- end }}
           {{- if (eq .Values.debug false) }}
           startupProbe:
@@ -66,9 +68,11 @@ spec:
             terminationGracePeriodSeconds: 60
           {{- end }}
           ports:
-            - containerPort: 14160
+            - containerPort: 4160
               protocol: TCP
-            - containerPort: 18180
+            - containerPort: 8180
+              protocol: TCP
+            - containerPort: 9100
               protocol: TCP
           securityContext:
             runAsUser: 1000

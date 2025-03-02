@@ -1,0 +1,29 @@
+debug: false
+prefix: "r-1-"
+
+nodeName: "sch-g-04"
+
+pvcRoot:
+  storageClassName: "algo-relay-r1-root"
+
+pvRoot:
+  hostPath: /mnt/nvme1/algo/r1
+
+deployment:
+  resources:
+    requests:
+      memory: '8000Mi'
+      cpu: '8000m'
+    limits:
+      memory: '40000Mi'
+      cpu: '20000m'
+
+serviceAVMProtocol:
+  type: 'NodePort'
+  port: 
+    node: 4160
+
+serviceMetricsProtocol:
+  type: 'NodePort'
+  port: 
+    node: 9101

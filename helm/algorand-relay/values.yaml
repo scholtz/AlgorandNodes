@@ -17,16 +17,24 @@ serviceAVMProtocol:
   name: 'algorand-avm-protocol-service'
   type: 'LoadBalancer'
   port:
-    service: 14160
+    service: 4160
     node: 30160
-    target: 14160
+    target: 4160
 
 serviceAlgodProtocol:
   name: 'algorand-algod-protocol-service'
   type: 'ClusterIP'
   port:
-    service: 18080
-    target: 18080
+    service: 8080
+    target: 8080
+
+serviceMetricsProtocol:
+  name: 'algorand-metrics-protocol-service'
+  type: 'LoadBalancer'
+  port:
+    service: 9100
+    node: 30100
+    target: 9100
 
 pvcRoot:
   name: "algorand-relay-mainnet-root-pvc"
@@ -35,6 +43,10 @@ pvcRoot:
   resources:
     requests:
       storage: 50Gi
+
+pvRoot:
+  name: "mainnet-relay-node-pv"
+  hostPath: ""
 
 deployment:
   name: "algorand-relay-mainnet-deployment"

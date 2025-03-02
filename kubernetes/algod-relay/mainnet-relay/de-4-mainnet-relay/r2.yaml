@@ -1,0 +1,29 @@
+debug: false
+prefix: "r-2-"
+
+nodeName: "sch-g-04"
+
+pvcRoot:
+  storageClassName: "algo-relay-r2-root"
+
+pvRoot:
+  hostPath: /mnt/nvme2/algo/r2
+
+deployment:
+  resources:
+    requests:
+      memory: '8000Mi'
+      cpu: '8000m'
+    limits:
+      memory: '40000Mi'
+      cpu: '20000m'
+
+serviceAVMProtocol:
+  type: 'NodePort'
+  port: 
+    node: 4170
+
+serviceMetricsProtocol:
+  type: 'NodePort'
+  port: 
+    node: 9102

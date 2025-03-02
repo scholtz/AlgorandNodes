@@ -1,0 +1,24 @@
+{{- if .Values.pvRoot.hostPath }}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Values.prefix }}{{ .Values.pvRoot.name }}
+spec:
+  {{- if .Values.nodeName }}
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - {{ .Values.nodeName }}
+  {{- end }}
+  storageClassName: {{ .Values.prefix }}{{ .Values.pvcRoot.storageClassName }}
+  capacity:
+    storage: {{ .Values.pvcRoot.resources.requests.storage }}
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: {{ .Values.pvRoot.hostPath }}
+{{- end }}

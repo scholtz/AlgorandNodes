@@ -1,0 +1,3 @@
+#helm upgrade --install --create-namespace --values ./r1.yaml --namespace algo-relay-mainnet algorand-relay biatec-repo/algorand-relay
+helm upgrade --install --create-namespace --values ./r1.yaml --namespace algo-relay-mainnet algorand-relay-r1 /home/cicd/AlgorandNodes/helm/algorand-relay
+helm upgrade --install --create-namespace --values ./r2.yaml --namespace algo-relay-mainnet algorand-relay-r2 /home/cicd/AlgorandNodes/helm/algorand-relay
