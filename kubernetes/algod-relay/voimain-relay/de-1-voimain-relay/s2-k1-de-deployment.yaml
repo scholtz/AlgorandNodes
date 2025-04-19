@@ -26,7 +26,7 @@ spec:
       terminationGracePeriodSeconds: 3
       containers:
         - name: algo-relay-voimain
-          image: scholtz2/algorand-relay-voimain:4.0.2-stable
+          image: scholtz2/algorand-relay-voimain:4.0.3-stable
           imagePullPolicy: IfNotPresent
           resources:
             requests:

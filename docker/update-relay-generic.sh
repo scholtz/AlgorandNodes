@@ -247,27 +247,27 @@ if [ $error_code_int -ne 0 ]; then
 	exit 1;
 fi
 
-cd /home/scholtz/AlgorandNodes/docker/algod-participation/sandbox
-echo "docker/algod-participation/sandbox"
+# cd /home/scholtz/AlgorandNodes/docker/algod-participation/sandbox
+# echo "docker/algod-participation/sandbox"
 
-f1=compose-participation-sandbox-night-build.dockerfile
-sed -i "s~$base~$produce~g" $f1
+# f1=compose-participation-sandbox-night-build.dockerfile
+# sed -i "s~$base~$produce~g" $f1
 
 
-f1base="compose-participation-sandbox-${base}-stable.sh"
-f1="compose-participation-sandbox-${produce}-stable.sh"
-if [ ! -f "$f1" ]; then
-    cp $f1base $f1
-    sed -i "s~$base~$produce~g" $f1
-fi
+# f1base="compose-participation-sandbox-${base}-stable.sh"
+# f1="compose-participation-sandbox-${produce}-stable.sh"
+# if [ ! -f "$f1" ]; then
+#     cp $f1base $f1
+#     sed -i "s~$base~$produce~g" $f1
+# fi
 
-echo "Processing ${f1}"
-bash $f1 || error_code=$?
-error_code_int=$(($error_code + 0))
-if [ $error_code_int -ne 0 ]; then
-    echo "$f1 failed";
-	exit 1;
-fi
+# echo "Processing ${f1}"
+# bash $f1 || error_code=$?
+# error_code_int=$(($error_code + 0))
+# if [ $error_code_int -ne 0 ]; then
+#     echo "$f1 failed";
+# 	exit 1;
+# fi
 
 cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/mainnet-relay/fi-1-mainnet-relay
 f1=h2-deployment.yaml
