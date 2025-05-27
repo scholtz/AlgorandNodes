@@ -44,7 +44,7 @@ deployment:
     value: 'aramid-relay-mainnet'
   nodeSelector: ""
   image: scholtz2/aramid-algo-node
-  tag: v4.0.3-stable
+  tag: v4.1.1-stable
   imagePullPolicy: IfNotPresent
   resources:
     requests:
