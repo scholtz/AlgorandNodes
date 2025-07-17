@@ -1,0 +1,15 @@
+prefix: "p-3-"
+
+# ingressParticipationNode:
+#   host: "voimain-participation-2.de.biatec.io"
+
+debug: true
+
+nodeName: "sch-g-04"
+
+pvcParticipationNode:
+  storageClassName: "algo-voimainmain-participation-root-3"
+
+pvParticipationNode:
+  name: "voimain-participation-node-pv"
+  hostPath: "/mnt/nvme1/algo/voimain-participation"
