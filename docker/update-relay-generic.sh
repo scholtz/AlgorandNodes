@@ -21,9 +21,11 @@ if [ "$tag" == "latest" ]; then
 fi
 produce=$tag
 
-cd /home/scholtz/AlgorandNodes/docker
+base=`pwd`
 
-currentFile="/home/scholtz/AlgorandNodes/docker/current-relay-version.txt"
+cd $base
+
+currentFile="$base/current-relay-version.txt"
 base=$(cat "$currentFile")
 
 if [ "$base" == "" ]; then
@@ -41,7 +43,7 @@ if [ "$base" == "$produce" ]; then
 fi
 
 
-cd /home/scholtz/AlgorandNodes/docker
+cd $base
 git pull || error_code=$?
 error_code_int=$(($error_code + 0))
 if [ $error_code_int -ne 0 ]; then
@@ -49,7 +51,7 @@ if [ $error_code_int -ne 0 ]; then
 	exit 1;
 fi
 
-cd /home/scholtz/AlgorandNodes/docker/algod-relay/mainnet
+cd $base/algod-relay/mainnet
 
 f1base="compose-relaynode-official-${base}-stable.sh"
 f1="compose-relaynode-official-${produce}-stable.sh"
@@ -65,7 +67,7 @@ if [ $error_code_int -ne 0 ]; then
 	exit 1;
 fi
 
-cd /home/scholtz/AlgorandNodes/docker/algod-relay/aramidmain
+cd $base/algod-relay/aramidmain
 echo "docker/algod-relay/aramidmain"
 
 f1base="aramid-from-official-${base}-stable.sh"
@@ -83,7 +85,7 @@ if [ $error_code_int -ne 0 ]; then
 	exit 1;
 fi
 
-cd /home/scholtz/AlgorandNodes/docker/algod-relay/voimain
+cd $base/algod-relay/voimain
 echo "docker/algod-relay/voimain"
 f1base="compose-relaynode-official-${base}-stable-voimain.sh"
 f1="compose-relaynode-official-${produce}-stable-voimain.sh"
@@ -100,7 +102,7 @@ if [ $error_code_int -ne 0 ]; then
 	exit 1;
 fi
 
-cd /home/scholtz/AlgorandNodes/docker/algod-relay/testnet
+cd $base/algod-relay/testnet
 
 f1base="compose-relaynode-official-${base}-stable-testnet.sh"
 f1="compose-relaynode-official-${produce}-stable-testnet.sh"
@@ -117,7 +119,7 @@ if [ $error_code_int -ne 0 ]; then
 	exit 1;
 fi
 
-cd /home/scholtz/AlgorandNodes/docker/algod-participation/mainnet
+cd $base/algod-participation/mainnet
 echo "docker/algod-participation/mainnet"
 
 f1base="compose-kmd-official-${base}-stable.sh"
@@ -201,7 +203,7 @@ if [ $error_code_int -ne 0 ]; then
 fi
 
 
-cd /home/scholtz/AlgorandNodes/docker/algod-follow/aramidmain
+cd $base/algod-follow/aramidmain
 echo "AlgorandNodes/docker/algod-follow/aramidmain"
 
 f1base="aramid-follow-node-${base}-stable.sh"
@@ -219,7 +221,7 @@ if [ $error_code_int -ne 0 ]; then
 	exit 1;
 fi
 
-cd /home/scholtz/AlgorandNodes/docker/algod-follow/voimain
+cd $base/algod-follow/voimain
 echo "AlgorandNodes/docker/algod-follow/voimain"
 
 f1base="voimain-follow-node-${base}-stable.sh"
@@ -247,7 +249,7 @@ if [ $error_code_int -ne 0 ]; then
 	exit 1;
 fi
 
-# cd /home/scholtz/AlgorandNodes/docker/algod-participation/sandbox
+# cd $base/algod-participation/sandbox
 # echo "docker/algod-participation/sandbox"
 
 # f1=compose-participation-sandbox-night-build.dockerfile
@@ -442,7 +444,7 @@ helm package voimain-participation/
 helm repo index --url https://scholtz.github.io/AlgorandNodes/helm/ .
 
 ################### FINISH
-cd /home/scholtz/AlgorandNodes/docker
+cd $base
 
 echo $produce > $currentFile
 
