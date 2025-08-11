@@ -76,7 +76,7 @@ spec:
         runAsGroup: 1000
       containers:
         - name: algo-participation-aramidmain
-          image: scholtz2/algorand-participation-aramidmain-extended:4.1.2-stable
+          image: scholtz2/algorand-participation-aramidmain-extended:4.2.1-stable
           imagePullPolicy: Always
           resources:
             requests:

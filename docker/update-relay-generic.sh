@@ -21,9 +21,11 @@ if [ "$tag" == "latest" ]; then
 fi
 produce=$tag
 
+mainDir=~/AlgorandNodes
 baseDir=`pwd`
 baseKMD=~/AlgorandKMDServer
-baseK8S="~/AlgorandNodes/kubernetes"
+baseK8S="$mainDir/kubernetes"
+baseHelm="$mainDir/helm"
 
 cd $baseDir
 
@@ -411,32 +413,32 @@ f1=deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
 ################### HELM CHARTS
-cd /home/scholtz/AlgorandNodes/helm/aramid-relay
+cd $baseHelm/aramid-relay
 f1=Chart.yaml
 sed -i "s~$base~$produce~g" $f1
 f1=values.yaml
 sed -i "s~$base~$produce~g" $f1
 
-cd /home/scholtz/AlgorandNodes/helm/aramid-participation
+cd $baseHelm/aramid-participation
 f1=Chart.yaml
 sed -i "s~$base~$produce~g" $f1
 f1=values.yaml
 sed -i "s~$base~$produce~g" $f1
 
 
-cd /home/scholtz/AlgorandNodes/helm/voimain-participation
+cd $baseHelm/voimain-participation
 f1=Chart.yaml
 sed -i "s~$base~$produce~g" $f1
 f1=values.yaml
 sed -i "s~$base~$produce~g" $f1
 
-cd /home/scholtz/AlgorandNodes/helm/algorand-participation
+cd $baseHelm/algorand-participation
 f1=Chart.yaml
 sed -i "s~$base~$produce~g" $f1
 f1=values.yaml
 sed -i "s~$base~$produce~g" $f1
 
-cd /home/scholtz/AlgorandNodes/helm/
+cd $baseHelm/
 
 helm package algorand-relay/
 helm package algorand-participation/
@@ -450,7 +452,7 @@ cd $baseDir
 
 echo $produce > $currentFile
 
-cd /home/scholtz/AlgorandNodes/
+cd $mainDir
 
 git add .
 git commit -m "cicd update from ${base} to ${produce}"

@@ -54,7 +54,7 @@ deploymentParticipationNode:
     key: "app"
     value: "voimain-participation-node"
   image: scholtz2/algorand-participation-voimain-extended
-  tag: 4.1.2-stable
+  tag: 4.2.1-stable
   imagePullPolicy: Always
   resources:
     requests:
