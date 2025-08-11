@@ -21,11 +21,13 @@ if [ "$tag" == "latest" ]; then
 fi
 produce=$tag
 
-base=`pwd`
+baseDir=`pwd`
+baseKMD=~/AlgorandKMDServer
+baseK8S="~/AlgorandNodes/kubernetes"
 
-cd $base
+cd $baseDir
 
-currentFile="$base/current-relay-version.txt"
+currentFile="$baseDir/current-relay-version.txt"
 base=$(cat "$currentFile")
 
 if [ "$base" == "" ]; then
@@ -43,7 +45,7 @@ if [ "$base" == "$produce" ]; then
 fi
 
 
-cd $base
+cd $baseDir
 git pull || error_code=$?
 error_code_int=$(($error_code + 0))
 if [ $error_code_int -ne 0 ]; then
@@ -51,7 +53,7 @@ if [ $error_code_int -ne 0 ]; then
 	exit 1;
 fi
 
-cd $base/algod-relay/mainnet
+cd $baseDir/algod-relay/mainnet
 
 f1base="compose-relaynode-official-${base}-stable.sh"
 f1="compose-relaynode-official-${produce}-stable.sh"
@@ -67,7 +69,7 @@ if [ $error_code_int -ne 0 ]; then
 	exit 1;
 fi
 
-cd $base/algod-relay/aramidmain
+cd $baseDir/algod-relay/aramidmain
 echo "docker/algod-relay/aramidmain"
 
 f1base="aramid-from-official-${base}-stable.sh"
@@ -85,7 +87,7 @@ if [ $error_code_int -ne 0 ]; then
 	exit 1;
 fi
 
-cd $base/algod-relay/voimain
+cd $baseDir/algod-relay/voimain
 echo "docker/algod-relay/voimain"
 f1base="compose-relaynode-official-${base}-stable-voimain.sh"
 f1="compose-relaynode-official-${produce}-stable-voimain.sh"
@@ -102,7 +104,7 @@ if [ $error_code_int -ne 0 ]; then
 	exit 1;
 fi
 
-cd $base/algod-relay/testnet
+cd $baseDir/algod-relay/testnet
 
 f1base="compose-relaynode-official-${base}-stable-testnet.sh"
 f1="compose-relaynode-official-${produce}-stable-testnet.sh"
@@ -119,7 +121,7 @@ if [ $error_code_int -ne 0 ]; then
 	exit 1;
 fi
 
-cd $base/algod-participation/mainnet
+cd $baseDir/algod-participation/mainnet
 echo "docker/algod-participation/mainnet"
 
 f1base="compose-kmd-official-${base}-stable.sh"
@@ -137,7 +139,7 @@ if [ $error_code_int -ne 0 ]; then
 	exit 1;
 fi
 
-cd /home/scholtz/AlgorandKMDServer/
+cd $baseKMD/
 echo "AlgorandKMDServer"
 
 git pull || error_code=$?
@@ -147,7 +149,7 @@ if [ $error_code_int -ne 0 ]; then
 	exit 1;
 fi
 
-cd /home/scholtz/AlgorandKMDServer/docker/mainnet
+cd $baseKMD/docker/mainnet
 echo "AlgorandKMDServer/docker/mainnet"
 
 f1base="compose-algorand-kmd-mainnet-extended-${base}.sh"
@@ -165,7 +167,7 @@ if [ $error_code_int -ne 0 ]; then
 	exit 1;
 fi
 
-cd /home/scholtz/AlgorandKMDServer/docker/voimain
+cd $baseKMD/docker/voimain
 echo "AlgorandKMDServer/docker/voimain"
 
 f1base="compose-algorand-participation-voimain-extended-${base}.sh"
@@ -184,7 +186,7 @@ if [ $error_code_int -ne 0 ]; then
 fi
 
 
-cd /home/scholtz/AlgorandKMDServer/docker/aramidmain
+cd $baseKMD/docker/aramidmain
 echo "AlgorandKMDServer/docker/aramidmain"
 
 f1base="compose-algorand-participation-aramidmain-extended-${base}.sh"
@@ -203,7 +205,7 @@ if [ $error_code_int -ne 0 ]; then
 fi
 
 
-cd $base/algod-follow/aramidmain
+cd $baseDir/algod-follow/aramidmain
 echo "AlgorandNodes/docker/algod-follow/aramidmain"
 
 f1base="aramid-follow-node-${base}-stable.sh"
@@ -221,7 +223,7 @@ if [ $error_code_int -ne 0 ]; then
 	exit 1;
 fi
 
-cd $base/algod-follow/voimain
+cd $baseDir/algod-follow/voimain
 echo "AlgorandNodes/docker/algod-follow/voimain"
 
 f1base="voimain-follow-node-${base}-stable.sh"
@@ -239,7 +241,7 @@ if [ $error_code_int -ne 0 ]; then
 	exit 1;
 fi
 
-cd /home/scholtz/AlgorandKMDServer/
+cd $baseKMD/
 
 git add .
 git commit -m "cicd update from ${base} to ${produce}"
@@ -249,7 +251,7 @@ if [ $error_code_int -ne 0 ]; then
 	exit 1;
 fi
 
-# cd $base/algod-participation/sandbox
+# cd $baseDir/algod-participation/sandbox
 # echo "docker/algod-participation/sandbox"
 
 # f1=compose-participation-sandbox-night-build.dockerfile
@@ -271,7 +273,7 @@ fi
 # 	exit 1;
 # fi
 
-cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/mainnet-relay/fi-1-mainnet-relay
+cd $baseK8S/algod-relay/mainnet-relay/fi-1-mainnet-relay
 f1=h2-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
@@ -282,7 +284,7 @@ f1=s3-k1-fi-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
 
-cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/mainnet-relay/de-1-mainnet-relay
+cd $baseK8S/algod-relay/mainnet-relay/de-1-mainnet-relay
 f1=g2-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
@@ -292,7 +294,7 @@ sed -i "s~$base~$produce~g" $f1
 f1=g3-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
-cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/mainnet-relay/in-1-mainnet-relay
+cd $baseK8S/algod-relay/mainnet-relay/in-1-mainnet-relay
 f1=h2-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
@@ -302,7 +304,7 @@ sed -i "s~$base~$produce~g" $f1
 f1=h3-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
-cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/mainnet-relay/in-2-mainnet-relay
+cd $baseK8S/algod-relay/mainnet-relay/in-2-mainnet-relay
 f1=h4-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
@@ -312,40 +314,40 @@ sed -i "s~$base~$produce~g" $f1
 f1=h6-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
-# cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/mainnet-relay/jp-1-mainnet-relay
+# cd $baseK8S/algod-relay/mainnet-relay/jp-1-mainnet-relay
 # f1=statefulset.yaml
 # sed -i "s~$base~$produce~g" $f1
 
-cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/sandbox-relay
+cd $baseK8S/algod-relay/sandbox-relay
 f1=sandbox.yaml
 sed -i "s~$base~$produce~g" $f1
 f1=participation-win-minikube.yaml
 sed -i "s~$base~$produce~g" $f1
 
-cd /home/scholtz/AlgorandNodes/kubernetes/algod-participation/mainnet-participation/fi-1-participation
+cd $baseK8S/algod-participation/mainnet-participation/fi-1-participation
 f1=h2-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 f1=kmd-win-minikube.yaml
 sed -i "s~$base~$produce~g" $f1
 
-# cd /home/scholtz/AlgorandNodes/kubernetes/algod-participation/voimain-participation/fi-1-participation
+# cd $baseK8S/algod-participation/voimain-participation/fi-1-participation
 # f1=deployment.yaml
 # sed -i "s~$base~$produce~g" $f1
 
-# cd /home/scholtz/AlgorandNodes/kubernetes/algod-participation/voimain-participation/de-1-participation
+# cd $baseK8S/algod-participation/voimain-participation/de-1-participation
 # f1=deployment.yaml
 # sed -i "s~$base~$produce~g" $f1
 
-# cd /home/scholtz/AlgorandNodes/kubernetes/algod-participation/voimain-participation/linode-generic
+# cd $baseK8S/algod-participation/voimain-participation/linode-generic
 # f1=deployment.yaml
 # sed -i "s~$base~$produce~g" $f1
 
-cd /home/scholtz/AlgorandNodes/kubernetes/algod-participation/mainnet-participation/de-1-participation
+cd $baseK8S/algod-participation/mainnet-participation/de-1-participation
 f1=h2-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
 ################### VOIMAIN
-cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/voimain-relay/de-1-voimain-relay
+cd $baseK8S/algod-relay/voimain-relay/de-1-voimain-relay
 f1=s1-k1-de-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 f1=s2-k1-de-deployment.yaml
@@ -353,21 +355,21 @@ sed -i "s~$base~$produce~g" $f1
 f1=s3-k1-de-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
-cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/voimain-relay/fi-1-voimain-relay
+cd $baseK8S/algod-relay/voimain-relay/fi-1-voimain-relay
 f1=s1-k1-fi-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 f1=s2-k1-fi-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
-cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/voimain-relay/in-1-voimain-relay
+cd $baseK8S/algod-relay/voimain-relay/in-1-voimain-relay
 f1=h1-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
-cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/testnet-relay/de-1-testnet-relay
+cd $baseK8S/algod-relay/testnet-relay/de-1-testnet-relay
 f1=statefulset.yaml
 sed -i "s~$base~$produce~g" $f1
 
-# cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/mainnet-relay/jp-2-mainnet-relay
+# cd $baseK8S/algod-relay/mainnet-relay/jp-2-mainnet-relay
 # f1=h1-deployment.yaml
 # sed -i "s~$base~$produce~g" $f1
 
@@ -376,7 +378,7 @@ sed -i "s~$base~$produce~g" $f1
 
 
 ################### ARAMIDMAIN
-cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/aramid-relay/fi-1-aramid-relay
+cd $baseK8S/algod-relay/aramid-relay/fi-1-aramid-relay
 f1=h1-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 f1=h2-deployment.yaml
@@ -384,7 +386,7 @@ sed -i "s~$base~$produce~g" $f1
 f1=a1-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
-cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/aramid-relay/de-1-aramid-relay
+cd $baseK8S/algod-relay/aramid-relay/de-1-aramid-relay
 f1=h1-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 f1=h2-deployment.yaml
@@ -392,19 +394,19 @@ sed -i "s~$base~$produce~g" $f1
 f1=h3-deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
-cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/aramid-relay/linode-example
+cd $baseK8S/algod-relay/aramid-relay/linode-example
 
 f1=statefulset.yaml
 sed -i "s~$base~$produce~g" $f1
 
-cd /home/scholtz/AlgorandNodes/kubernetes/algod-relay/aramid-relay/aws
+cd $baseK8S/algod-relay/aramid-relay/aws
 f1=deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
-cd /home/scholtz/AlgorandNodes/kubernetes/algod-participation/aramid-participation/de-1-participation
+cd $baseK8S/algod-participation/aramid-participation/de-1-participation
 f1=deployment.yaml
 sed -i "s~$base~$produce~g" $f1
-cd /home/scholtz/AlgorandNodes/kubernetes/algod-participation/aramid-participation/fi-1-participation
+cd $baseK8S/algod-participation/aramid-participation/fi-1-participation
 f1=deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
@@ -444,7 +446,7 @@ helm package voimain-participation/
 helm repo index --url https://scholtz.github.io/AlgorandNodes/helm/ .
 
 ################### FINISH
-cd $base
+cd $baseDir
 
 echo $produce > $currentFile
 
