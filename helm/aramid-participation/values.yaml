@@ -54,7 +54,7 @@ deploymentParticipationNode:
     key: "app"
     value: "aramidmain-participation-node"
   image: scholtz2/algorand-participation-aramidmain-extended
-  tag: 4.2.1-stable
+  tag: 4.3.0-stable
   imagePullPolicy: Always
   resources:
     requests:

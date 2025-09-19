@@ -39,7 +39,7 @@ spec:
       terminationGracePeriodSeconds: 3
       containers:
         - name: algo-kmd-mainnet
-          image: docker.io/scholtz2/algorand-kmd-mainnet:4.2.1-stable
+          image: docker.io/scholtz2/algorand-kmd-mainnet:4.3.0-stable
           imagePullPolicy: Always
 #           resources:
 #            requests:
