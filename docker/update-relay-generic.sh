@@ -438,6 +438,12 @@ sed -i "s~$base~$produce~g" $f1
 f1=values.yaml
 sed -i "s~$base~$produce~g" $f1
 
+cd $baseHelm/algorand-relay
+f1=Chart.yaml
+sed -i "s~$base~$produce~g" $f1
+f1=values.yaml
+sed -i "s~$base~$produce~g" $f1
+
 cd $baseHelm/
 
 helm package algorand-relay/

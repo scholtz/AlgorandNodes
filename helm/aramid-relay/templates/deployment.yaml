@@ -16,7 +16,9 @@ spec:
       labels:
         {{ .Values.deployment.label.key }}: {{ .Values.prefix }}{{ .Values.deployment.label.value }}
     spec:
-      {{- if .Values.deployment.nodeSelector }}
+      {{- if .Values.nodeName }}
+      nodeName: {{ .Values.nodeName }}
+      {{- else if .Values.deployment.nodeSelector }}
       nodeName: {{ .Values.deployment.nodeSelector }}
       {{- end }}
       terminationGracePeriodSeconds: 3

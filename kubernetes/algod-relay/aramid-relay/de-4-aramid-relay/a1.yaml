@@ -1,0 +1,23 @@
+pvcRoot:
+  storageClassName: "a-1-aramid-archival-sc"
+
+prefix: "a-1-"
+
+deployment:
+  resources:
+    requests:
+      memory: "1000Mi"
+      cpu: "1000m"
+    limits:
+      memory: "16000Mi"
+      cpu: "8000m"
+
+serviceAVMProtocol:
+  type: "NodePort"
+  port:
+    node: 14161
+
+pvRoot:
+  hostPath: "/mnt/nvme1/aramid-a-1"
+
+nodeName: "sch-g-04"

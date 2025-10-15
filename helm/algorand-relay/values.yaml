@@ -44,6 +44,8 @@ pvcRoot:
     requests:
       storage: 50Gi
 
+# The best storage is block device using nvme SSD drives
+# If hosted directly on server, use hostPath
 pvRoot:
   name: "mainnet-relay-node-pv"
   hostPath: ""
@@ -63,7 +65,7 @@ deployment:
     value: 'algorand-relay-mainnet'
   nodeSelector: ""
   image: scholtz2/algorand-relay-mainnet
-  tag: 4.0.2-stable
+  tag: 4.3.0-stable
   imagePullPolicy: IfNotPresent
   resources:
     requests:

@@ -8,22 +8,22 @@ image:
   repository: nginx
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ''
+  tag: ""
 
 debug: false
 prefix: "r-1-"
 
 serviceAVMProtocol:
-  name: 'aramid-avm-protocol-service'
-  type: 'LoadBalancer'
+  name: "aramid-avm-protocol-service"
+  type: "LoadBalancer"
   port:
     service: 14160
     node: 30160
     target: 14160
 
 serviceAlgodProtocol:
-  name: 'aramid-algod-protocol-service'
-  type: 'ClusterIP'
+  name: "aramid-algod-protocol-service"
+  type: "ClusterIP"
   port:
     service: 18080
     target: 18080
@@ -36,20 +36,29 @@ pvcRoot:
     requests:
       storage: 50Gi
 
+# Used to set the storage and deployment to specific node. If used with hostPath for example. This has priority over deployment.nodeSelector
+nodeName: ""
+
+# The best storage is block device using nvme SSD drives
+# If hosted directly on server, use hostPath
+pvRoot:
+  name: "aramid-relay-mainnet-root-pv"
+  hostPath: ""
+
 deployment:
   name: "aramid-relay-mainnet-deployment"
   replicas: 1
   label:
-    key: 'app'
-    value: 'aramid-relay-mainnet'
+    key: "app"
+    value: "aramid-relay-mainnet"
   nodeSelector: ""
   image: scholtz2/aramid-algo-node
   tag: v4.3.0-stable
   imagePullPolicy: IfNotPresent
   resources:
     requests:
-      memory: '1000Mi'
-      cpu: '1000m'
+      memory: "1000Mi"
+      cpu: "1000m"
     limits:
-      memory: '16000Mi'
-      cpu: '8000m'
+      memory: "16000Mi"
+      cpu: "8000m"
