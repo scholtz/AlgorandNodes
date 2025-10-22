@@ -1,0 +1,1 @@
+helm upgrade --install --create-namespace aramid-indexer /home/cicd/AlgorandNodes/helm/aramid-indexer --values ./i1.yaml --namespace aramid-indexer

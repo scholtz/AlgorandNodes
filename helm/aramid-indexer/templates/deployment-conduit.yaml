@@ -53,10 +53,10 @@ spec:
             runAsGroup: 1000
           volumeMounts:
             - name: {{ .Values.prefix }}{{ .Values.secretConduit.name }}
-              mountPath: /app/data/conduit.yml
+              mountPath: {{ .Values.deploymentConduit.mountPath }}/conduit.yml
               subPath: conduit.yml
             - name: {{ .Values.prefix }}aramid-conduit-pvc
-              mountPath: /app/data
+              mountPath: {{ .Values.deploymentConduit.mountPath }}
 
       volumes:
         - name: {{ .Values.prefix }}{{ .Values.secretConduit.name }}

@@ -1,0 +1,24 @@
+{{- if .Values.pvDB.hostPath }}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Values.prefix }}{{ .Values.pvDB.name }}
+spec:
+  {{- if .Values.nodeName }}
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - {{ .Values.nodeName }}
+  {{- end }}
+  storageClassName: {{ .Values.pvcDB.storageClassName }}
+  capacity:
+    storage: {{ .Values.pvcDB.resources.requests.storage }}
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: {{ .Values.pvDB.hostPath }}
+{{- end }}

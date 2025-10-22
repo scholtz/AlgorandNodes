@@ -6,9 +6,9 @@ metadata:
   name: {{ .Values.prefix }}{{ .Values.ingress.name }}
   annotations: 
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-    cert-manager.io/cluster-issuer: letsencrypt-prod
+    cert-manager.io/cluster-issuer: {{ .Values.ingress.clusterIssuer }}
 spec:
-  ingressClassName: "nginx"
+  ingressClassName: {{ .Values.ingress.ingressClassName }}
   tls:
   - hosts:
     - {{ .Values.ingress.host }}

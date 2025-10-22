@@ -83,7 +83,7 @@ spec:
             - name: INDEXER_ENABLE_ALL_PARAMETERS
               value: '1'
             - name: INDEXER_DATA
-              value: '/app/data'
+              value: '/data/data'
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000

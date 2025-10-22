@@ -22,14 +22,14 @@ secretConduit:
 
 pvcDB:
   name: "indexer-db-aramidmain-pvc"
-  storageClassName: "linode-block-storage-retain"
+  storageClassName: "i-1-indexer-db-aramidmain-sc"
   accessMode: "ReadWriteOnce"
   resources:
     requests:
       storage: 50Gi
 pvDB:
   name: "aramid-db-aramidmain-pv"
-  hostPath: ""
+  hostPath: "/mnt/nvme1/aramid-indexer/db"
 
 deploymentDB:
   name: "indexer-aramidmain-db-deployment"
@@ -71,7 +71,7 @@ serviceIndexer:
 
 pvcConduit:
   name: "aramid-conduit-pvc"
-  storageClassName: "linode-block-storage-retain"
+  storageClassName: "i-1-aramid-conduit-sc"
   accessMode: "ReadWriteOnce"
   resources:
     requests:
@@ -79,11 +79,11 @@ pvcConduit:
 
 pvConduit:
   name: "aramid-conduit-pv"
-  hostPath: ""
+  hostPath: "/mnt/nvme1/aramid-indexer/conduit"
 
 pvcFollowNode:
   name: "aramid-follow-node-pvc"
-  storageClassName: "linode-block-storage-retain"
+  storageClassName: "i-1-aramid-follow-node-sc"
   accessMode: "ReadWriteOnce"
   resources:
     requests:
@@ -91,7 +91,7 @@ pvcFollowNode:
 
 pvFollowNode:
   name: "aramid-follow-node-pv"
-  hostPath: ""
+  hostPath: "/mnt/nvme1/aramid-indexer/follow"
 
 deploymentFollowerNode:
   name: "indexer-aramidmain-follower-node-deployment"
@@ -152,6 +152,6 @@ deploymentIndexer:
 ingress:
   enabled: true
   name: "indexer-aramidmain-ingress"
-  host: "" # aramidmain-indexer.de-4.biatec.io
+  host: "aramidmain-indexer.de-4.biatec.io"
   clusterIssuer: "letsencrypt"
   ingressClassName: "nginx"
