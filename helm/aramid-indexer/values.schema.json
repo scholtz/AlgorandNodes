@@ -1,0 +1,681 @@
+{
+    "title": "Chart Values",
+    "type": "object",
+    "properties": {
+        "replicaCount": {
+            "type": "number",
+            "description": "Deployment replica count",
+            "default": 1
+        },
+        "debug": {
+            "type": "boolean",
+            "description": "Starts the image in bash mode and turns off the liveness probes",
+            "default": false
+        },
+        "prefix": {
+            "type": "string",
+            "description": "Prefix identifier for the node, deployment, ingress, or other resources",
+            "default": "i-1-"
+        },
+        "db": {
+            "type": "object",
+            "properties": {
+                "user": {
+                    "type": "string",
+                    "description": "Database user",
+                    "default": "dbuser"
+                },
+                "password": {
+                    "type": "string",
+                    "description": "Database password",
+                    "default": "postgresPassword"
+                },
+                "dbName": {
+                    "type": "string",
+                    "description": "Database name",
+                    "default": "indexerdb"
+                }
+            }
+        },
+        "secretIndexer": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the secret",
+                    "default": "indexer-secret"
+                },
+                "algodToken": {
+                    "type": "string",
+                    "description": "Algod token",
+                    "default": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                },
+                "indexerToken": {
+                    "type": "string",
+                    "description": "Indexer token",
+                    "default": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                }
+            }
+        },
+        "secretConduit": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the secret",
+                    "default": "conduit-secret"
+                }
+            }
+        },
+        "pvcDB": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the PVC",
+                    "default": "indexer-db-aramidmain-pvc"
+                },
+                "storageClassName": {
+                    "type": "string",
+                    "description": "Storage class name",
+                    "default": "linode-block-storage-retain"
+                },
+                "accessMode": {
+                    "type": "string",
+                    "description": "Access mode",
+                    "default": "ReadWriteOnce"
+                },
+                "resources": {
+                    "type": "object",
+                    "properties": {
+                        "requests": {
+                            "type": "object",
+                            "properties": {
+                                "storage": {
+                                    "type": "string",
+                                    "description": "Requested storage size",
+                                    "default": "50Gi"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "pvDB": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the PV",
+                    "default": "aramid-db-aramidmain-pv"
+                },
+                "hostPath": {
+                    "type": "string",
+                    "description": "Host path for the PV",
+                    "default": ""
+                }
+            }
+        },
+        "deploymentDB": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the deployment",
+                    "default": "indexer-aramidmain-db-deployment"
+                },
+                "label": {
+                    "type": "object",
+                    "properties": {
+                        "key": {
+                            "type": "string",
+                            "description": "Label key",
+                            "default": "app"
+                        },
+                        "value": {
+                            "type": "string",
+                            "description": "Label value",
+                            "default": "indexer-aramidmain-db"
+                        }
+                    }
+                },
+                "image": {
+                    "type": "string",
+                    "description": "Image name",
+                    "default": "postgres"
+                },
+                "tag": {
+                    "type": "number",
+                    "description": "Image tag",
+                    "default": 14
+                },
+                "imagePullPolicy": {
+                    "type": "string",
+                    "description": "Image pull policy",
+                    "default": "IfNotPresent"
+                },
+                "secretName": {
+                    "type": "string",
+                    "description": "Secret name",
+                    "default": "indexer-secret"
+                },
+                "resources": {
+                    "type": "object",
+                    "properties": {
+                        "requests": {
+                            "type": "object",
+                            "properties": {
+                                "memory": {
+                                    "type": "string",
+                                    "description": "Requested memory",
+                                    "default": "100Mi"
+                                },
+                                "cpu": {
+                                    "type": "string",
+                                    "description": "Requested CPU",
+                                    "default": "100m"
+                                }
+                            }
+                        },
+                        "limits": {
+                            "type": "object",
+                            "properties": {
+                                "memory": {
+                                    "type": "string",
+                                    "description": "Memory limit",
+                                    "default": "16000Mi"
+                                },
+                                "cpu": {
+                                    "type": "string",
+                                    "description": "CPU limit",
+                                    "default": "8000m"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "serviceDB": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the service",
+                    "default": "indexer-aramidmain-db-service"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "Type of the service",
+                    "default": "ClusterIP"
+                },
+                "port": {
+                    "type": "object",
+                    "properties": {
+                        "service": {
+                            "type": "number",
+                            "description": "Service port",
+                            "default": 5432
+                        },
+                        "target": {
+                            "type": "number",
+                            "description": "Target port",
+                            "default": 5432
+                        }
+                    }
+                }
+            }
+        },
+        "serviceFollowerNode": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the service",
+                    "default": "indexer-aramidmain-follower-node-service"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "Type of the service",
+                    "default": "ClusterIP"
+                },
+                "port": {
+                    "type": "object",
+                    "properties": {
+                        "service": {
+                            "type": "number",
+                            "description": "Service port",
+                            "default": 8080
+                        },
+                        "target": {
+                            "type": "number",
+                            "description": "Target port",
+                            "default": 8080
+                        }
+                    }
+                }
+            }
+        },
+        "serviceIndexer": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the service",
+                    "default": "indexer-aramidmain-indexer-service"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "Type of the service",
+                    "default": "ClusterIP"
+                },
+                "port": {
+                    "type": "object",
+                    "properties": {
+                        "service": {
+                            "type": "number",
+                            "description": "Service port",
+                            "default": 8980
+                        },
+                        "target": {
+                            "type": "number",
+                            "description": "Target port",
+                            "default": 8980
+                        }
+                    }
+                }
+            }
+        },
+        "pvcConduit": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the PVC",
+                    "default": "aramid-conduit-pvc"
+                },
+                "storageClassName": {
+                    "type": "string",
+                    "description": "Storage class name",
+                    "default": "linode-block-storage-retain"
+                },
+                "accessMode": {
+                    "type": "string",
+                    "description": "Access mode",
+                    "default": "ReadWriteOnce"
+                },
+                "resources": {
+                    "type": "object",
+                    "properties": {
+                        "requests": {
+                            "type": "object",
+                            "properties": {
+                                "storage": {
+                                    "type": "string",
+                                    "description": "Requested storage size",
+                                    "default": "10Gi"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "pvConduit": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the PV",
+                    "default": "aramid-conduit-pv"
+                },
+                "hostPath": {
+                    "type": "string",
+                    "description": "Host path for the PV",
+                    "default": ""
+                }
+            }
+        },
+        "pvcFollowNode": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the PVC",
+                    "default": "aramid-follow-node-pvc"
+                },
+                "storageClassName": {
+                    "type": "string",
+                    "description": "Storage class name",
+                    "default": "linode-block-storage-retain"
+                },
+                "accessMode": {
+                    "type": "string",
+                    "description": "Access mode",
+                    "default": "ReadWriteOnce"
+                },
+                "resources": {
+                    "type": "object",
+                    "properties": {
+                        "requests": {
+                            "type": "object",
+                            "properties": {
+                                "storage": {
+                                    "type": "string",
+                                    "description": "Requested storage size",
+                                    "default": "10Gi"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "pvFollowNode": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the PV",
+                    "default": "aramid-follow-node-pv"
+                },
+                "hostPath": {
+                    "type": "string",
+                    "description": "Host path for the PV",
+                    "default": ""
+                }
+            }
+        },
+        "deploymentFollowerNode": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the deployment",
+                    "default": "indexer-aramidmain-follower-node-deployment"
+                },
+                "label": {
+                    "type": "object",
+                    "properties": {
+                        "key": {
+                            "type": "string",
+                            "description": "Label key",
+                            "default": "app"
+                        },
+                        "value": {
+                            "type": "string",
+                            "description": "Label value",
+                            "default": "indexer-aramidmain-follower-node"
+                        }
+                    }
+                },
+                "image": {
+                    "type": "string",
+                    "description": "Image name",
+                    "default": "scholtz2/aramid-algo-follow-node"
+                },
+                "tag": {
+                    "type": "string",
+                    "description": "Image tag",
+                    "default": "v4.3.0-stable"
+                },
+                "imagePullPolicy": {
+                    "type": "string",
+                    "description": "Image pull policy",
+                    "default": "Always"
+                },
+                "resources": {
+                    "type": "object",
+                    "properties": {
+                        "requests": {
+                            "type": "object",
+                            "properties": {
+                                "memory": {
+                                    "type": "string",
+                                    "description": "Requested memory",
+                                    "default": "100Mi"
+                                },
+                                "cpu": {
+                                    "type": "string",
+                                    "description": "Requested CPU",
+                                    "default": "100m"
+                                }
+                            }
+                        },
+                        "limits": {
+                            "type": "object",
+                            "properties": {
+                                "memory": {
+                                    "type": "string",
+                                    "description": "Memory limit",
+                                    "default": "6000Mi"
+                                },
+                                "cpu": {
+                                    "type": "string",
+                                    "description": "CPU limit",
+                                    "default": "4000m"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "deploymentConduit": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the deployment",
+                    "default": "indexer-aramidmain-conduit-deployment"
+                },
+                "label": {
+                    "type": "object",
+                    "properties": {
+                        "key": {
+                            "type": "string",
+                            "description": "Label key",
+                            "default": "app"
+                        },
+                        "value": {
+                            "type": "string",
+                            "description": "Label value",
+                            "default": "indexer-aramidmain-conduit"
+                        }
+                    }
+                },
+                "image": {
+                    "type": "string",
+                    "description": "Image name",
+                    "default": "scholtz2/aramid-conduit"
+                },
+                "tag": {
+                    "type": "string",
+                    "description": "Image tag",
+                    "default": "v1.9.0-stable"
+                },
+                "imagePullPolicy": {
+                    "type": "string",
+                    "description": "Image pull policy",
+                    "default": "IfNotPresent"
+                },
+                "secretName": {
+                    "type": "string",
+                    "description": "Secret name",
+                    "default": "indexer-secret"
+                },
+                "mountPath": {
+                    "type": "string",
+                    "description": "Mount path",
+                    "default": "/data/data"
+                },
+                "resources": {
+                    "type": "object",
+                    "properties": {
+                        "requests": {
+                            "type": "object",
+                            "properties": {
+                                "memory": {
+                                    "type": "string",
+                                    "description": "Requested memory",
+                                    "default": "100Mi"
+                                },
+                                "cpu": {
+                                    "type": "string",
+                                    "description": "Requested CPU",
+                                    "default": "100m"
+                                }
+                            }
+                        },
+                        "limits": {
+                            "type": "object",
+                            "properties": {
+                                "memory": {
+                                    "type": "string",
+                                    "description": "Memory limit",
+                                    "default": "6000Mi"
+                                },
+                                "cpu": {
+                                    "type": "string",
+                                    "description": "CPU limit",
+                                    "default": "4000m"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "deploymentIndexer": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the deployment",
+                    "default": "indexer-aramidmain-indexer-deployment"
+                },
+                "replicas": {
+                    "type": "number",
+                    "description": "Number of replicas",
+                    "default": 2
+                },
+                "label": {
+                    "type": "object",
+                    "properties": {
+                        "key": {
+                            "type": "string",
+                            "description": "Label key",
+                            "default": "appId"
+                        },
+                        "value": {
+                            "type": "string",
+                            "description": "Label value",
+                            "default": "indexer-aramidmain-indexer"
+                        }
+                    }
+                },
+                "label2": {
+                    "type": "object",
+                    "properties": {
+                        "key": {
+                            "type": "string",
+                            "description": "Second label key",
+                            "default": "app"
+                        },
+                        "value": {
+                            "type": "string",
+                            "description": "Second label value",
+                            "default": "indexer-aramidmain"
+                        }
+                    }
+                },
+                "image": {
+                    "type": "string",
+                    "description": "Image name",
+                    "default": "scholtz2/aramid-indexer"
+                },
+                "tag": {
+                    "type": "string",
+                    "description": "Image tag",
+                    "default": "v3.9.0-stable"
+                },
+                "imagePullPolicy": {
+                    "type": "string",
+                    "description": "Image pull policy",
+                    "default": "IfNotPresent"
+                },
+                "secretName": {
+                    "type": "string",
+                    "description": "Secret name",
+                    "default": "indexer-secret"
+                },
+                "resources": {
+                    "type": "object",
+                    "properties": {
+                        "requests": {
+                            "type": "object",
+                            "properties": {
+                                "memory": {
+                                    "type": "string",
+                                    "description": "Requested memory",
+                                    "default": "100Mi"
+                                },
+                                "cpu": {
+                                    "type": "string",
+                                    "description": "Requested CPU",
+                                    "default": "100m"
+                                }
+                            }
+                        },
+                        "limits": {
+                            "type": "object",
+                            "properties": {
+                                "memory": {
+                                    "type": "string",
+                                    "description": "Memory limit",
+                                    "default": "3000Mi"
+                                },
+                                "cpu": {
+                                    "type": "string",
+                                    "description": "CPU limit",
+                                    "default": "3000m"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "ingress": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "description": "Enable ingress",
+                    "default": true
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Name of the ingress",
+                    "default": "indexer-aramidmain-ingress"
+                },
+                "host": {
+                    "type": "string",
+                    "description": "Host for the ingress",
+                    "default": ""
+                },
+                "clusterIssuer": {
+                    "type": "string",
+                    "description": "Cluster issuer",
+                    "default": "letsencrypt"
+                },
+                "ingressClassName": {
+                    "type": "string",
+                    "description": "Ingress class name",
+                    "default": "nginx"
+                }
+            }
+        }
+    }
+}

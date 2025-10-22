@@ -2,75 +2,123 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+## @section Deployment configuration
+## @param replicaCount Deployment replica count
 replicaCount: 1
 
+## @section Image
+## Global image parameters
+## @param image.pullPolicy Image pull policy
 image:
-  repository: nginx
   pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: ''
 
+## @section Debug
+## @param debug Starts the image in bash mode and turns off the liveness probes
 debug: false
+
+## @section Prefix
+## @param prefix Prefix identifier for the node, deployment, ingress, or other resources
 prefix: "r-1-"
 
+## @section Service for the gossip protocol
 serviceAVMProtocol:
+  ## @param serviceAVMProtocol.name Name of the service.
   name: 'algorand-avm-protocol-service'
+  ## @param serviceAVMProtocol.type Type of the service
   type: 'LoadBalancer'
+  ## @section Port configuration
   port:
+    ## @param serviceAVMProtocol.port.service Service port
     service: 4160
+    ## @param serviceAVMProtocol.port.node Node port
     node: 30160
+    ## @param serviceAVMProtocol.port.target Target port
     target: 4160
 
+## @section Service for algod protocol
 serviceAlgodProtocol:
+  ## @param serviceAlgodProtocol.name Name of the service.
   name: 'algorand-algod-protocol-service'
+  ## @param serviceAlgodProtocol.type Type of the service
   type: 'ClusterIP'
   port:
+    ## @param serviceAlgodProtocol.port.service Service port
     service: 8080
+    ## @param serviceAlgodProtocol.port.target Target port
     target: 8080
 
+## @section Service for metrics protocol
 serviceMetricsProtocol:
+  ## @param serviceMetricsProtocol.name Name of the service.
   name: 'algorand-metrics-protocol-service'
+  ## @param serviceMetricsProtocol.type Type of the service
   type: 'LoadBalancer'
   port:
+    ## @param serviceMetricsProtocol.port.service Service port
     service: 9100
+    ## @param serviceMetricsProtocol.port.node Node port
     node: 30100
+    ## @param serviceMetricsProtocol.port.target Target port
     target: 9100
 
+## @section Persistent Volume Claim for root
 pvcRoot:
+  ## @param pvcRoot.name Name of the PVC
   name: "algorand-relay-mainnet-root-pvc"
+  ## @param pvcRoot.storageClassName Storage class name
   storageClassName: "linode-block-storage-retain"
+  ## @param pvcRoot.accessMode Access mode
   accessMode: "ReadWriteOnce"
   resources:
     requests:
+      ## @param pvcRoot.resources.requests.storage Requested storage size
       storage: 50Gi
 
+## @section Persistent Volume for root
 # The best storage is block device using nvme SSD drives
 # If hosted directly on server, use hostPath
 pvRoot:
+  ## @param pvRoot.name Name of the PV
   name: "mainnet-relay-node-pv"
+  ## @param pvRoot.hostPath Host path for the PV
   hostPath: ""
 
+## @section Deployment details
 deployment:
+  ## @param deployment.name Name of the deployment
   name: "algorand-relay-mainnet-deployment"
+  ## @param deployment.replicas Number of replicas
   replicas: 1
   
   # label key with the prefix
   label:
+    ## @param deployment.label.key Label key with prefix
     key: 'app-instance'
+    ## @param deployment.label.value Label value with prefix
     value: 'algorand-relay-mainnet'
 
   # label key without the prefix
   label2:
+    ## @param deployment.label2.key Label key without prefix
     key: 'app'
+    ## @param deployment.label2.value Label value without prefix
     value: 'algorand-relay-mainnet'
+  ## @param deployment.nodeSelector Node selector for scheduling
   nodeSelector: ""
+  ## @param deployment.image Image name
   image: scholtz2/algorand-relay-mainnet
+  ## @param deployment.tag Image tag
   tag: 4.3.0-stable
+  ## @param deployment.imagePullPolicy Image pull policy
   imagePullPolicy: IfNotPresent
   resources:
     requests:
+      ## @param deployment.resources.requests.memory Requested memory
       memory: '1000Mi'
+      ## @param deployment.resources.requests.cpu Requested CPU
       cpu: '1000m'
     limits:
+      ## @param deployment.resources.limits.memory Memory limit
       memory: '16000Mi'
+      ## @param deployment.resources.limits.cpu CPU limit
       cpu: '8000m'

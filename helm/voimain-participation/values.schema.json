@@ -1,0 +1,271 @@
+{
+    "title": "Chart Values",
+    "type": "object",
+    "properties": {
+        "debug": {
+            "type": "boolean",
+            "description": "Starts the image in bash mode and turns off the liveness probes",
+            "default": false
+        },
+        "prefix": {
+            "type": "string",
+            "description": "Prefix identifier for the node, deployment, ingress, or other resources",
+            "default": "p-1-"
+        },
+        "nodeName": {
+            "type": "string",
+            "description": "Name of the node",
+            "default": ""
+        },
+        "pvcParticipationNode": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the PVC",
+                    "default": "voimain-participation-node-pvc"
+                },
+                "storageClassName": {
+                    "type": "string",
+                    "description": "Storage class name",
+                    "default": "linode-block-storage-retain"
+                },
+                "accessMode": {
+                    "type": "string",
+                    "description": "Access mode",
+                    "default": "ReadWriteOnce"
+                },
+                "resources": {
+                    "type": "object",
+                    "properties": {
+                        "requests": {
+                            "type": "object",
+                            "properties": {
+                                "storage": {
+                                    "type": "string",
+                                    "description": "Requested storage size",
+                                    "default": "20Gi"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "pvParticipationNode": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the PV",
+                    "default": "voimain-participation-node-pv"
+                },
+                "hostPath": {
+                    "type": "string",
+                    "description": "Host path for the PV",
+                    "default": ""
+                }
+            }
+        },
+        "service18080": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the service",
+                    "default": "voimain-18080-service"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "Type of the service",
+                    "default": "ClusterIP"
+                },
+                "port": {
+                    "type": "object",
+                    "properties": {
+                        "service": {
+                            "type": "number",
+                            "description": "Service port",
+                            "default": 18080
+                        },
+                        "target": {
+                            "type": "number",
+                            "description": "Target port",
+                            "default": 18080
+                        }
+                    }
+                }
+            }
+        },
+        "service18888": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the service",
+                    "default": "voimain-18888-service"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "Type of the service",
+                    "default": "ClusterIP"
+                },
+                "port": {
+                    "type": "object",
+                    "properties": {
+                        "service": {
+                            "type": "number",
+                            "description": "Service port",
+                            "default": 18888
+                        },
+                        "target": {
+                            "type": "number",
+                            "description": "Target port",
+                            "default": 18888
+                        }
+                    }
+                }
+            }
+        },
+        "service28081": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the service",
+                    "default": "voimain-28081-service"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "Type of the service",
+                    "default": "ClusterIP"
+                },
+                "port": {
+                    "type": "object",
+                    "properties": {
+                        "service": {
+                            "type": "number",
+                            "description": "Service port",
+                            "default": 28081
+                        },
+                        "target": {
+                            "type": "number",
+                            "description": "Target port",
+                            "default": 28081
+                        }
+                    }
+                }
+            }
+        },
+        "ingressParticipationNode": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the ingress",
+                    "default": "voimain-participation-node-ingress"
+                },
+                "host": {
+                    "type": "string",
+                    "description": "Host for the ingress",
+                    "default": ""
+                },
+                "metadata": {
+                    "type": "object",
+                    "properties": {
+                        "annotations": {
+                            "type": "object",
+                            "properties": {
+                                "clusterIssuer": {
+                                    "type": "string",
+                                    "description": "Cluster issuer annotation",
+                                    "default": "letsencrypt-prod"
+                                },
+                                "timeout": {
+                                    "type": "number",
+                                    "description": "Timeout annotation",
+                                    "default": 120
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "deploymentParticipationNode": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the deployment",
+                    "default": "voimain-participation-node-deployment"
+                },
+                "label": {
+                    "type": "object",
+                    "properties": {
+                        "key": {
+                            "type": "string",
+                            "description": "Label key",
+                            "default": "app"
+                        },
+                        "value": {
+                            "type": "string",
+                            "description": "Label value",
+                            "default": "voimain-participation-node"
+                        }
+                    }
+                },
+                "image": {
+                    "type": "string",
+                    "description": "Image name",
+                    "default": "scholtz2/algorand-participation-voimain-extended"
+                },
+                "tag": {
+                    "type": "string",
+                    "description": "Image tag",
+                    "default": "4.3.0-stable"
+                },
+                "imagePullPolicy": {
+                    "type": "string",
+                    "description": "Image pull policy",
+                    "default": "Always"
+                },
+                "resources": {
+                    "type": "object",
+                    "properties": {
+                        "requests": {
+                            "type": "object",
+                            "properties": {
+                                "memory": {
+                                    "type": "string",
+                                    "description": "Requested memory",
+                                    "default": "100Mi"
+                                },
+                                "cpu": {
+                                    "type": "string",
+                                    "description": "Requested CPU",
+                                    "default": "100m"
+                                }
+                            }
+                        },
+                        "limits": {
+                            "type": "object",
+                            "properties": {
+                                "memory": {
+                                    "type": "string",
+                                    "description": "Memory limit",
+                                    "default": "4000Mi"
+                                },
+                                "cpu": {
+                                    "type": "string",
+                                    "description": "CPU limit",
+                                    "default": "4000m"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

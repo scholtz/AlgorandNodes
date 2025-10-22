@@ -1,0 +1,246 @@
+{
+    "title": "Chart Values",
+    "type": "object",
+    "properties": {
+        "replicaCount": {
+            "type": "number",
+            "description": "Deployment replica count",
+            "default": 1
+        },
+        "image": {
+            "type": "object",
+            "properties": {
+                "repository": {
+                    "type": "string",
+                    "description": "Image repository",
+                    "default": "nginx"
+                },
+                "pullPolicy": {
+                    "type": "string",
+                    "description": "Image pull policy",
+                    "default": "IfNotPresent"
+                },
+                "tag": {
+                    "type": "string",
+                    "description": "Image tag",
+                    "default": ""
+                }
+            }
+        },
+        "debug": {
+            "type": "boolean",
+            "description": "Starts the image in bash mode and turns off the liveness probes",
+            "default": false
+        },
+        "prefix": {
+            "type": "string",
+            "description": "Prefix identifier for the node, deployment, ingress, or other resources",
+            "default": "r-1-"
+        },
+        "serviceAVMProtocol": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the service",
+                    "default": "aramid-avm-protocol-service"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "Type of the service",
+                    "default": "LoadBalancer"
+                },
+                "port": {
+                    "type": "object",
+                    "properties": {
+                        "service": {
+                            "type": "number",
+                            "description": "Service port",
+                            "default": 14160
+                        },
+                        "node": {
+                            "type": "number",
+                            "description": "Node port",
+                            "default": 30160
+                        },
+                        "target": {
+                            "type": "number",
+                            "description": "Target port",
+                            "default": 14160
+                        }
+                    }
+                }
+            }
+        },
+        "serviceAlgodProtocol": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the service",
+                    "default": "aramid-algod-protocol-service"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "Type of the service",
+                    "default": "ClusterIP"
+                },
+                "port": {
+                    "type": "object",
+                    "properties": {
+                        "service": {
+                            "type": "number",
+                            "description": "Service port",
+                            "default": 18080
+                        },
+                        "target": {
+                            "type": "number",
+                            "description": "Target port",
+                            "default": 18080
+                        }
+                    }
+                }
+            }
+        },
+        "pvcRoot": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the PVC",
+                    "default": "aramid-relay-mainnet-root-pvc"
+                },
+                "storageClassName": {
+                    "type": "string",
+                    "description": "Storage class name",
+                    "default": "linode-block-storage-retain"
+                },
+                "accessMode": {
+                    "type": "string",
+                    "description": "Access mode",
+                    "default": "ReadWriteOnce"
+                },
+                "resources": {
+                    "type": "object",
+                    "properties": {
+                        "requests": {
+                            "type": "object",
+                            "properties": {
+                                "storage": {
+                                    "type": "string",
+                                    "description": "Requested storage size",
+                                    "default": "50Gi"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "nodeName": {
+            "type": "string",
+            "description": "Name of the node",
+            "default": ""
+        },
+        "pvRoot": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the PV",
+                    "default": "aramid-relay-mainnet-root-pv"
+                },
+                "hostPath": {
+                    "type": "string",
+                    "description": "Host path for the PV",
+                    "default": ""
+                }
+            }
+        },
+        "deployment": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the deployment",
+                    "default": "aramid-relay-mainnet-deployment"
+                },
+                "replicas": {
+                    "type": "number",
+                    "description": "Number of replicas",
+                    "default": 1
+                },
+                "label": {
+                    "type": "object",
+                    "properties": {
+                        "key": {
+                            "type": "string",
+                            "description": "Label key",
+                            "default": "app"
+                        },
+                        "value": {
+                            "type": "string",
+                            "description": "Label value",
+                            "default": "aramid-relay-mainnet"
+                        }
+                    }
+                },
+                "nodeSelector": {
+                    "type": "string",
+                    "description": "Node selector for scheduling",
+                    "default": ""
+                },
+                "image": {
+                    "type": "string",
+                    "description": "Image name",
+                    "default": "scholtz2/aramid-algo-node"
+                },
+                "tag": {
+                    "type": "string",
+                    "description": "Image tag",
+                    "default": "v4.3.0-stable"
+                },
+                "imagePullPolicy": {
+                    "type": "string",
+                    "description": "Image pull policy",
+                    "default": "IfNotPresent"
+                },
+                "resources": {
+                    "type": "object",
+                    "properties": {
+                        "requests": {
+                            "type": "object",
+                            "properties": {
+                                "memory": {
+                                    "type": "string",
+                                    "description": "Requested memory",
+                                    "default": "1000Mi"
+                                },
+                                "cpu": {
+                                    "type": "string",
+                                    "description": "Requested CPU",
+                                    "default": "1000m"
+                                }
+                            }
+                        },
+                        "limits": {
+                            "type": "object",
+                            "properties": {
+                                "memory": {
+                                    "type": "string",
+                                    "description": "Memory limit",
+                                    "default": "16000Mi"
+                                },
+                                "cpu": {
+                                    "type": "string",
+                                    "description": "CPU limit",
+                                    "default": "8000m"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

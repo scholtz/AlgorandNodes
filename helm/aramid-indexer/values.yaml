@@ -2,156 +2,267 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+## @section Global settings
+## @param replicaCount Deployment replica count
 replicaCount: 1
 
+## @param debug Starts the image in bash mode and turns off the liveness probes
 debug: false
+
+## @param prefix Prefix identifier for the node, deployment, ingress, or other resources
 prefix: "i-1-"
 
+## @section Database configuration
 db:
+  ## @param db.user Database user
   user: dbuser
+  ## @param db.password Database password
   password: postgresPassword
+  ## @param db.dbName Database name
   dbName: indexerdb
 
+## @section Secret for indexer
 secretIndexer:
+  ## @param secretIndexer.name Name of the secret
   name: indexer-secret
+  ## @param secretIndexer.algodToken Algod token
   algodToken: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+  ## @param secretIndexer.indexerToken Indexer token
   indexerToken: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 
+## @section Secret for conduit
 secretConduit:
+  ## @param secretConduit.name Name of the secret
   name: conduit-secret
 
+## @section Persistent Volume Claim for DB
 pvcDB:
+  ## @param pvcDB.name Name of the PVC
   name: "indexer-db-aramidmain-pvc"
+  ## @param pvcDB.storageClassName Storage class name
   storageClassName: "linode-block-storage-retain"
+  ## @param pvcDB.accessMode Access mode
   accessMode: "ReadWriteOnce"
   resources:
     requests:
+      ## @param pvcDB.resources.requests.storage Requested storage size
       storage: 50Gi
+
+## @section Persistent Volume for DB
 pvDB:
+  ## @param pvDB.name Name of the PV
   name: "aramid-db-aramidmain-pv"
+  ## @param pvDB.hostPath Host path for the PV
   hostPath: ""
 
+## @section Deployment for DB
 deploymentDB:
+  ## @param deploymentDB.name Name of the deployment
   name: "indexer-aramidmain-db-deployment"
   label:
+    ## @param deploymentDB.label.key Label key
     key: "app"
+    ## @param deploymentDB.label.value Label value
     value: "indexer-aramidmain-db"
+  ## @param deploymentDB.image Image name
   image: postgres
+  ## @param deploymentDB.tag Image tag
   tag: 14
+  ## @param deploymentDB.imagePullPolicy Image pull policy
   imagePullPolicy: IfNotPresent
+  ## @param deploymentDB.secretName Secret name
   secretName: "indexer-secret"
   resources:
     requests:
+      ## @param deploymentDB.resources.requests.memory Requested memory
       memory: "100Mi"
+      ## @param deploymentDB.resources.requests.cpu Requested CPU
       cpu: "100m"
     limits:
+      ## @param deploymentDB.resources.limits.memory Memory limit
       memory: "16000Mi"
+      ## @param deploymentDB.resources.limits.cpu CPU limit
       cpu: "8000m"
 
+## @section Service for DB
 serviceDB:
+  ## @param serviceDB.name Name of the service
   name: "indexer-aramidmain-db-service"
+  ## @param serviceDB.type Type of the service
   type: "ClusterIP"
   port:
+    ## @param serviceDB.port.service Service port
     service: 5432
+    ## @param serviceDB.port.target Target port
     target: 5432
 
+## @section Service for follower node
 serviceFollowerNode:
+  ## @param serviceFollowerNode.name Name of the service
   name: "indexer-aramidmain-follower-node-service"
+  ## @param serviceFollowerNode.type Type of the service
   type: "ClusterIP"
   port:
+    ## @param serviceFollowerNode.port.service Service port
     service: 8080
+    ## @param serviceFollowerNode.port.target Target port
     target: 8080
 
+## @section Service for indexer
 serviceIndexer:
+  ## @param serviceIndexer.name Name of the service
   name: "indexer-aramidmain-indexer-service"
+  ## @param serviceIndexer.type Type of the service
   type: "ClusterIP"
   port:
+    ## @param serviceIndexer.port.service Service port
     service: 8980
+    ## @param serviceIndexer.port.target Target port
     target: 8980
 
+## @section Persistent Volume Claim for conduit
 pvcConduit:
+  ## @param pvcConduit.name Name of the PVC
   name: "aramid-conduit-pvc"
+  ## @param pvcConduit.storageClassName Storage class name
   storageClassName: "linode-block-storage-retain"
+  ## @param pvcConduit.accessMode Access mode
   accessMode: "ReadWriteOnce"
   resources:
     requests:
+      ## @param pvcConduit.resources.requests.storage Requested storage size
       storage: 10Gi
 
+## @section Persistent Volume for conduit
 pvConduit:
+  ## @param pvConduit.name Name of the PV
   name: "aramid-conduit-pv"
+  ## @param pvConduit.hostPath Host path for the PV
   hostPath: ""
 
+## @section Persistent Volume Claim for follow node
 pvcFollowNode:
+  ## @param pvcFollowNode.name Name of the PVC
   name: "aramid-follow-node-pvc"
+  ## @param pvcFollowNode.storageClassName Storage class name
   storageClassName: "linode-block-storage-retain"
+  ## @param pvcFollowNode.accessMode Access mode
   accessMode: "ReadWriteOnce"
   resources:
     requests:
+      ## @param pvcFollowNode.resources.requests.storage Requested storage size
       storage: 10Gi
 
+## @section Persistent Volume for follow node
 pvFollowNode:
+  ## @param pvFollowNode.name Name of the PV
   name: "aramid-follow-node-pv"
+  ## @param pvFollowNode.hostPath Host path for the PV
   hostPath: ""
 
+## @section Deployment for follower node
 deploymentFollowerNode:
+  ## @param deploymentFollowerNode.name Name of the deployment
   name: "indexer-aramidmain-follower-node-deployment"
   label:
+    ## @param deploymentFollowerNode.label.key Label key
     key: "app"
+    ## @param deploymentFollowerNode.label.value Label value
     value: "indexer-aramidmain-follower-node"
+  ## @param deploymentFollowerNode.image Image name
   image: "scholtz2/aramid-algo-follow-node"
+  ## @param deploymentFollowerNode.tag Image tag
   tag: "v4.3.0-stable"
+  ## @param deploymentFollowerNode.imagePullPolicy Image pull policy
   imagePullPolicy: Always
   resources:
     requests:
+      ## @param deploymentFollowerNode.resources.requests.memory Requested memory
       memory: "100Mi"
+      ## @param deploymentFollowerNode.resources.requests.cpu Requested CPU
       cpu: "100m"
     limits:
+      ## @param deploymentFollowerNode.resources.limits.memory Memory limit
       memory: "6000Mi"
+      ## @param deploymentFollowerNode.resources.limits.cpu CPU limit
       cpu: "4000m"
 
-
+## @section Deployment for conduit
 deploymentConduit:
+  ## @param deploymentConduit.name Name of the deployment
   name: "indexer-aramidmain-conduit-deployment"
   label:
+    ## @param deploymentConduit.label.key Label key
     key: "app"
+    ## @param deploymentConduit.label.value Label value
     value: "indexer-aramidmain-conduit"
+  ## @param deploymentConduit.image Image name
   image: "scholtz2/aramid-conduit"
+  ## @param deploymentConduit.tag Image tag
   tag: "v1.9.0-stable"
+  ## @param deploymentConduit.imagePullPolicy Image pull policy
   imagePullPolicy: IfNotPresent
+  ## @param deploymentConduit.secretName Secret name
   secretName: "indexer-secret"
+  ## @param deploymentConduit.mountPath Mount path
   mountPath: /data/data
   resources:
     requests:
+      ## @param deploymentConduit.resources.requests.memory Requested memory
       memory: "100Mi"
+      ## @param deploymentConduit.resources.requests.cpu Requested CPU
       cpu: "100m"
     limits:
+      ## @param deploymentConduit.resources.limits.memory Memory limit
       memory: "6000Mi"
+      ## @param deploymentConduit.resources.limits.cpu CPU limit
       cpu: "4000m"
 
+## @section Deployment for indexer
 deploymentIndexer:
+  ## @param deploymentIndexer.name Name of the deployment
   name: "indexer-aramidmain-indexer-deployment"
+  ## @param deploymentIndexer.replicas Number of replicas
   replicas: 2
   label:
+    ## @param deploymentIndexer.label.key Label key
     key: "appId"
+    ## @param deploymentIndexer.label.value Label value
     value: "indexer-aramidmain-indexer"
   label2:
+    ## @param deploymentIndexer.label2.key Second label key
     key: "app"
+    ## @param deploymentIndexer.label2.value Second label value
     value: "indexer-aramidmain"
+  ## @param deploymentIndexer.image Image name
   image: "scholtz2/aramid-indexer"
+  ## @param deploymentIndexer.tag Image tag
   tag: "v3.9.0-stable"
+  ## @param deploymentIndexer.imagePullPolicy Image pull policy
   imagePullPolicy: IfNotPresent
+  ## @param deploymentIndexer.secretName Secret name
   secretName: "indexer-secret"
   resources:
     requests:
+      ## @param deploymentIndexer.resources.requests.memory Requested memory
       memory: "100Mi"
+      ## @param deploymentIndexer.resources.requests.cpu Requested CPU
       cpu: "100m"
     limits:
+      ## @param deploymentIndexer.resources.limits.memory Memory limit
       memory: "3000Mi"
+      ## @param deploymentIndexer.resources.limits.cpu CPU limit
       cpu: "3000m"
 
+## @section Ingress configuration
 ingress:
+  ## @param ingress.enabled Enable ingress
   enabled: true
+  ## @param ingress.name Name of the ingress
   name: "indexer-aramidmain-ingress"
+  ## @param ingress.host Host for the ingress
   host: "" # aramidmain-indexer.de-4.biatec.io
+  ## @param ingress.clusterIssuer Cluster issuer
   clusterIssuer: "letsencrypt"
+  ## @param ingress.ingressClassName Ingress class name
   ingressClassName: "nginx"

@@ -2,63 +2,109 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+## @section Global settings
+## @param replicaCount Deployment replica count
 replicaCount: 1
 
+## @section Image
+## Global image parameters
+## @param image.repository Image repository
 image:
   repository: nginx
+  ## @param image.pullPolicy Image pull policy
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
+  ## @param image.tag Image tag
   tag: ""
 
+## @section Debug
+## @param debug Starts the image in bash mode and turns off the liveness probes
 debug: false
+
+## @section Prefix
+## @param prefix Prefix identifier for the node, deployment, ingress, or other resources
 prefix: "r-1-"
 
+## @section Service for AVM protocol
 serviceAVMProtocol:
+  ## @param serviceAVMProtocol.name Name of the service
   name: "aramid-avm-protocol-service"
+  ## @param serviceAVMProtocol.type Type of the service
   type: "LoadBalancer"
   port:
+    ## @param serviceAVMProtocol.port.service Service port
     service: 14160
+    ## @param serviceAVMProtocol.port.node Node port
     node: 30160
+    ## @param serviceAVMProtocol.port.target Target port
     target: 14160
 
+## @section Service for algod protocol
 serviceAlgodProtocol:
+  ## @param serviceAlgodProtocol.name Name of the service
   name: "aramid-algod-protocol-service"
+  ## @param serviceAlgodProtocol.type Type of the service
   type: "ClusterIP"
   port:
+    ## @param serviceAlgodProtocol.port.service Service port
     service: 18080
+    ## @param serviceAlgodProtocol.port.target Target port
     target: 18080
 
+## @section Persistent Volume Claim for root
 pvcRoot:
+  ## @param pvcRoot.name Name of the PVC
   name: "aramid-relay-mainnet-root-pvc"
+  ## @param pvcRoot.storageClassName Storage class name
   storageClassName: "linode-block-storage-retain"
+  ## @param pvcRoot.accessMode Access mode
   accessMode: "ReadWriteOnce"
   resources:
     requests:
+      ## @param pvcRoot.resources.requests.storage Requested storage size
       storage: 50Gi
 
 # Used to set the storage and deployment to specific node. If used with hostPath for example. This has priority over deployment.nodeSelector
+## @section Node Name
+## @param nodeName Name of the node
 nodeName: ""
 
 # The best storage is block device using nvme SSD drives
 # If hosted directly on server, use hostPath
+## @section Persistent Volume for root
 pvRoot:
+  ## @param pvRoot.name Name of the PV
   name: "aramid-relay-mainnet-root-pv"
+  ## @param pvRoot.hostPath Host path for the PV
   hostPath: ""
 
+## @section Deployment details
 deployment:
+  ## @param deployment.name Name of the deployment
   name: "aramid-relay-mainnet-deployment"
+  ## @param deployment.replicas Number of replicas
   replicas: 1
   label:
+    ## @param deployment.label.key Label key
     key: "app"
+    ## @param deployment.label.value Label value
     value: "aramid-relay-mainnet"
+  ## @param deployment.nodeSelector Node selector for scheduling
   nodeSelector: ""
+  ## @param deployment.image Image name
   image: scholtz2/aramid-algo-node
+  ## @param deployment.tag Image tag
   tag: v4.3.0-stable
+  ## @param deployment.imagePullPolicy Image pull policy
   imagePullPolicy: IfNotPresent
   resources:
     requests:
+      ## @param deployment.resources.requests.memory Requested memory
       memory: "1000Mi"
+      ## @param deployment.resources.requests.cpu Requested CPU
       cpu: "1000m"
     limits:
+      ## @param deployment.resources.limits.memory Memory limit
       memory: "16000Mi"
+      ## @param deployment.resources.limits.cpu CPU limit
       cpu: "8000m"

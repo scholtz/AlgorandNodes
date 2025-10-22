@@ -2,64 +2,110 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+## @section Debug
+## @param debug Starts the image in bash mode and turns off the liveness probes
 debug: false
+
+## @section Prefix
+## @param prefix Prefix identifier for the node, deployment, ingress, or other resources
 prefix: "p-1-"
 
+## @section Node Name
+## @param nodeName Name of the node
 nodeName: ""
 
+## @section Persistent Volume Claim for participation node
 pvcParticipationNode:
+  ## @param pvcParticipationNode.name Name of the PVC
   name: "voimain-participation-node-pvc"
+  ## @param pvcParticipationNode.storageClassName Storage class name
   storageClassName: "linode-block-storage-retain"
+  ## @param pvcParticipationNode.accessMode Access mode
   accessMode: "ReadWriteOnce"
   resources:
     requests:
+      ## @param pvcParticipationNode.resources.requests.storage Requested storage size
       storage: 20Gi
 
+## @section Persistent Volume for participation node
 pvParticipationNode:
+  ## @param pvParticipationNode.name Name of the PV
   name: "voimain-participation-node-pv"
+  ## @param pvParticipationNode.hostPath Host path for the PV
   hostPath: ""
 
+## @section Service for port 18080
 service18080:
+  ## @param service18080.name Name of the service
   name: "voimain-18080-service"
+  ## @param service18080.type Type of the service
   type: "ClusterIP"
   port:
+    ## @param service18080.port.service Service port
     service: 18080
+    ## @param service18080.port.target Target port
     target: 18080
 
+## @section Service for port 18888
 service18888:
+  ## @param service18888.name Name of the service
   name: "voimain-18888-service"
+  ## @param service18888.type Type of the service
   type: "ClusterIP"
   port:
+    ## @param service18888.port.service Service port
     service: 18888
+    ## @param service18888.port.target Target port
     target: 18888
 
+## @section Service for port 28081
 service28081:
+  ## @param service28081.name Name of the service
   name: "voimain-28081-service"
+  ## @param service28081.type Type of the service
   type: "ClusterIP"
   port:
+    ## @param service28081.port.service Service port
     service: 28081
+    ## @param service28081.port.target Target port
     target: 28081
 
+## @section Ingress for participation node
 ingressParticipationNode:
+  ## @param ingressParticipationNode.name Name of the ingress
   name: "voimain-participation-node-ingress"
+  ## @param ingressParticipationNode.host Host for the ingress
   host: ""
   metadata:
     annotations:
+      ## @param ingressParticipationNode.metadata.annotations.clusterIssuer Cluster issuer annotation
       clusterIssuer: "letsencrypt-prod"
+      ## @param ingressParticipationNode.metadata.annotations.timeout Timeout annotation
       timeout: 120
 
+## @section Deployment for participation node
 deploymentParticipationNode:
+  ## @param deploymentParticipationNode.name Name of the deployment
   name: "voimain-participation-node-deployment"
   label:
+    ## @param deploymentParticipationNode.label.key Label key
     key: "app"
+    ## @param deploymentParticipationNode.label.value Label value
     value: "voimain-participation-node"
+  ## @param deploymentParticipationNode.image Image name
   image: scholtz2/algorand-participation-voimain-extended
+  ## @param deploymentParticipationNode.tag Image tag
   tag: 4.3.0-stable
+  ## @param deploymentParticipationNode.imagePullPolicy Image pull policy
   imagePullPolicy: Always
   resources:
     requests:
+      ## @param deploymentParticipationNode.resources.requests.memory Requested memory
       memory: "100Mi"
+      ## @param deploymentParticipationNode.resources.requests.cpu Requested CPU
       cpu: "100m"
     limits:
+      ## @param deploymentParticipationNode.resources.limits.memory Memory limit
       memory: "4000Mi"
+      ## @param deploymentParticipationNode.resources.limits.cpu CPU limit
       cpu: "4000m"
