@@ -58,7 +58,7 @@ spec:
       terminationGracePeriodSeconds: 3
       containers:
         - name: aramid-relay-mainnet
-          image: scholtz2/aramid-algo-node:v4.3.0-stable
+          image: scholtz2/aramid-algo-node:v4.4.1-stable
           imagePullPolicy: Always
           resources:
             requests:
