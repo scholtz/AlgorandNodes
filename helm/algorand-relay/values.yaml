@@ -108,7 +108,7 @@ deployment:
   ## @param deployment.image Image name
   image: scholtz2/algorand-relay-mainnet
   ## @param deployment.tag Image tag
-  tag: 4.3.0-stable
+  tag: 4.4.1-stable
   ## @param deployment.imagePullPolicy Image pull policy
   imagePullPolicy: IfNotPresent
   resources:

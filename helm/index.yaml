@@ -2,8 +2,18 @@ apiVersion: v1
 entries:
   algorand-participation:
   - apiVersion: v2
+    appVersion: 4.4.1
+    created: "2025-11-23T11:39:06.141106517+01:00"
+    description: Algorand participation node for mainnet-1.0 blockchain.
+    digest: a7c9f3d7af9e040901211dfe2ed1f2eb8678f8e97172e4a9c8805b4343cfc133
+    name: algorand-participation
+    type: application
+    urls:
+    - https://scholtz.github.io/AlgorandNodes/helm/algorand-participation-4.4.1.tgz
+    version: 4.4.1
+  - apiVersion: v2
     appVersion: 4.3.0
-    created: "2025-10-22T16:41:55.097181412+02:00"
+    created: "2025-11-23T11:39:06.140730767+01:00"
     description: Algorand participation node for mainnet-1.0 blockchain.
     digest: c0c6a46ed154a993946b995c61b6962d37788310c477228b9e52595096b2848d
     name: algorand-participation
@@ -13,7 +23,7 @@ entries:
     version: 4.3.0
   - apiVersion: v2
     appVersion: 4.2.1
-    created: "2025-10-22T16:41:55.096840992+02:00"
+    created: "2025-11-23T11:39:06.131192038+01:00"
     description: Algorand participation node for mainnet-1.0 blockchain.
     digest: a35f24b50c14090460e3c467c9b029c4d7256df58e3703d51171e7d7ff170f57
     name: algorand-participation
@@ -23,7 +33,7 @@ entries:
     version: 4.2.1
   - apiVersion: v2
     appVersion: 4.0.3
-    created: "2025-10-22T16:41:55.096559762+02:00"
+    created: "2025-11-23T11:39:06.125505962+01:00"
     description: Algorand participation node for mainnet-1.0 blockchain.
     digest: d29ec094fa6149e1b943ddfe846e0d934344080b33413c273b8ab99c85f68c6b
     name: algorand-participation
@@ -33,7 +43,7 @@ entries:
     version: 4.0.3
   - apiVersion: v2
     appVersion: 4.0.2
-    created: "2025-10-22T16:41:55.096273971+02:00"
+    created: "2025-11-23T11:39:06.108217115+01:00"
     description: Algorand participation node for mainnet-1.0 blockchain.
     digest: fa6a19752aeafb0170c09a9551fcb80ddde877c071f70dbfbb8f81c46e01f6be
     name: algorand-participation
@@ -43,7 +53,7 @@ entries:
     version: 4.0.2
   - apiVersion: v2
     appVersion: 4.0.1
-    created: "2025-10-22T16:41:55.095876531+02:00"
+    created: "2025-11-23T11:39:06.100584477+01:00"
     description: Algorand participation node for mainnet-1.0 blockchain.
     digest: 1f3f8301f2f1a6de1289c98a01e706bbfd3989c934e1ce52c548e782faf46116
     name: algorand-participation
@@ -53,8 +63,18 @@ entries:
     version: 4.0.1
   algorand-relay:
   - apiVersion: v2
+    appVersion: 4.4.1
+    created: "2025-11-23T11:39:06.196180423+01:00"
+    description: Algorand relay node for mainnet-1.0 blockchain.
+    digest: 135b9ed9fe3ac1d17b5065277f0468d4b0bf2df812f30a2d43c6364285e8dd32
+    name: algorand-relay
+    type: application
+    urls:
+    - https://scholtz.github.io/AlgorandNodes/helm/algorand-relay-4.4.1.tgz
+    version: 4.4.1
+  - apiVersion: v2
     appVersion: 4.3.0
-    created: "2025-10-22T16:41:55.097869783+02:00"
+    created: "2025-11-23T11:39:06.195821012+01:00"
     description: Algorand relay node for mainnet-1.0 blockchain.
     digest: 145faeefea20fb38a3a8aaef64dfcb798f9f7338814056fa7bd10af449654168
     name: algorand-relay
@@ -64,7 +84,7 @@ entries:
     version: 4.3.0
   - apiVersion: v2
     appVersion: 4.0.2
-    created: "2025-10-22T16:41:55.097483323+02:00"
+    created: "2025-11-23T11:39:06.177758084+01:00"
     description: Algorand relay node for mainnet-1.0 blockchain.
     digest: 84c17e0baa8524441ad1ca17b3ed0a452d0bda6f968d1e574d6cba6db0b74f20
     name: algorand-relay
@@ -75,7 +95,7 @@ entries:
   aramid-indexer:
   - apiVersion: v2
     appVersion: 3.9.0
-    created: "2025-10-22T16:41:55.098984814+02:00"
+    created: "2025-11-23T11:39:06.218411235+01:00"
     description: Aramid indexer node for aramidmain-1.0 blockchain.
     digest: 50d781ab052f817b6a850723b982e96e3be630eb64bb0e33c1eaba52e573cdd9
     name: aramid-indexer
@@ -85,7 +105,7 @@ entries:
     version: 3.9.0
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2025-10-22T16:41:55.098367523+02:00"
+    created: "2025-11-23T11:39:06.199938796+01:00"
     description: Aramid indexer node for aramidmain-1.0 blockchain.
     digest: 29bd93d097a5e593ea0afc1aa7b254a3d13a1c31d90056d847ef1284f7687b51
     name: aramid-indexer
@@ -95,8 +115,18 @@ entries:
     version: 1.0.0
   aramid-participation:
   - apiVersion: v2
+    appVersion: 4.4.1
+    created: "2025-11-23T11:39:06.245837522+01:00"
+    description: Aramid participation node for aramidmain-1.0 blockchain.
+    digest: d0e6b081b6a66d874bdd903873ba120ac00676ac26401885701f2b788de33977
+    name: aramid-participation
+    type: application
+    urls:
+    - https://scholtz.github.io/AlgorandNodes/helm/aramid-participation-4.4.1.tgz
+    version: 4.4.1
+  - apiVersion: v2
     appVersion: 4.3.0
-    created: "2025-10-22T16:41:55.100809376+02:00"
+    created: "2025-11-23T11:39:06.245073522+01:00"
     description: Aramid participation node for aramidmain-1.0 blockchain.
     digest: e89dda332a1a0ddc8df3ef54fe8e14ae2ec64a8cc3f2f0dee63bdb25d52494e2
     name: aramid-participation
@@ -106,7 +136,7 @@ entries:
     version: 4.3.0
   - apiVersion: v2
     appVersion: 4.2.1
-    created: "2025-10-22T16:41:55.100494275+02:00"
+    created: "2025-11-23T11:39:06.24394778+01:00"
     description: Aramid participation node for aramidmain-1.0 blockchain.
     digest: bca91b93fa835f23a55062e550f40ea564fe07fc7b979458c4e66cf5984b7fdb
     name: aramid-participation
@@ -116,7 +146,7 @@ entries:
     version: 4.2.1
   - apiVersion: v2
     appVersion: 4.0.3
-    created: "2025-10-22T16:41:55.100239745+02:00"
+    created: "2025-11-23T11:39:06.236916293+01:00"
     description: Aramid participation node for aramidmain-1.0 blockchain.
     digest: 3e4e7c2b158a1bdeae606c55154eaf6fb54d755c2e083be117002645c8d343cf
     name: aramid-participation
@@ -126,7 +156,7 @@ entries:
     version: 4.0.3
   - apiVersion: v2
     appVersion: 4.0.2
-    created: "2025-10-22T16:41:55.099982635+02:00"
+    created: "2025-11-23T11:39:06.235969363+01:00"
     description: Aramid participation node for aramidmain-1.0 blockchain.
     digest: 6a899cb0fa14c7ce7fafeaf5f29e7bbb8d56bd782928c6e7e89537921adb57c7
     name: aramid-participation
@@ -136,7 +166,7 @@ entries:
     version: 4.0.2
   - apiVersion: v2
     appVersion: 4.0.1
-    created: "2025-10-22T16:41:55.099735445+02:00"
+    created: "2025-11-23T11:39:06.234953602+01:00"
     description: Aramid participation node for aramidmain-1.0 blockchain.
     digest: 466cfe02464c6bcf7c6f6382202701d8e71b560b3d70edd4845e2d387a77e8af
     name: aramid-participation
@@ -146,7 +176,7 @@ entries:
     version: 4.0.1
   - apiVersion: v2
     appVersion: 3.26.0
-    created: "2025-10-22T16:41:55.099481085+02:00"
+    created: "2025-11-23T11:39:06.224832041+01:00"
     description: Aramid participation node for aramidmain-1.0 blockchain.
     digest: 81e32522d06d098042c8545c77f3ac85c1f9d72feb413a77caaef34281910e4c
     name: aramid-participation
@@ -156,7 +186,7 @@ entries:
     version: 3.26.1
   - apiVersion: v2
     appVersion: 3.26.0
-    created: "2025-10-22T16:41:55.099224634+02:00"
+    created: "2025-11-23T11:39:06.22385764+01:00"
     description: Aramid participation node for aramidmain-1.0 blockchain.
     digest: 67256fb6dfca7ad9aff4269be3ec0edd063d41037d41ebd658eda11bf7802569
     name: aramid-participation
@@ -166,8 +196,18 @@ entries:
     version: 3.26.0
   aramid-relay:
   - apiVersion: v2
+    appVersion: 4.4.1
+    created: "2025-11-23T11:39:06.268942966+01:00"
+    description: Aramid relay node for aramidmain-1.0 blockchain.
+    digest: 359be76be63102ed4f4fbd86c537c9f615162a112958410d0bb39c8edeceff89
+    name: aramid-relay
+    type: application
+    urls:
+    - https://scholtz.github.io/AlgorandNodes/helm/aramid-relay-4.4.1.tgz
+    version: 4.4.1
+  - apiVersion: v2
     appVersion: 4.3.0
-    created: "2025-10-22T16:41:55.105574581+02:00"
+    created: "2025-11-23T11:39:06.268670125+01:00"
     description: Aramid relay node for aramidmain-1.0 blockchain.
     digest: 9e7afd3d83432f7e293bc5ef7a482af07752463705def9e9a8067e09c824c605
     name: aramid-relay
@@ -177,7 +217,7 @@ entries:
     version: 4.3.0
   - apiVersion: v2
     appVersion: 4.2.1
-    created: "2025-10-22T16:41:55.10510952+02:00"
+    created: "2025-11-23T11:39:06.260039967+01:00"
     description: Aramid relay node for aramidmain-1.0 blockchain.
     digest: da7406481f5d0cc849c2b37e63675b158be5e6570f4721055d6ec60595ae9242
     name: aramid-relay
@@ -187,7 +227,7 @@ entries:
     version: 4.2.1
   - apiVersion: v2
     appVersion: 4.0.3
-    created: "2025-10-22T16:41:55.1047692+02:00"
+    created: "2025-11-23T11:39:06.255681732+01:00"
     description: Aramid relay node for aramidmain-1.0 blockchain.
     digest: 4d40c6da80cb63cfedce1dd3e6f1120c2a9fde0a78875d1f60fde4cb649985fe
     name: aramid-relay
@@ -197,7 +237,7 @@ entries:
     version: 4.0.3
   - apiVersion: v2
     appVersion: 4.0.2
-    created: "2025-10-22T16:41:55.10442906+02:00"
+    created: "2025-11-23T11:39:06.255348782+01:00"
     description: Aramid relay node for aramidmain-1.0 blockchain.
     digest: a74bb4c9c0458d9d02bccc91ec83413bc0bc38144a24d42fc6815393435375af
     name: aramid-relay
@@ -207,7 +247,7 @@ entries:
     version: 4.0.2
   - apiVersion: v2
     appVersion: 4.0.1
-    created: "2025-10-22T16:41:55.104089099+02:00"
+    created: "2025-11-23T11:39:06.254933672+01:00"
     description: Aramid relay node for aramidmain-1.0 blockchain.
     digest: 7856e0d39a30f69b4fde0329eb5ba6bacb9e1b463fc819ea80d69f2b677103ca
     name: aramid-relay
@@ -217,7 +257,7 @@ entries:
     version: 4.0.1
   - apiVersion: v2
     appVersion: 3.26.0
-    created: "2025-10-22T16:41:55.103744689+02:00"
+    created: "2025-11-23T11:39:06.249848657+01:00"
     description: Aramid relay node for aramidmain-1.0 blockchain.
     digest: d98b1b65ae20d497f4bbab727442f3e15cc7f997ee45e9c784f8453a1ef03526
     name: aramid-relay
@@ -227,7 +267,7 @@ entries:
     version: 3.26.0
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2025-10-22T16:41:55.103385779+02:00"
+    created: "2025-11-23T11:39:06.249226406+01:00"
     description: Aramid relay node for aramidmain-1.0 blockchain.
     digest: eb7a63bbe415fb80a3a8a107053f05290d4fa5bb1dae6c4bb17eb029dcf0d30e
     name: aramid-relay
@@ -237,7 +277,7 @@ entries:
     version: 1.0.4
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2025-10-22T16:41:55.103025718+02:00"
+    created: "2025-11-23T11:39:06.248595925+01:00"
     description: Aramid relay node for aramidmain-1.0 blockchain.
     digest: 2e7c21c8ff48ca2c9a8b75837680b1622cbdad5fb190e018a9c96023e0c39268
     name: aramid-relay
@@ -247,7 +287,7 @@ entries:
     version: 1.0.3
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2025-10-22T16:41:55.102625098+02:00"
+    created: "2025-11-23T11:39:06.247907824+01:00"
     description: Aramid relay node for aramidmain-1.0 blockchain.
     digest: 2610602c38475043956b746d363d30964b689abebc87953ab8663f8be5932eb4
     name: aramid-relay
@@ -257,7 +297,7 @@ entries:
     version: 1.0.2
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2025-10-22T16:41:55.101227406+02:00"
+    created: "2025-11-23T11:39:06.247276164+01:00"
     description: Aramid relay node for aramidmain-1.0 blockchain.
     digest: 00676d6bbc23f749ddf36759597db1d834fd6ce394e82d6f1d7c3492f77815d0
     name: aramid-relay
@@ -267,7 +307,7 @@ entries:
     version: 1.0.1
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2025-10-22T16:41:55.101014696+02:00"
+    created: "2025-11-23T11:39:06.246620813+01:00"
     description: Aramid relay node for aramidmain-1.0 blockchain.
     digest: 3891a4c8484efc7a2579bd5cc19fd99ff8fba2677ab35f40f3466a1b125de318
     name: aramid-relay
@@ -277,8 +317,18 @@ entries:
     version: 1.0.0
   voimain-participation:
   - apiVersion: v2
+    appVersion: 4.4.1
+    created: "2025-11-23T11:39:06.289604756+01:00"
+    description: VOI participation node for voimain-1.0 blockchain.
+    digest: e99d980981f0b52f7575549996cd41fe40b2e6d8e930922e584de707896cb93e
+    name: voimain-participation
+    type: application
+    urls:
+    - https://scholtz.github.io/AlgorandNodes/helm/voimain-participation-4.4.1.tgz
+    version: 4.4.1
+  - apiVersion: v2
     appVersion: 4.3.0
-    created: "2025-10-22T16:41:55.108474314+02:00"
+    created: "2025-11-23T11:39:06.289215976+01:00"
     description: VOI participation node for voimain-1.0 blockchain.
     digest: 59cdc698fc7ad25a6e52ffb2ed5c15cec59544b4b6b30dff37fe90fb51c14ce0
     name: voimain-participation
@@ -288,7 +338,7 @@ entries:
     version: 4.3.0
   - apiVersion: v2
     appVersion: 4.2.1
-    created: "2025-10-22T16:41:55.107988263+02:00"
+    created: "2025-11-23T11:39:06.280428977+01:00"
     description: VOI participation node for voimain-1.0 blockchain.
     digest: 6b81c45d3dbad8660f84f6f9e3c34d7036363e7f18abb1654ad9b69e7028c442
     name: voimain-participation
@@ -298,7 +348,7 @@ entries:
     version: 4.2.1
   - apiVersion: v2
     appVersion: 4.0.3
-    created: "2025-10-22T16:41:55.107604673+02:00"
+    created: "2025-11-23T11:39:06.279636076+01:00"
     description: VOI participation node for voimain-1.0 blockchain.
     digest: 4394d89c776d025c4c82ba378150192539fc428cd6d75cec2690dd9d0166586a
     name: voimain-participation
@@ -308,7 +358,7 @@ entries:
     version: 4.0.3
   - apiVersion: v2
     appVersion: 4.0.2
-    created: "2025-10-22T16:41:55.107201213+02:00"
+    created: "2025-11-23T11:39:06.278623495+01:00"
     description: VOI participation node for voimain-1.0 blockchain.
     digest: 2ecd9f789d9180e4a1379bcbc3c6e692faa354641e55fb65377b6a3a061607df
     name: voimain-participation
@@ -318,7 +368,7 @@ entries:
     version: 4.0.2
   - apiVersion: v2
     appVersion: 4.0.1
-    created: "2025-10-22T16:41:55.106796592+02:00"
+    created: "2025-11-23T11:39:06.277137514+01:00"
     description: VOI participation node for voimain-1.0 blockchain.
     digest: c1c5027ee8f436a90ace65d652b1d3b71acf667e2144e768fedcf635d5298ab5
     name: voimain-participation
@@ -328,7 +378,7 @@ entries:
     version: 4.0.1
   - apiVersion: v2
     appVersion: 3.26.0
-    created: "2025-10-22T16:41:55.106389912+02:00"
+    created: "2025-11-23T11:39:06.269739937+01:00"
     description: VOI participation node for voimain-1.0 blockchain.
     digest: dffc6f587ae70559510b2f363d9630e05f57e2fd57c4ca639024220dd88bd9fc
     name: voimain-participation
@@ -338,7 +388,7 @@ entries:
     version: 3.26.1
   - apiVersion: v2
     appVersion: 3.26.0
-    created: "2025-10-22T16:41:55.105982141+02:00"
+    created: "2025-11-23T11:39:06.269369706+01:00"
     description: VOI participation node for voimain-1.0 blockchain.
     digest: ae7992b8bc389facda2a5cb0468d70d5019ad863c8cb8bdeb319c87ce3127848
     name: voimain-participation
@@ -346,4 +396,4 @@ entries:
     urls:
     - https://scholtz.github.io/AlgorandNodes/helm/voimain-participation-3.26.0.tgz
     version: 3.26.0
-generated: "2025-10-22T16:41:55.094368939+02:00"
+generated: "2025-11-23T11:39:06.085466422+01:00"
