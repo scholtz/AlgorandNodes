@@ -94,7 +94,7 @@ deployment:
   ## @param deployment.image Image name
   image: scholtz2/aramid-algo-node
   ## @param deployment.tag Image tag
-  tag: v4.7.0-stable
+  tag: v4.7.2-stable
   ## @param deployment.imagePullPolicy Image pull policy
   imagePullPolicy: IfNotPresent
   resources:
