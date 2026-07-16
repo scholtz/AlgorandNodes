@@ -29,7 +29,7 @@ spec:
       terminationGracePeriodSeconds: 3
       containers:
         - name: algo-relay-voimain-nonarchival
-          image: scholtz2/algorand-relay-voimain:4.7.3-stable
+          image: scholtz2/algorand-relay-voimain:4.7.4-stable
           imagePullPolicy: Always
           resources:
             requests:
