@@ -95,7 +95,7 @@ deploymentParticipationNode:
   ## @param deploymentParticipationNode.image Image name
   image: scholtz2/algorand-participation-voimain-extended
   ## @param deploymentParticipationNode.tag Image tag
-  tag: 5.0.2-stable
+  tag: 5.0.3-stable
   ## @param deploymentParticipationNode.imagePullPolicy Image pull policy
   imagePullPolicy: Always
   resources:
