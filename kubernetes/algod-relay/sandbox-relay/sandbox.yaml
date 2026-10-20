@@ -6,7 +6,7 @@
 # Setup k8s on mac: https://www.youtube.com/watch?v=KZEG2Nix7-U
 # Setup k8s on windows: https://www.youtube.com/watch?v=o7nTRD0CWAA
 #
-# https://stackoverflow.com/questions/6475.0.3/location-of-kubernetes-config-directory-with-docker-desktop-on-windows
+# https://stackoverflow.com/questions/6475.0.4/location-of-kubernetes-config-directory-with-docker-desktop-on-windows
 # docker run -it --privileged --pid=host debian nsenter -t 1 -m -u -n -i sh
 # vi /etc/kubernetes/manifests/kube-apiserver.yaml
 # add     - --service-node-port-range=80-62767
@@ -42,7 +42,7 @@ spec:
       terminationGracePeriodSeconds: 3
       containers:
         - name: algo-participation-sandbox
-          image: scholtz2/algorand-participation-sandbox:5.0.3-stable
+          image: scholtz2/algorand-participation-sandbox:5.0.4-stable
           imagePullPolicy: Always
 #           resources:
 #            requests:
