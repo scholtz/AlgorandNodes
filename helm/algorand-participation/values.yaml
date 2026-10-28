@@ -95,7 +95,7 @@ deploymentParticipationNode:
   ## @param deploymentParticipationNode.image Image name
   image: scholtz2/algorand-participation-mainnet-extended
   ## @param deploymentParticipationNode.tag Image tag
-  tag: 5.0.4-stable
+  tag: 5.0.5-stable
   ## @param deploymentParticipationNode.imagePullPolicy Image pull policy
   imagePullPolicy: Always
   resources:
