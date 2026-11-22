@@ -84,3 +84,9 @@ spec:
               value: '/data/data'
           securityContext:
             {{- include "indexer.containerSecurity" 1000 | nindent 12 }}
+          volumeMounts:
+            - name: indexer-data
+              mountPath: /data/data
+      volumes:
+        - name: indexer-data
+          emptyDir: {}

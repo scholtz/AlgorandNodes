@@ -31,4 +31,4 @@ docker run -it -v "$(pwd)/algorand-indexer:/app/data" scholtz2/readme-generator-
 
 helm package algorand-indexer/
 
-helm repo index --url https://scholtz.github.io/AlgorandNodes/helm/ .
+helm repo index --merge index.yaml --url https://scholtz.github.io/AlgorandNodes/helm/ .

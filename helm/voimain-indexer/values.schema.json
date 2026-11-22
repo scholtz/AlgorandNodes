@@ -10,7 +10,7 @@
         "prefix": {
             "type": "string",
             "description": "Prefix identifier for the node, deployment, ingress, or other resources",
-            "default": "i-1-"
+            "default": "voi-i-1-"
         },
         "nodeName": {
             "type": "string",
@@ -552,7 +552,7 @@
                 "mountPath": {
                     "type": "string",
                     "description": "Mount path",
-                    "default": "/data/data"
+                    "default": "/data"
                 },
                 "resources": {
                     "type": "object",

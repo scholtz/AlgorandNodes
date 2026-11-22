@@ -55,3 +55,14 @@ capabilities:
   drop:
     - ALL
 {{- end }}
+
+{{/*
+libpq connection string. Values are single-quoted with \ and ' escaped so that
+special characters in the user, password or database name cannot break the DSN.
+*/}}
+{{- define "indexer.dsn" -}}
+{{- $user := .Values.db.user | replace "\\" "\\\\" | replace "'" "\\'" -}}
+{{- $pass := .Values.db.password | replace "\\" "\\\\" | replace "'" "\\'" -}}
+{{- $name := .Values.db.dbName | replace "\\" "\\\\" | replace "'" "\\'" -}}
+{{- printf "host=%s%s port=%v user='%s' password='%s' dbname='%s' sslmode=disable" .Values.prefix .Values.serviceDB.name .Values.serviceDB.port.service $user $pass $name -}}
+{{- end }}

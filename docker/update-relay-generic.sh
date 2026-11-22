@@ -426,15 +426,6 @@ f1=values.yaml
 sed -i "s~$base~$produce~g" $f1
 
 
-# indexer charts use their own chart version; only the follower node image tag follows the node version
-cd $baseHelm/voimain-indexer
-f1=values.yaml
-sed -i "s~$base~$produce~g" $f1
-
-cd $baseHelm/algorand-indexer
-f1=values.yaml
-sed -i "s~$base~$produce~g" $f1
-
 cd $baseHelm/voimain-participation
 f1=Chart.yaml
 sed -i "s~$base~$produce~g" $f1
@@ -460,9 +451,7 @@ helm package algorand-participation/
 helm package aramid-relay/
 helm package aramid-participation/
 helm package voimain-participation/
-helm package voimain-indexer/
-helm package algorand-indexer/
-helm repo index --url https://scholtz.github.io/AlgorandNodes/helm/ .
+helm repo index --merge index.yaml --url https://scholtz.github.io/AlgorandNodes/helm/ .
 
 ################### FINISH
 cd $baseDir

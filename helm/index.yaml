@@ -3,15 +3,15 @@ entries:
   algorand-indexer:
   - apiVersion: v2
     appVersion: 3.11.1
-    created: "2026-11-22T18:52:13.553234292Z"
+    created: "2026-11-22T18:55:42.464003967Z"
     description: Algorand indexer (follower node, conduit, postgres and indexer API)
       for the Algorand mainnet blockchain.
-    digest: a25126e743b483a856a095718ada89d82d8626f28e3b19ae79ad29c023a8670a
+    digest: cac4381885bf9dda3f0e4116cede39c1fb85c380951c585b34b6a2e735db3c89
     name: algorand-indexer
     type: application
     urls:
-    - https://scholtz.github.io/AlgorandNodes/helm/algorand-indexer-1.0.0.tgz
-    version: 1.0.0
+    - https://scholtz.github.io/AlgorandNodes/helm/algorand-indexer-3.11.1.tgz
+    version: 3.11.1
   algorand-participation:
   - apiVersion: v2
     appVersion: 4.4.1
@@ -107,9 +107,9 @@ entries:
   aramid-indexer:
   - apiVersion: v2
     appVersion: 3.9.0
-    created: "2026-11-22T18:52:13.662125253Z"
+    created: "2026-11-22T18:55:42.511991672Z"
     description: Aramid indexer node for aramidmain-1.0 blockchain.
-    digest: 686c19b5bc2952e6b343631cb0713f828174f4787c91c0cbe29f6ab8357c2a2b
+    digest: 398e116ceb16c1469019130cd12daee732a1c34ac41f8ec2c9da015eff78773a
     name: aramid-indexer
     type: application
     urls:
@@ -340,15 +340,15 @@ entries:
   voimain-indexer:
   - apiVersion: v2
     appVersion: 3.11.1
-    created: "2026-11-22T18:52:13.858032215Z"
+    created: "2026-11-22T18:55:42.600662891Z"
     description: Voi indexer (follower node, conduit, postgres and indexer API) for
       the Voi mainnet blockchain.
-    digest: 33fa61c577cfe40761ccafc87e787b3ee4ce0d0479df75f76ce485a15755bb11
+    digest: 837e0fc2991084ccd0852971442efd2a9d26c172dff5a5bbb5b735c60dfb6b3e
     name: voimain-indexer
     type: application
     urls:
-    - https://scholtz.github.io/AlgorandNodes/helm/voimain-indexer-1.0.0.tgz
-    version: 1.0.0
+    - https://scholtz.github.io/AlgorandNodes/helm/voimain-indexer-3.11.1.tgz
+    version: 3.11.1
   voimain-participation:
   - apiVersion: v2
     appVersion: 4.4.1
@@ -430,4 +430,4 @@ entries:
     urls:
     - https://scholtz.github.io/AlgorandNodes/helm/voimain-participation-3.26.0.tgz
     version: 3.26.0
-generated: "2026-11-22T18:52:13.548222506Z"
+generated: "2026-11-22T18:55:42.459004596Z"

@@ -70,6 +70,23 @@ f1=deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
 
+################### HELM CHARTS (voimain-indexer, algorand-indexer)
+# chart version and appVersion follow the indexer version, the indexer image tag is bumped
+# and the follower node image tag follows the current relay/node version
+baseHelm=/home/scholtz/AlgorandNodes/helm
+relayVersion=$(cat /home/scholtz/AlgorandNodes/docker/current-relay-version.txt)
+for chart in voimain-indexer algorand-indexer; do
+    cd $baseHelm/$chart
+    sed -i "s~${base#v}~${produce#v}~g" Chart.yaml
+    sed -i "s~$base~$produce~g" values.yaml
+    sed -i "s~tag: \"[0-9][0-9.]*-stable\"~tag: \"${relayVersion}-stable\"~" values.yaml
+done
+
+cd $baseHelm
+helm package voimain-indexer/
+helm package algorand-indexer/
+helm repo index --merge index.yaml --url https://scholtz.github.io/AlgorandNodes/helm/ .
+
 echo $produce > $currentFile
 
 cd /home/scholtz/AlgorandNodes/

@@ -7,7 +7,7 @@
 debug: false
 
 ## @param prefix Prefix identifier for the node, deployment, ingress, or other resources
-prefix: "i-1-"
+prefix: "voi-i-1-"
 
 ## @param nodeName Hostname of the node the optional hostPath persistent volumes are bound to
 nodeName: ""
@@ -231,7 +231,7 @@ deploymentConduit:
   ## @param deploymentConduit.imagePullPolicy Image pull policy
   imagePullPolicy: IfNotPresent
   ## @param deploymentConduit.mountPath Mount path
-  mountPath: /data/data
+  mountPath: /data
   resources:
     requests:
       ## @param deploymentConduit.resources.requests.memory Requested memory
