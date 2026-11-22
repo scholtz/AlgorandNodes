@@ -25,8 +25,10 @@ spec:
       # give algod time to stop cleanly
       terminationGracePeriodSeconds: 30
       {{- include "indexer.scheduling" . | nindent 6 }}
+      {{- if not .Values.debug }}
       initContainers:
         {{- include "indexer.waitFor" (dict "root" . "title" "DB Server" "host" (printf "%s%s" .Values.prefix .Values.serviceDB.name) "port" .Values.serviceDB.port.service) | nindent 8 }}
+      {{- end }}
       containers:
         - name: {{ .Values.prefix }}follow-node
           image: {{ .Values.deploymentFollowerNode.image }}:{{ .Values.deploymentFollowerNode.tag }}

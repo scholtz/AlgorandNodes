@@ -80,6 +80,10 @@ if [ "$relayVersion" == "" ]; then
     exit 1;
 fi
 for chart in voimain-indexer algorand-indexer; do
+    if [ -f "$baseHelm/${chart}-${produce#v}.tgz" ]; then
+        echo "$baseHelm/${chart}-${produce#v}.tgz already exists, bump the chart version by hand first";
+        exit 1;
+    fi
     cd $baseHelm/$chart || exit 1
     sed -i "s~^version: .*~version: ${produce#v}~" Chart.yaml
     sed -i "s~^appVersion: .*~appVersion: '${produce#v}'~" Chart.yaml

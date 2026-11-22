@@ -14,3 +14,5 @@ The initial sync can take a long time. Check progress with:
 WARNING: default database password and/or API tokens are in use.
 Override db.password, secretIndexer.algodToken and secretIndexer.indexerToken before exposing this release.
 {{- end }}
+
+If pvDB.hostPath, pvConduit.hostPath or pvFollowNode.hostPath are used, the directories must already exist and be writable by uid 999 (db) and uid 1000 (conduit, follower node), because hostPath volumes ignore fsGroup.
