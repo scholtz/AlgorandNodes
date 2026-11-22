@@ -2,6 +2,7 @@
 # Run manually on the maintainer's server after the patched scholtz2/aramid-indexer image
 # (docker/indexer/aramidmain/aramid-indexer-<ver>.sh) for the current indexer version has been pushed.
 # Brings the aramid-indexer helm chart in sync with docker/current-indexer-version.txt.
+# values.schema.json defaults are documentation only and are not regenerated here (see helm/reindex.sh).
 
 mainDir=/home/scholtz/AlgorandNodes
 baseHelm=$mainDir/helm
@@ -17,7 +18,9 @@ fi
 cd $baseHelm/aramid-indexer || exit 1
 cur=$(awk '/^version:/{print $2}' Chart.yaml)
 curApp=$(awk '/^appVersion:/{print $2}' Chart.yaml | tr -d "'\"")
-if [ "$curApp" == "$newv" ]; then
+# a previous run may have failed after editing the chart: edited but uncommitted means resume at packaging
+dirty=$(git -C $mainDir status --porcelain -- helm/aramid-indexer)
+if [ "$curApp" == "$newv" ] && [ "$dirty" == "" ]; then
     echo "aramid-indexer chart already at $newv";
     exit 0;
 fi
@@ -27,6 +30,12 @@ if ! curl -sf "https://hub.docker.com/v2/repositories/scholtz2/aramid-indexer/ta
     exit 1;
 fi
 
+if ! curl -sf "https://hub.docker.com/v2/repositories/scholtz2/aramid-algo-follow-node/tags/v${relayVersion}-stable" > /dev/null; then
+    echo "scholtz2/aramid-algo-follow-node:v${relayVersion}-stable does not exist yet";
+    exit 1;
+fi
+
+if [ "$curApp" != "$newv" ]; then
 git -C $mainDir pull || exit 1
 
 top=$(printf '%s\n%s\n' "$cur" "$newv" | sort -V | tail -1)
@@ -39,6 +48,8 @@ sed -i "s~^version: .*~version: ${chartVersion}~" Chart.yaml
 sed -i "s~^appVersion: .*~appVersion: '${newv}'~" Chart.yaml
 sed -i "s~tag: \"v$curApp-stable\"~tag: \"v${newv}-stable\"~" values.yaml
 sed -i "/^deploymentFollowerNode:/,/^## @section Deployment for conduit/ s~tag: \"\(v\?\)[0-9][0-9.]*-stable\"~tag: \"\1${relayVersion}-stable\"~" values.yaml
+fi
+chartVersion=$(awk '/^version:/{print $2}' Chart.yaml)
 
 cd $baseHelm || exit 1
 helm package aramid-indexer/ || exit 1

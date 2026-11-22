@@ -116,7 +116,7 @@ deployment:
   ## @param deployment.terminationGracePeriodSeconds Time given to the node to stop cleanly
   terminationGracePeriodSeconds: 30
   ## @param deployment.livenessFailureThreshold Failed liveness probes (10s apart) before the node is restarted. Keep high, a catching up node is not healthy but must not be killed
-  livenessFailureThreshold: 60
+  livenessFailureThreshold: 360
   resources:
     requests:
       ## @param deployment.resources.requests.memory Requested memory

@@ -255,7 +255,7 @@
                 "livenessFailureThreshold": {
                     "type": "number",
                     "description": "Failed liveness probes (10s apart) before the node is restarted. Keep high, a catching up node is not healthy but must not be killed",
-                    "default": 60
+                    "default": 360
                 },
                 "resources": {
                     "type": "object",

@@ -1,3 +1,4 @@
+#!/bin/bash
 cd "$(dirname "$0")"
 outputVer=v3.11.1-stable
 tag=v3.11.1
