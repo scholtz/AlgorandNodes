@@ -114,7 +114,7 @@ deployment:
   ## @param deployment.imagePullPolicy Image pull policy
   imagePullPolicy: IfNotPresent
   ## @param deployment.terminationGracePeriodSeconds Time given to the node to stop cleanly
-  terminationGracePeriodSeconds: 30
+  terminationGracePeriodSeconds: 120
   ## @param deployment.startupFailureThreshold Failed startup probes (10s apart) allowed before the node is restarted. A first sync from genesis can take many hours
   startupFailureThreshold: 8640
   resources:

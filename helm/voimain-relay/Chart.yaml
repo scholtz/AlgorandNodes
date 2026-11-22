@@ -6,7 +6,7 @@ description: VOI relay node for voimain-1.0 blockchain.
 type: application
 
 # Chart version, incremented with every change of the chart or its templates.
-# The relay update script sets it to the node version.
+# The relay update script sets it to the node version, or to the next patch when that would not increase it.
 version: 5.1.1
 
 # Version of the node being deployed.

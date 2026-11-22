@@ -107,9 +107,9 @@ entries:
   aramid-indexer:
   - apiVersion: v2
     appVersion: 3.11.1
-    created: "2026-11-22T21:32:35.81320354Z"
+    created: "2026-11-22T21:34:25.518966524Z"
     description: Aramid indexer node for aramidmain-1.0 blockchain.
-    digest: 73850de5b7c315cfac1429f8a6cad08b22497eaadddce3f2fe25ddf410cab507
+    digest: b89466075f974e1de8cd07e59c225775572ed4748ad83ff51c00439e93e45d00
     name: aramid-indexer
     type: application
     urls:
@@ -443,12 +443,12 @@ entries:
   voimain-relay:
   - apiVersion: v2
     appVersion: 5.1.1
-    created: "2026-11-22T21:32:35.93734342Z"
+    created: "2026-11-22T21:34:25.646280697Z"
     description: VOI relay node for voimain-1.0 blockchain.
-    digest: 433d72e605a61591fad34c8d1d20134a2083ac2269ba110b6b9d4fee83951481
+    digest: 1c30fc9d09d44b3095cbc83107680a866979ae522556be8fce2f5a224718a3bf
     name: voimain-relay
     type: application
     urls:
     - https://scholtz.github.io/AlgorandNodes/helm/voimain-relay-5.1.1.tgz
     version: 5.1.1
-generated: "2026-11-22T21:32:35.754557598Z"
+generated: "2026-11-22T21:34:25.45970458Z"

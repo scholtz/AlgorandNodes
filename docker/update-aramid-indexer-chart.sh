@@ -20,7 +20,7 @@ cd $baseHelm/aramid-indexer || exit 1
 cur=$(awk '/^version:/{print $2}' Chart.yaml)
 curApp=$(awk '/^appVersion:/{print $2}' Chart.yaml | tr -d "'\"")
 chartVersion=$cur
-if [ "$curApp" == "$newv" ] && [ -f "$baseHelm/aramid-indexer-${cur}.tgz" ]; then
+if [ "$curApp" == "$newv" ] && [ -f "$baseHelm/aramid-indexer-${cur}.tgz" ] && grep -q "aramid-indexer-${cur}.tgz" $baseHelm/index.yaml; then
     # already released; only retry a push which may have failed earlier
     if [ "$(git -C $mainDir log --oneline @{u}.. 2>/dev/null)" != "" ]; then
         git -C $mainDir push || { echo "git push failed"; exit 1; }
