@@ -82,6 +82,13 @@ if [ "$relayVersion" == "" ]; then
 fi
 for chart in voimain-indexer algorand-indexer aramid-indexer; do
     cd $baseHelm/$chart || exit 1
+    if [ "$chart" == "aramid-indexer" ]; then
+        # the aramid indexer is a patched fork built manually, do not publish a chart pointing to a missing image
+        if ! curl -sf "https://hub.docker.com/v2/repositories/scholtz2/aramid-indexer/tags/${produce}-stable" > /dev/null; then
+            echo "scholtz2/aramid-indexer:${produce}-stable does not exist yet, skipping aramid-indexer chart";
+            continue;
+        fi
+    fi
     # chart version follows the indexer version but must always increase, also after hand-bumped chart-only fixes
     cur=$(awk '/^version:/{print $2}' Chart.yaml)
     newv=${produce#v}
@@ -102,6 +109,9 @@ done
 cd $baseHelm || exit 1
 helm package voimain-indexer/ || exit 1
 helm package algorand-indexer/ || exit 1
+if curl -sf "https://hub.docker.com/v2/repositories/scholtz2/aramid-indexer/tags/${produce}-stable" > /dev/null; then
+    helm package aramid-indexer/ || exit 1
+fi
 helm repo index --merge index.yaml --url https://scholtz.github.io/AlgorandNodes/helm/ . || exit 1
 
 echo $produce > $currentFile

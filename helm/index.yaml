@@ -443,12 +443,12 @@ entries:
   voimain-relay:
   - apiVersion: v2
     appVersion: 5.1.1
-    created: "2026-11-22T21:20:24.914725573Z"
+    created: "2026-11-22T21:22:32.979931242Z"
     description: VOI relay node for voimain-1.0 blockchain.
-    digest: 9b03852047772d45e9f6f8d6dbf4c80978930770bddd1d5637179835526fe3e7
+    digest: 6bec484739a59f0bfe31c6ff83525ac7b512de6aaf9b0fcf31d720db0c0d8d43
     name: voimain-relay
     type: application
     urls:
     - https://scholtz.github.io/AlgorandNodes/helm/voimain-relay-5.1.1.tgz
     version: 5.1.1
-generated: "2026-11-22T21:20:24.708304882Z"
+generated: "2026-11-22T21:22:32.804923846Z"

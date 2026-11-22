@@ -66,7 +66,7 @@ pvcRoot:
       storage: 50Gi
 
 ## @section Node name
-## Used to pin the deployment to a specific node, e.g. together with hostPath. It has priority over deployment.nodeSelector
+## Used to pin the deployment to a specific node, e.g. together with hostPath.
 ## @param nodeName Name of the node
 nodeName: ""
 
@@ -107,8 +107,6 @@ deployment:
     key: 'app'
     ## @param deployment.label2.value Label value without prefix
     value: 'voimain-relay'
-  ## @param deployment.nodeSelector Node name for scheduling (deprecated, use nodeName)
-  nodeSelector: ""
   ## @param deployment.image Image name
   image: scholtz2/algorand-relay-voimain
   ## @param deployment.tag Image tag
@@ -117,6 +115,8 @@ deployment:
   imagePullPolicy: IfNotPresent
   ## @param deployment.terminationGracePeriodSeconds Time given to the node to stop cleanly
   terminationGracePeriodSeconds: 30
+  ## @param deployment.livenessFailureThreshold Failed liveness probes (10s apart) before the node is restarted. Keep high, a catching up node is not healthy but must not be killed
+  livenessFailureThreshold: 60
   resources:
     requests:
       ## @param deployment.resources.requests.memory Requested memory

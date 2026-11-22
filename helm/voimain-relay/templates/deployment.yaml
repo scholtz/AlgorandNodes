@@ -64,7 +64,7 @@ spec:
                 - /app/health.sh
             periodSeconds: 10
             timeoutSeconds: 10
-            failureThreshold: 6
+            failureThreshold: {{ .Values.deployment.livenessFailureThreshold }}
           {{- end }}
           ports:
             - name: gossip

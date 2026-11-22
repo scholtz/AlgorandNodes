@@ -232,11 +232,6 @@
                         }
                     }
                 },
-                "nodeSelector": {
-                    "type": "string",
-                    "description": "Node name for scheduling (deprecated, use nodeName)",
-                    "default": ""
-                },
                 "image": {
                     "type": "string",
                     "description": "Image name",
@@ -256,6 +251,11 @@
                     "type": "number",
                     "description": "Time given to the node to stop cleanly",
                     "default": 30
+                },
+                "livenessFailureThreshold": {
+                    "type": "number",
+                    "description": "Failed liveness probes (10s apart) before the node is restarted. Keep high, a catching up node is not healthy but must not be killed",
+                    "default": 60
                 },
                 "resources": {
                     "type": "object",
