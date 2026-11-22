@@ -34,9 +34,9 @@
                             "default": 5010
                         },
                         "node": {
-                            "type": "string",
+                            "type": "number",
                             "description": "Node port. Used only with NodePort or LoadBalancer service type",
-                            "default": ""
+                            "default": 0
                         },
                         "target": {
                             "type": "number",
@@ -69,9 +69,9 @@
                             "default": 28081
                         },
                         "node": {
-                            "type": "string",
+                            "type": "number",
                             "description": "Node port. Used only with NodePort or LoadBalancer service type",
-                            "default": ""
+                            "default": 0
                         },
                         "target": {
                             "type": "number",
@@ -104,9 +104,9 @@
                             "default": 9100
                         },
                         "node": {
-                            "type": "string",
+                            "type": "number",
                             "description": "Node port. Used only with NodePort or LoadBalancer service type",
-                            "default": ""
+                            "default": 0
                         },
                         "target": {
                             "type": "number",
@@ -256,11 +256,6 @@
                     "type": "number",
                     "description": "Failed startup probes (10s apart) allowed before the node is restarted. A first sync from genesis can take many hours",
                     "default": 8640
-                },
-                "livenessFailureThreshold": {
-                    "type": "number",
-                    "description": "Failed liveness probes (10s apart) before the node is restarted. Keep high, a catching up node is not healthy but must not be killed",
-                    "default": 360
                 },
                 "resources": {
                     "type": "object",

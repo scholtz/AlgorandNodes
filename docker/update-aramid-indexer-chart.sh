@@ -15,6 +15,7 @@ if [ "$produce" == "" ] || [ "$relayVersion" == "" ]; then
     exit 1;
 fi
 
+git -C $mainDir pull || { echo "git pull failed"; exit 1; }
 cd $baseHelm/aramid-indexer || exit 1
 cur=$(awk '/^version:/{print $2}' Chart.yaml)
 curApp=$(awk '/^appVersion:/{print $2}' Chart.yaml | tr -d "'\"")
@@ -39,23 +40,20 @@ if ! curl -sf "https://hub.docker.com/v2/repositories/scholtz2/aramid-algo-follo
 fi
 
 if [ "$curApp" != "$newv" ]; then
-git -C $mainDir pull || exit 1
-
 top=$(printf '%s\n%s\n' "$cur" "$newv" | sort -V | tail -1)
 if [ "$top" == "$newv" ] && [ "$cur" != "$newv" ]; then
     chartVersion=$newv
 else
     chartVersion="${cur%.*}.$((${cur##*.}+1))"
 fi
+sed -i "s~tag: \"v${curApp//./\.}-stable\"~tag: \"v${newv}-stable\"~" values.yaml
+sed -i "/^deploymentFollowerNode:/,/^## @section Deployment for conduit/ s~tag: \"\(v\?\)[0-9][0-9.]*-stable\"~tag: \"\1${relayVersion}-stable\"~" values.yaml
+grep -q "tag: \"v${newv}-stable\"" values.yaml || { echo "indexer tag was not updated in values.yaml"; git checkout -- values.yaml; exit 1; }
+grep -q "tag: \"v${relayVersion}-stable\"" values.yaml || { echo "follower tag was not updated in values.yaml"; git checkout -- values.yaml; exit 1; }
 sed -i "s~^version: .*~version: ${chartVersion}~" Chart.yaml
 sed -i "s~^appVersion: .*~appVersion: '${newv}'~" Chart.yaml
-sed -i "s~tag: \"v$curApp-stable\"~tag: \"v${newv}-stable\"~" values.yaml
-sed -i "/^deploymentFollowerNode:/,/^## @section Deployment for conduit/ s~tag: \"\(v\?\)[0-9][0-9.]*-stable\"~tag: \"\1${relayVersion}-stable\"~" values.yaml
 fi
 chartVersion=$(awk '/^version:/{print $2}' Chart.yaml)
-# abort when the edits did not take effect (e.g. values.yaml drifted from Chart.yaml)
-grep -q "tag: \"v${newv}-stable\"" values.yaml || { echo "indexer tag was not updated in values.yaml"; exit 1; }
-grep -q "tag: \"v${relayVersion}-stable\"" values.yaml || { echo "follower tag was not updated in values.yaml"; exit 1; }
 
 cd $baseHelm || exit 1
 helm package aramid-indexer/ || exit 1

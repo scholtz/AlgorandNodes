@@ -57,14 +57,17 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 10
             failureThreshold: 100
+          # liveness only checks that the node answers; a node which is still catching up is not restarted
           livenessProbe:
             exec:
               command:
                 - /bin/bash
-                - /app/health.sh
-            periodSeconds: 10
-            timeoutSeconds: 10
-            failureThreshold: {{ .Values.deployment.livenessFailureThreshold }}
+                - -c
+                - goal node status > /dev/null
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 20
+            failureThreshold: 10
           {{- end }}
           ports:
             - name: gossip
