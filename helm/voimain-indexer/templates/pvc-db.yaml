@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.prefix }}{{ .Values.pvcDB.name }}
+spec:
+  {{- if .Values.pvDB.hostPath }}
+  volumeName: {{ .Values.prefix }}{{ .Values.pvDB.name }}
+  {{- end }}
+  storageClassName: {{ .Values.pvcDB.storageClassName }}
+  accessModes:
+    - {{ .Values.pvcDB.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.pvcDB.resources.requests.storage }}

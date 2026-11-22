@@ -5,9 +5,9 @@ metadata:
 spec:
   type: {{ .Values.serviceIndexer.type }}
   selector:
-    {{ .Values.deploymentIndexer.label2.key }}: {{ .Values.deploymentIndexer.label2.value }}
+    {{ .Values.deploymentIndexer.label2.key }}: {{ .Values.prefix }}{{ .Values.deploymentIndexer.label2.value }}
   ports:
-    - name: algod-port
+    - name: indexer-http
       protocol: TCP
       appProtocol: http
       port: {{ .Values.serviceIndexer.port.service }}

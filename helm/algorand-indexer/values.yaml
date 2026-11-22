@@ -1,0 +1,299 @@
+# Default values for relay.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+## @section Global settings
+## @param debug Starts the containers in idle bash mode and turns off the probes
+debug: false
+
+## @param prefix Prefix identifier for the node, deployment, ingress, or other resources
+prefix: "algo-i-1-"
+
+## @param nodeName Hostname of the node the optional hostPath persistent volumes are bound to
+nodeName: ""
+
+## @param imagePullSecrets Image pull secrets applied to all pods
+imagePullSecrets: []
+
+## @param nodeSelector Node selector applied to all pods
+nodeSelector: {}
+
+## @param tolerations Tolerations applied to all pods
+tolerations: []
+
+## @param affinity Affinity applied to all pods
+affinity: {}
+
+## @section Init container which waits for dependencies
+initContainer:
+  ## @param initContainer.image Image of the init container (needs sh and nc)
+  image: busybox
+  ## @param initContainer.tag Tag of the init container image
+  tag: "1.37"
+  ## @param initContainer.imagePullPolicy Image pull policy of the init container
+  imagePullPolicy: IfNotPresent
+
+## @section Database configuration
+db:
+  ## @param db.user Database user
+  user: dbuser
+  ## @param db.password Database password
+  password: postgresPassword
+  ## @param db.dbName Database name
+  dbName: indexerdb
+
+## @section Secret for indexer
+secretIndexer:
+  ## @param secretIndexer.name Name of the secret
+  name: indexer-secret
+  ## @param secretIndexer.algodToken Algod token
+  algodToken: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+  ## @param secretIndexer.indexerToken Indexer token
+  indexerToken: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+## @section Secret for conduit
+secretConduit:
+  ## @param secretConduit.name Name of the secret
+  name: conduit-secret
+
+## @section Persistent Volume Claim for DB
+pvcDB:
+  ## @param pvcDB.name Name of the PVC
+  name: "indexer-db-mainnet-pvc"
+  ## @param pvcDB.storageClassName Storage class name
+  storageClassName: "linode-block-storage-retain"
+  ## @param pvcDB.accessMode Access mode
+  accessMode: "ReadWriteOnce"
+  resources:
+    requests:
+      ## @param pvcDB.resources.requests.storage Requested storage size
+      storage: 3Ti
+
+## @section Persistent Volume for DB
+pvDB:
+  ## @param pvDB.name Name of the PV
+  name: "indexer-db-mainnet-pv"
+  ## @param pvDB.hostPath Host path for the PV
+  hostPath: ""
+
+## @section Deployment for DB
+deploymentDB:
+  ## @param deploymentDB.name Name of the deployment
+  name: "indexer-mainnet-db-deployment"
+  label:
+    ## @param deploymentDB.label.key Label key
+    key: "app"
+    ## @param deploymentDB.label.value Label value
+    value: "indexer-mainnet-db"
+  ## @param deploymentDB.image Image name
+  image: postgres
+  ## @param deploymentDB.tag Image tag
+  tag: "14"
+  ## @param deploymentDB.imagePullPolicy Image pull policy
+  imagePullPolicy: IfNotPresent
+  resources:
+    requests:
+      ## @param deploymentDB.resources.requests.memory Requested memory
+      memory: "100Mi"
+      ## @param deploymentDB.resources.requests.cpu Requested CPU
+      cpu: "100m"
+    limits:
+      ## @param deploymentDB.resources.limits.memory Memory limit
+      memory: "16000Mi"
+      ## @param deploymentDB.resources.limits.cpu CPU limit
+      cpu: "8000m"
+
+## @section Service for DB
+serviceDB:
+  ## @param serviceDB.name Name of the service
+  name: "indexer-mainnet-db-service"
+  ## @param serviceDB.type Type of the service
+  type: "ClusterIP"
+  port:
+    ## @param serviceDB.port.service Service port
+    service: 5432
+    ## @param serviceDB.port.target Target port
+    target: 5432
+
+## @section Service for follower node
+serviceFollowerNode:
+  ## @param serviceFollowerNode.name Name of the service
+  name: "indexer-mainnet-follower-node-service"
+  ## @param serviceFollowerNode.type Type of the service
+  type: "ClusterIP"
+  port:
+    ## @param serviceFollowerNode.port.service Service port
+    service: 8080
+    ## @param serviceFollowerNode.port.target Target port
+    target: 8080
+
+## @section Service for indexer
+serviceIndexer:
+  ## @param serviceIndexer.name Name of the service
+  name: "indexer-mainnet-indexer-service"
+  ## @param serviceIndexer.type Type of the service
+  type: "ClusterIP"
+  port:
+    ## @param serviceIndexer.port.service Service port
+    service: 8980
+    ## @param serviceIndexer.port.target Target port
+    target: 8980
+
+## @section Persistent Volume Claim for conduit
+pvcConduit:
+  ## @param pvcConduit.name Name of the PVC
+  name: "indexer-conduit-pvc"
+  ## @param pvcConduit.storageClassName Storage class name
+  storageClassName: "linode-block-storage-retain"
+  ## @param pvcConduit.accessMode Access mode
+  accessMode: "ReadWriteOnce"
+  resources:
+    requests:
+      ## @param pvcConduit.resources.requests.storage Requested storage size
+      storage: 10Gi
+
+## @section Persistent Volume for conduit
+pvConduit:
+  ## @param pvConduit.name Name of the PV
+  name: "indexer-conduit-pv"
+  ## @param pvConduit.hostPath Host path for the PV
+  hostPath: ""
+
+## @section Persistent Volume Claim for follow node
+pvcFollowNode:
+  ## @param pvcFollowNode.name Name of the PVC
+  name: "indexer-follow-node-pvc"
+  ## @param pvcFollowNode.storageClassName Storage class name
+  storageClassName: "linode-block-storage-retain"
+  ## @param pvcFollowNode.accessMode Access mode
+  accessMode: "ReadWriteOnce"
+  resources:
+    requests:
+      ## @param pvcFollowNode.resources.requests.storage Requested storage size
+      storage: 10Gi
+
+## @section Persistent Volume for follow node
+pvFollowNode:
+  ## @param pvFollowNode.name Name of the PV
+  name: "indexer-follow-node-pv"
+  ## @param pvFollowNode.hostPath Host path for the PV
+  hostPath: ""
+
+## @section Deployment for follower node
+deploymentFollowerNode:
+  ## @param deploymentFollowerNode.name Name of the deployment
+  name: "indexer-mainnet-follower-node-deployment"
+  label:
+    ## @param deploymentFollowerNode.label.key Label key
+    key: "app"
+    ## @param deploymentFollowerNode.label.value Label value
+    value: "indexer-mainnet-follower-node"
+  ## @param deploymentFollowerNode.image Image name
+  image: "scholtz2/algorand-relay-mainnet"
+  ## @param deploymentFollowerNode.tag Image tag
+  tag: "5.1.1-stable"
+  ## @param deploymentFollowerNode.imagePullPolicy Image pull policy
+  imagePullPolicy: Always
+  ## @param deploymentFollowerNode.command Optional command overriding the image entrypoint
+  command:
+    - /bin/bash
+    - -ec
+    - |
+      if [ ! -f data/config.json ]; then
+        echo '{"Version": 33, "EndpointAddress": "0.0.0.0:8080", "EnableFollowMode": true, "CatchupParallelBlocks": 64, "MaxAcctLookback": 1024}' > data/config.json
+      fi
+      [ -f data/genesis.json ] || cp mainnet/genesis.json data/genesis.json
+      trap 'goal node stop || true; exit 0' TERM INT
+      goal node start
+      while :; do date; goal node status || true; sleep 600 & wait $!; done
+  resources:
+    requests:
+      ## @param deploymentFollowerNode.resources.requests.memory Requested memory
+      memory: "100Mi"
+      ## @param deploymentFollowerNode.resources.requests.cpu Requested CPU
+      cpu: "100m"
+    limits:
+      ## @param deploymentFollowerNode.resources.limits.memory Memory limit
+      memory: "6000Mi"
+      ## @param deploymentFollowerNode.resources.limits.cpu CPU limit
+      cpu: "4000m"
+
+## @section Deployment for conduit
+deploymentConduit:
+  ## @param deploymentConduit.name Name of the deployment
+  name: "indexer-mainnet-conduit-deployment"
+  label:
+    ## @param deploymentConduit.label.key Label key
+    key: "app"
+    ## @param deploymentConduit.label.value Label value
+    value: "indexer-mainnet-conduit"
+  ## @param deploymentConduit.image Image name
+  image: "algorand/conduit"
+  ## @param deploymentConduit.tag Image tag
+  tag: "1.11.1"
+  ## @param deploymentConduit.imagePullPolicy Image pull policy
+  imagePullPolicy: IfNotPresent
+  ## @param deploymentConduit.mountPath Mount path
+  mountPath: /data
+  resources:
+    requests:
+      ## @param deploymentConduit.resources.requests.memory Requested memory
+      memory: "100Mi"
+      ## @param deploymentConduit.resources.requests.cpu Requested CPU
+      cpu: "100m"
+    limits:
+      ## @param deploymentConduit.resources.limits.memory Memory limit
+      memory: "6000Mi"
+      ## @param deploymentConduit.resources.limits.cpu CPU limit
+      cpu: "4000m"
+
+## @section Deployment for indexer
+deploymentIndexer:
+  ## @param deploymentIndexer.name Name of the deployment
+  name: "indexer-mainnet-indexer-deployment"
+  ## @param deploymentIndexer.replicas Number of replicas
+  replicas: 2
+  label:
+    ## @param deploymentIndexer.label.key Label key
+    key: "appId"
+    ## @param deploymentIndexer.label.value Label value
+    value: "indexer-mainnet-indexer"
+  label2:
+    ## @param deploymentIndexer.label2.key Second label key
+    key: "app"
+    ## @param deploymentIndexer.label2.value Second label value
+    value: "indexer-mainnet"
+  ## @param deploymentIndexer.image Image name
+  image: "scholtz2/algorand-indexer"
+  ## @param deploymentIndexer.tag Image tag
+  tag: "v3.11.1-stable"
+  ## @param deploymentIndexer.imagePullPolicy Image pull policy
+  imagePullPolicy: IfNotPresent
+  ## @param deploymentIndexer.genesis Path to the genesis file of the chain inside the indexer image
+  genesis: "/app/genesis/mainnet/genesis.json"
+  resources:
+    requests:
+      ## @param deploymentIndexer.resources.requests.memory Requested memory
+      memory: "100Mi"
+      ## @param deploymentIndexer.resources.requests.cpu Requested CPU
+      cpu: "100m"
+    limits:
+      ## @param deploymentIndexer.resources.limits.memory Memory limit
+      memory: "3000Mi"
+      ## @param deploymentIndexer.resources.limits.cpu CPU limit
+      cpu: "3000m"
+
+## @section Ingress configuration
+ingress:
+  ## @param ingress.enabled Enable ingress
+  enabled: true
+  ## @param ingress.name Name of the ingress
+  name: "indexer-mainnet-ingress"
+  ## @param ingress.host Host for the ingress
+  host: "" # mainnet-indexer.de-4.biatec.io
+  ## @param ingress.clusterIssuer Cluster issuer
+  clusterIssuer: "letsencrypt"
+  ## @param ingress.ingressClassName Ingress class name
+  ingressClassName: "nginx"
+  ## @param ingress.annotations Additional ingress annotations
+  annotations: {}

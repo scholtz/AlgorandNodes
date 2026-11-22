@@ -1,4 +1,3 @@
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,34 +13,32 @@ spec:
     metadata:
       labels:
         {{ .Values.deploymentFollowerNode.label.key }}: {{ .Values.prefix }}{{ .Values.deploymentFollowerNode.label.value }}
+      annotations:
+        checksum/tokens: {{ include (print $.Template.BasePath "/secret-indexer.yaml") . | sha256sum }}
     spec:
       securityContext:
         runAsUser: 1000
         runAsGroup: 1000
         fsGroup: 1000
-      terminationGracePeriodSeconds: 3
+        seccompProfile:
+          type: RuntimeDefault
+      # give algod time to stop cleanly
+      terminationGracePeriodSeconds: 30
+      {{- include "indexer.scheduling" . | nindent 6 }}
+      {{- if not .Values.debug }}
       initContainers:
-        - name: wait-for-db-before-starup
-          image: busybox
-          command:
-            [
-              'sh',
-              '-c',
-              'echo -e "Checking for the availability of DB Server deployment"; while ! nc -z {{ .Values.prefix }}{{ .Values.serviceDB.name }} 5432; do sleep 1; printf "-"; done; echo -e "  >> DB Server has started";',
-            ]
-
+        {{- include "indexer.waitFor" (dict "root" . "title" "DB Server" "host" (printf "%s%s" .Values.prefix .Values.serviceDB.name) "port" .Values.serviceDB.port.service) | nindent 8 }}
+      {{- end }}
       containers:
         - name: {{ .Values.prefix }}follow-node
           image: {{ .Values.deploymentFollowerNode.image }}:{{ .Values.deploymentFollowerNode.tag }}
           imagePullPolicy: {{ .Values.deploymentFollowerNode.imagePullPolicy }}
-          # command:
-          #   [
-          #     '/bin/bash',
-          #     '-ec',
-          #     'date; sleep 1 ;cp --update=none config.json data/config.json; cp --update=none genesis/aramidmain/genesis.json data/genesis.json; cp --update=none consensus.json data/consensus.json; date; goal node start; date; while :; do date; sleep 600 ; done ',
-          #   ]
-          # command: ["goal", "node", "start"]
-          # command: ["/bin/bash", "-ec", "while :; do date; sleep 600 ; done"]
+          {{- if .Values.debug }}
+          command: ['/bin/bash', '-ec', 'while :; do date; sleep 60 ; done']
+          {{- else if .Values.deploymentFollowerNode.command }}
+          command:
+            {{- toYaml .Values.deploymentFollowerNode.command | nindent 12 }}
+          {{- end }}
           lifecycle:
             preStop:
               exec:
@@ -49,42 +46,47 @@ spec:
           resources:
             requests:
               memory: {{ .Values.deploymentFollowerNode.resources.requests.memory }}
-              cpu:  {{ .Values.deploymentFollowerNode.resources.requests.cpu }}
+              cpu: {{ .Values.deploymentFollowerNode.resources.requests.cpu }}
             limits:
               memory: {{ .Values.deploymentFollowerNode.resources.limits.memory }}
               cpu: {{ .Values.deploymentFollowerNode.resources.limits.cpu }}
           ports:
-            - containerPort: 8080
+            - containerPort: {{ .Values.serviceFollowerNode.port.target }}
               protocol: TCP
+          {{- if not .Values.debug }}
+          startupProbe:
+            tcpSocket:
+              port: {{ .Values.serviceFollowerNode.port.target }}
+            periodSeconds: 10
+            failureThreshold: 90
           readinessProbe:
             tcpSocket:
-              port: 8080
+              port: {{ .Values.serviceFollowerNode.port.target }}
             initialDelaySeconds: 10
             timeoutSeconds: 10
             failureThreshold: 20
           livenessProbe:
             tcpSocket:
-              port: 8080
+              port: {{ .Values.serviceFollowerNode.port.target }}
             initialDelaySeconds: 20
             timeoutSeconds: 5
             failureThreshold: 5
-            terminationGracePeriodSeconds: 3
+          {{- end }}
           securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
+            {{- include "indexer.containerSecurity" 1000 | nindent 12 }}
           volumeMounts:
-            - name: {{ .Values.prefix }}aramid-follow-node-pvc
+            - name: follow-node-data
               mountPath: /app/data
-            - name: {{ .Values.prefix }}{{ .Values.secretIndexer.name }}
+            - name: tokens
               subPath: INDEXER_ALGOD_TOKEN
               mountPath: /app/data/algod.token
-            - name: {{ .Values.prefix }}{{ .Values.secretIndexer.name }}
+            - name: tokens
               subPath: INDEXER_API_TOKEN
               mountPath: /app/data/algod.admin.token
       volumes:
-        - name: {{ .Values.prefix }}{{ .Values.secretIndexer.name }}
+        - name: tokens
           secret:
             secretName: {{ .Values.prefix }}{{ .Values.secretIndexer.name }}
-        - name: {{ .Values.prefix }}aramid-follow-node-pvc
+        - name: follow-node-data
           persistentVolumeClaim:
-            claimName: {{ .Values.prefix }}aramid-follow-node-pvc
+            claimName: {{ .Values.prefix }}{{ .Values.pvcFollowNode.name }}

@@ -451,7 +451,7 @@ helm package algorand-participation/
 helm package aramid-relay/
 helm package aramid-participation/
 helm package voimain-participation/
-helm repo index --url https://scholtz.github.io/AlgorandNodes/helm/ .
+helm repo index --merge index.yaml --url https://scholtz.github.io/AlgorandNodes/helm/ .
 
 ################### FINISH
 cd $baseDir

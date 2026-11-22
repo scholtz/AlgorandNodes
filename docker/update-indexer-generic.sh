@@ -48,6 +48,8 @@ if [ $error_code_int -ne 0 ]; then
 	exit 1;
 fi
 
+baseHelm=/home/scholtz/AlgorandNodes/helm
+
 cd /home/scholtz/AlgorandNodes/docker/indexer/mainnet
 
 f1base="compose-indexer-${base}.sh"
@@ -70,13 +72,47 @@ f1=deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
 
+################### HELM CHARTS (voimain-indexer, algorand-indexer)
+# chart version and appVersion follow the indexer version, the indexer image tag is bumped
+# and the follower node image tag follows the current relay/node version
+relayVersion=$(cat /home/scholtz/AlgorandNodes/docker/current-relay-version.txt)
+if [ "$relayVersion" == "" ]; then
+    echo "failed to read current relay version";
+    exit 1;
+fi
+for chart in voimain-indexer algorand-indexer; do
+    cd $baseHelm/$chart || exit 1
+    # chart version follows the indexer version but must always increase, also after hand-bumped chart-only fixes
+    cur=$(awk '/^version:/{print $2}' Chart.yaml)
+    newv=${produce#v}
+    top=$(printf '%s
+%s
+' "$cur" "$newv" | sort -V | tail -1)
+    if [ "$top" == "$newv" ] && [ "$cur" != "$newv" ]; then
+        chartVersion=$newv
+    else
+        chartVersion="${cur%.*}.$((${cur##*.}+1))"
+    fi
+    sed -i "s~^version: .*~version: ${chartVersion}~" Chart.yaml
+    sed -i "s~^appVersion: .*~appVersion: '${produce#v}'~" Chart.yaml
+    sed -i "s~$base~$produce~g" values.yaml
+    sed -i "/^deploymentFollowerNode:/,/^## @section Deployment for conduit/ s~tag: \"[0-9][0-9.]*-stable\"~tag: \"${relayVersion}-stable\"~" values.yaml
+done
+
+cd $baseHelm || exit 1
+helm package voimain-indexer/ || exit 1
+helm package algorand-indexer/ || exit 1
+helm repo index --merge index.yaml --url https://scholtz.github.io/AlgorandNodes/helm/ . || exit 1
+
 echo $produce > $currentFile
 
 cd /home/scholtz/AlgorandNodes/
 
 git add .
 git commit -m "cicd update indexer from ${base} to ${produce}"
+error_code=0
 git push  || error_code=$?
+error_code_int=$(($error_code + 0))
 if [ $error_code_int -ne 0 ]; then
     echo "git push failed";
 	exit 1;
