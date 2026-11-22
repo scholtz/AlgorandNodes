@@ -444,6 +444,12 @@ sed -i "s~$base~$produce~g" $f1
 f1=values.yaml
 sed -i "s~$base~$produce~g" $f1
 
+cd $baseHelm/voimain-relay
+f1=Chart.yaml
+sed -i "s~$base~$produce~g" $f1
+f1=values.yaml
+sed -i "s~$base~$produce~g" $f1
+
 cd $baseHelm/
 
 helm package algorand-relay/
@@ -451,6 +457,7 @@ helm package algorand-participation/
 helm package aramid-relay/
 helm package aramid-participation/
 helm package voimain-participation/
+helm package voimain-relay/
 helm repo index --merge index.yaml --url https://scholtz.github.io/AlgorandNodes/helm/ .
 
 ################### FINISH

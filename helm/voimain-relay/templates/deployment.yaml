@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.prefix }}{{ .Values.deployment.name }}
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{ .Values.deployment.label.key }}: {{ .Values.prefix }}{{ .Values.deployment.label.value }}
+  template:
+    metadata:
+      labels:
+        {{ .Values.deployment.label.key }}: {{ .Values.prefix }}{{ .Values.deployment.label.value }}
+        {{- if .Values.deployment.label2.key }}
+        {{ .Values.deployment.label2.key }}: {{ .Values.prefix }}{{ .Values.deployment.label2.value }}
+        {{- end }}
+    spec:
+      {{- include "relay.scheduling" . | nindent 6 }}
+      terminationGracePeriodSeconds: {{ .Values.deployment.terminationGracePeriodSeconds }}
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: voimain-relay
+          image: {{ .Values.deployment.image }}:{{ .Values.deployment.tag }}
+          imagePullPolicy: {{ .Values.deployment.imagePullPolicy }}
+          resources:
+            requests:
+              memory: {{ .Values.deployment.resources.requests.memory }}
+              cpu: {{ .Values.deployment.resources.requests.cpu }}
+            limits:
+              memory: {{ .Values.deployment.resources.limits.memory }}
+              cpu: {{ .Values.deployment.resources.limits.cpu }}
+          {{- if .Values.debug }}
+          command: ['/bin/bash', '-ec', 'while :; do date; sleep 60 ; done']
+          {{- else }}
+          command: ['/bin/bash', '/app/run.sh']
+          startupProbe:
+            exec:
+              command:
+                - /bin/bash
+                - /app/health.sh
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 10
+            failureThreshold: 1000
+          readinessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - /app/health.sh
+            periodSeconds: 10
+            timeoutSeconds: 10
+            failureThreshold: 100
+          livenessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - /app/health.sh
+            periodSeconds: 10
+            timeoutSeconds: 10
+            failureThreshold: 6
+          {{- end }}
+          ports:
+            - name: gossip
+              containerPort: {{ .Values.serviceAVMProtocol.port.target }}
+              protocol: TCP
+            - name: algod
+              containerPort: {{ .Values.serviceAlgodProtocol.port.target }}
+              protocol: TCP
+            - name: metrics
+              containerPort: {{ .Values.serviceMetricsProtocol.port.target }}
+              protocol: TCP
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: root
+              mountPath: /app/data
+      volumes:
+        - name: root
+          persistentVolumeClaim:
+            claimName: {{ .Values.prefix }}{{ .Values.pvcRoot.name }}

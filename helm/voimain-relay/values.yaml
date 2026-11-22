@@ -1,0 +1,130 @@
+# Default values for voimain-relay.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+## @section Debug
+## @param debug Starts the image in bash mode and turns off the probes
+debug: false
+
+## @section Prefix
+## @param prefix Prefix identifier for the node, deployment, ingress, or other resources
+prefix: "voi-r-1-"
+
+## @section Service for the gossip protocol
+serviceAVMProtocol:
+  ## @param serviceAVMProtocol.name Name of the service.
+  name: 'voimain-avm-protocol-service'
+  ## @param serviceAVMProtocol.type Type of the service
+  type: 'LoadBalancer'
+  port:
+    ## @param serviceAVMProtocol.port.service Service port
+    service: 5010
+    ## @param serviceAVMProtocol.port.node Node port. Used only with NodePort or LoadBalancer service type
+    node: 30010
+    ## @param serviceAVMProtocol.port.target Target port. Must match NetAddress in the node config.json
+    target: 5010
+
+## @section Service for algod protocol
+serviceAlgodProtocol:
+  ## @param serviceAlgodProtocol.name Name of the service.
+  name: 'voimain-algod-protocol-service'
+  ## @param serviceAlgodProtocol.type Type of the service
+  type: 'ClusterIP'
+  port:
+    ## @param serviceAlgodProtocol.port.service Service port
+    service: 28081
+    ## @param serviceAlgodProtocol.port.node Node port. Used only with NodePort or LoadBalancer service type
+    node: ""
+    ## @param serviceAlgodProtocol.port.target Target port. Must match EndpointAddress in the node config.json
+    target: 28081
+
+## @section Service for metrics protocol
+serviceMetricsProtocol:
+  ## @param serviceMetricsProtocol.name Name of the service.
+  name: 'voimain-metrics-protocol-service'
+  ## @param serviceMetricsProtocol.type Type of the service
+  type: 'ClusterIP'
+  port:
+    ## @param serviceMetricsProtocol.port.service Service port
+    service: 9100
+    ## @param serviceMetricsProtocol.port.node Node port. Used only with NodePort or LoadBalancer service type
+    node: ""
+    ## @param serviceMetricsProtocol.port.target Target port
+    target: 9100
+
+## @section Persistent Volume Claim for root
+pvcRoot:
+  ## @param pvcRoot.name Name of the PVC
+  name: "voimain-relay-root-pvc"
+  ## @param pvcRoot.storageClassName Storage class name. Empty value uses the cluster default storage class
+  storageClassName: "linode-block-storage-retain"
+  ## @param pvcRoot.accessMode Access mode
+  accessMode: "ReadWriteOnce"
+  resources:
+    requests:
+      ## @param pvcRoot.resources.requests.storage Requested storage size
+      storage: 50Gi
+
+## @section Node name
+## Used to pin the deployment to a specific node, e.g. together with hostPath. It has priority over deployment.nodeSelector
+## @param nodeName Name of the node
+nodeName: ""
+
+## @section Scheduling
+## @param imagePullSecrets Image pull secrets
+imagePullSecrets: []
+## @param tolerations Pod tolerations
+tolerations: []
+## @param affinity Pod affinity
+affinity: {}
+
+## @section Persistent Volume for root
+# The best storage is block device using nvme SSD drives
+# If hosted directly on server, use hostPath. The directory must exist and be writable by uid 1000.
+pvRoot:
+  ## @param pvRoot.name Name of the PV
+  name: "voimain-relay-root-pv"
+  ## @param pvRoot.hostPath Host path for the PV. When set, the PV is created and bound to the PVC
+  hostPath: ""
+
+## @section Deployment details
+deployment:
+  ## @param deployment.name Name of the deployment
+  name: "voimain-relay-deployment"
+  ## @param deployment.replicas Number of replicas. Keep at 1 because the volume is ReadWriteOnce
+  replicas: 1
+
+  # label key with the prefix
+  label:
+    ## @param deployment.label.key Label key with prefix
+    key: 'app-instance'
+    ## @param deployment.label.value Label value with prefix
+    value: 'voimain-relay'
+
+  # label key without the prefix
+  label2:
+    ## @param deployment.label2.key Label key without prefix
+    key: 'app'
+    ## @param deployment.label2.value Label value without prefix
+    value: 'voimain-relay'
+  ## @param deployment.nodeSelector Node name for scheduling (deprecated, use nodeName)
+  nodeSelector: ""
+  ## @param deployment.image Image name
+  image: scholtz2/algorand-relay-voimain
+  ## @param deployment.tag Image tag
+  tag: 5.1.1-stable
+  ## @param deployment.imagePullPolicy Image pull policy
+  imagePullPolicy: IfNotPresent
+  ## @param deployment.terminationGracePeriodSeconds Time given to the node to stop cleanly
+  terminationGracePeriodSeconds: 30
+  resources:
+    requests:
+      ## @param deployment.resources.requests.memory Requested memory
+      memory: '1000Mi'
+      ## @param deployment.resources.requests.cpu Requested CPU
+      cpu: '1000m'
+    limits:
+      ## @param deployment.resources.limits.memory Memory limit
+      memory: '16000Mi'
+      ## @param deployment.resources.limits.cpu CPU limit
+      cpu: '8000m'

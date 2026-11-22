@@ -1,0 +1,298 @@
+{
+    "title": "Chart Values",
+    "type": "object",
+    "properties": {
+        "debug": {
+            "type": "boolean",
+            "description": "Starts the image in bash mode and turns off the probes",
+            "default": false
+        },
+        "prefix": {
+            "type": "string",
+            "description": "Prefix identifier for the node, deployment, ingress, or other resources",
+            "default": "voi-r-1-"
+        },
+        "serviceAVMProtocol": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the service.",
+                    "default": "voimain-avm-protocol-service"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "Type of the service",
+                    "default": "LoadBalancer"
+                },
+                "port": {
+                    "type": "object",
+                    "properties": {
+                        "service": {
+                            "type": "number",
+                            "description": "Service port",
+                            "default": 5010
+                        },
+                        "node": {
+                            "type": "number",
+                            "description": "Node port. Used only with NodePort or LoadBalancer service type",
+                            "default": 30010
+                        },
+                        "target": {
+                            "type": "number",
+                            "description": "Target port. Must match NetAddress in the node config.json",
+                            "default": 5010
+                        }
+                    }
+                }
+            }
+        },
+        "serviceAlgodProtocol": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the service.",
+                    "default": "voimain-algod-protocol-service"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "Type of the service",
+                    "default": "ClusterIP"
+                },
+                "port": {
+                    "type": "object",
+                    "properties": {
+                        "service": {
+                            "type": "number",
+                            "description": "Service port",
+                            "default": 28081
+                        },
+                        "node": {
+                            "type": "string",
+                            "description": "Node port. Used only with NodePort or LoadBalancer service type",
+                            "default": ""
+                        },
+                        "target": {
+                            "type": "number",
+                            "description": "Target port. Must match EndpointAddress in the node config.json",
+                            "default": 28081
+                        }
+                    }
+                }
+            }
+        },
+        "serviceMetricsProtocol": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the service.",
+                    "default": "voimain-metrics-protocol-service"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "Type of the service",
+                    "default": "ClusterIP"
+                },
+                "port": {
+                    "type": "object",
+                    "properties": {
+                        "service": {
+                            "type": "number",
+                            "description": "Service port",
+                            "default": 9100
+                        },
+                        "node": {
+                            "type": "string",
+                            "description": "Node port. Used only with NodePort or LoadBalancer service type",
+                            "default": ""
+                        },
+                        "target": {
+                            "type": "number",
+                            "description": "Target port",
+                            "default": 9100
+                        }
+                    }
+                }
+            }
+        },
+        "pvcRoot": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the PVC",
+                    "default": "voimain-relay-root-pvc"
+                },
+                "storageClassName": {
+                    "type": "string",
+                    "description": "Storage class name. Empty value uses the cluster default storage class",
+                    "default": "linode-block-storage-retain"
+                },
+                "accessMode": {
+                    "type": "string",
+                    "description": "Access mode",
+                    "default": "ReadWriteOnce"
+                },
+                "resources": {
+                    "type": "object",
+                    "properties": {
+                        "requests": {
+                            "type": "object",
+                            "properties": {
+                                "storage": {
+                                    "type": "string",
+                                    "description": "Requested storage size",
+                                    "default": "50Gi"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "nodeName": {
+            "type": "string",
+            "description": "Name of the node",
+            "default": ""
+        },
+        "imagePullSecrets": {
+            "type": "array",
+            "description": "Image pull secrets",
+            "default": [],
+            "items": {}
+        },
+        "tolerations": {
+            "type": "array",
+            "description": "Pod tolerations",
+            "default": [],
+            "items": {}
+        },
+        "affinity": {
+            "type": "object",
+            "description": "Pod affinity",
+            "default": {}
+        },
+        "pvRoot": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the PV",
+                    "default": "voimain-relay-root-pv"
+                },
+                "hostPath": {
+                    "type": "string",
+                    "description": "Host path for the PV. When set, the PV is created and bound to the PVC",
+                    "default": ""
+                }
+            }
+        },
+        "deployment": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the deployment",
+                    "default": "voimain-relay-deployment"
+                },
+                "replicas": {
+                    "type": "number",
+                    "description": "Number of replicas. Keep at 1 because the volume is ReadWriteOnce",
+                    "default": 1
+                },
+                "label": {
+                    "type": "object",
+                    "properties": {
+                        "key": {
+                            "type": "string",
+                            "description": "Label key with prefix",
+                            "default": "app-instance"
+                        },
+                        "value": {
+                            "type": "string",
+                            "description": "Label value with prefix",
+                            "default": "voimain-relay"
+                        }
+                    }
+                },
+                "label2": {
+                    "type": "object",
+                    "properties": {
+                        "key": {
+                            "type": "string",
+                            "description": "Label key without prefix",
+                            "default": "app"
+                        },
+                        "value": {
+                            "type": "string",
+                            "description": "Label value without prefix",
+                            "default": "voimain-relay"
+                        }
+                    }
+                },
+                "nodeSelector": {
+                    "type": "string",
+                    "description": "Node name for scheduling (deprecated, use nodeName)",
+                    "default": ""
+                },
+                "image": {
+                    "type": "string",
+                    "description": "Image name",
+                    "default": "scholtz2/algorand-relay-voimain"
+                },
+                "tag": {
+                    "type": "string",
+                    "description": "Image tag",
+                    "default": "5.1.1-stable"
+                },
+                "imagePullPolicy": {
+                    "type": "string",
+                    "description": "Image pull policy",
+                    "default": "IfNotPresent"
+                },
+                "terminationGracePeriodSeconds": {
+                    "type": "number",
+                    "description": "Time given to the node to stop cleanly",
+                    "default": 30
+                },
+                "resources": {
+                    "type": "object",
+                    "properties": {
+                        "requests": {
+                            "type": "object",
+                            "properties": {
+                                "memory": {
+                                    "type": "string",
+                                    "description": "Requested memory",
+                                    "default": "1000Mi"
+                                },
+                                "cpu": {
+                                    "type": "string",
+                                    "description": "Requested CPU",
+                                    "default": "1000m"
+                                }
+                            }
+                        },
+                        "limits": {
+                            "type": "object",
+                            "properties": {
+                                "memory": {
+                                    "type": "string",
+                                    "description": "Memory limit",
+                                    "default": "16000Mi"
+                                },
+                                "cpu": {
+                                    "type": "string",
+                                    "description": "CPU limit",
+                                    "default": "8000m"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

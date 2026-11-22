@@ -19,6 +19,10 @@ docker run -it -v "$(pwd)/voimain-participation:/app/data" scholtz2/readme-gener
 
 helm package voimain-participation/
 
+docker run -it -v "$(pwd)/voimain-relay:/app/data" scholtz2/readme-generator-for-helm:2.7.2 readme-generator -v data/values.yaml -s data/values.schema.json
+
+helm package voimain-relay/
+
 docker run -it -v "$(pwd)/aramid-indexer:/app/data" scholtz2/readme-generator-for-helm:2.7.2 readme-generator -v data/values.yaml -s data/values.schema.json
 
 helm package aramid-indexer/

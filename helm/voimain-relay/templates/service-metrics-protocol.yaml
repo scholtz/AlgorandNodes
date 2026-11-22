@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.prefix }}{{ .Values.serviceMetricsProtocol.name }}
+spec:
+  type: {{ .Values.serviceMetricsProtocol.type }}
+  selector:
+    {{ .Values.deployment.label.key }}: {{ .Values.prefix }}{{ .Values.deployment.label.value }}
+  ports:
+    - name: metrics-port
+      protocol: TCP
+      appProtocol: http
+      port: {{ .Values.serviceMetricsProtocol.port.service }}
+      {{- if and (or (eq .Values.serviceMetricsProtocol.type "NodePort") (eq .Values.serviceMetricsProtocol.type "LoadBalancer")) (not (empty .Values.serviceMetricsProtocol.port.node)) }}
+      nodePort: {{ .Values.serviceMetricsProtocol.port.node }}
+      {{- end }}
+      targetPort: {{ .Values.serviceMetricsProtocol.port.target }}

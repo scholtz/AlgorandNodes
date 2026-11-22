@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.prefix }}{{ .Values.pvcRoot.name }}
+spec:
+  {{- if .Values.pvRoot.hostPath }}
+  volumeName: {{ .Values.prefix }}{{ .Values.pvRoot.name }}
+  {{- end }}
+  {{- if or .Values.pvRoot.hostPath .Values.pvcRoot.storageClassName }}
+  storageClassName: {{ .Values.pvcRoot.storageClassName | quote }}
+  {{- end }}
+  accessModes:
+    - {{ .Values.pvcRoot.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.pvcRoot.resources.requests.storage }}
