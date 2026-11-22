@@ -9,7 +9,6 @@ spec:
   ports:
     - name: metrics-port
       protocol: TCP
-      appProtocol: http
       port: {{ .Values.serviceMetricsProtocol.port.service }}
       {{- if and (or (eq .Values.serviceMetricsProtocol.type "NodePort") (eq .Values.serviceMetricsProtocol.type "LoadBalancer")) (not (empty .Values.serviceMetricsProtocol.port.node)) }}
       nodePort: {{ .Values.serviceMetricsProtocol.port.node }}

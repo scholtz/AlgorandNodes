@@ -72,7 +72,7 @@ f1=deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
 
-################### HELM CHARTS (voimain-indexer, algorand-indexer, aramid-indexer)
+################### HELM CHARTS (voimain-indexer, algorand-indexer; aramid-indexer is handled by update-aramid-indexer-chart.sh)
 # chart version and appVersion follow the indexer version, the indexer image tag is bumped
 # and the follower node image tag follows the current relay/node version
 relayVersion=$(cat /home/scholtz/AlgorandNodes/docker/current-relay-version.txt)
@@ -80,15 +80,8 @@ if [ "$relayVersion" == "" ]; then
     echo "failed to read current relay version";
     exit 1;
 fi
-for chart in voimain-indexer algorand-indexer aramid-indexer; do
+for chart in voimain-indexer algorand-indexer; do
     cd $baseHelm/$chart || exit 1
-    if [ "$chart" == "aramid-indexer" ]; then
-        # the aramid indexer is a patched fork built manually, do not publish a chart pointing to a missing image
-        if ! curl -sf "https://hub.docker.com/v2/repositories/scholtz2/aramid-indexer/tags/${produce}-stable" > /dev/null; then
-            echo "scholtz2/aramid-indexer:${produce}-stable does not exist yet, skipping aramid-indexer chart";
-            continue;
-        fi
-    fi
     # chart version follows the indexer version but must always increase, also after hand-bumped chart-only fixes
     cur=$(awk '/^version:/{print $2}' Chart.yaml)
     newv=${produce#v}
@@ -109,9 +102,6 @@ done
 cd $baseHelm || exit 1
 helm package voimain-indexer/ || exit 1
 helm package algorand-indexer/ || exit 1
-if curl -sf "https://hub.docker.com/v2/repositories/scholtz2/aramid-indexer/tags/${produce}-stable" > /dev/null; then
-    helm package aramid-indexer/ || exit 1
-fi
 helm repo index --merge index.yaml --url https://scholtz.github.io/AlgorandNodes/helm/ . || exit 1
 
 echo $produce > $currentFile

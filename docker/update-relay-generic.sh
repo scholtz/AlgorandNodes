@@ -445,8 +445,18 @@ f1=values.yaml
 sed -i "s~$base~$produce~g" $f1
 
 cd $baseHelm/voimain-relay
-f1=Chart.yaml
-sed -i "s~$base~$produce~g" $f1
+# chart version follows the node version but must always increase, also after hand-bumped chart-only fixes
+cur=$(awk '/^version:/{print $2}' Chart.yaml)
+top=$(printf '%s
+%s
+' "$cur" "$produce" | sort -V | tail -1)
+if [ "$top" == "$produce" ] && [ "$cur" != "$produce" ]; then
+    chartVersion=$produce
+else
+    chartVersion="${cur%.*}.$((${cur##*.}+1))"
+fi
+sed -i "s~^version: .*~version: ${chartVersion}~" Chart.yaml
+sed -i "s~^appVersion: .*~appVersion: \"${produce}\"~" Chart.yaml
 f1=values.yaml
 sed -i "s~$base~$produce~g" $f1
 

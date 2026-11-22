@@ -1,4 +1,5 @@
 {{- if .Values.pvRoot.hostPath }}
+{{- $_ := required "nodeName must be set when pvRoot.hostPath is used" .Values.nodeName }}
 apiVersion: v1
 kind: PersistentVolume
 metadata:

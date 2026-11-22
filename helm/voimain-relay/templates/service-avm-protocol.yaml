@@ -9,7 +9,6 @@ spec:
   ports:
     - name: avm-port
       protocol: TCP
-      appProtocol: http
       port: {{ .Values.serviceAVMProtocol.port.service }}
       {{- if and (or (eq .Values.serviceAVMProtocol.type "NodePort") (eq .Values.serviceAVMProtocol.type "LoadBalancer")) (not (empty .Values.serviceAVMProtocol.port.node)) }}
       nodePort: {{ .Values.serviceAVMProtocol.port.node }}
