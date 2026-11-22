@@ -468,7 +468,7 @@
                     "default": [
                         "/bin/bash",
                         "-ec",
-                        "if [ ! -f data/config.json ]; then\n  echo '{\"Version\": 33, \"EndpointAddress\": \"0.0.0.0:8080\", \"EnableFollowMode\": true, \"CatchupParallelBlocks\": 64, \"MaxAcctLookback\": 1024}' > data/config.json\nfi\n[ -f data/genesis.json ] || cp mainnet/genesis.json data/genesis.json\ntrap 'goal node stop; exit 0' TERM INT\ngoal node start\nwhile :; do date; goal node status; sleep 600 & wait $!; done\n"
+                        "if [ ! -f data/config.json ]; then\n  echo '{\"Version\": 33, \"EndpointAddress\": \"0.0.0.0:8080\", \"EnableFollowMode\": true, \"CatchupParallelBlocks\": 64, \"MaxAcctLookback\": 1024}' > data/config.json\nfi\n[ -f data/genesis.json ] || cp mainnet/genesis.json data/genesis.json\ntrap 'goal node stop || true; exit 0' TERM INT\ngoal node start\nwhile :; do date; goal node status || true; sleep 600 & wait $!; done\n"
                     ],
                     "items": {
                         "type": "string"

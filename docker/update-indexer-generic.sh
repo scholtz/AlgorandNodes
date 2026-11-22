@@ -48,6 +48,14 @@ if [ $error_code_int -ne 0 ]; then
 	exit 1;
 fi
 
+baseHelm=/home/scholtz/AlgorandNodes/helm
+for chart in voimain-indexer algorand-indexer; do
+    if [ -f "$baseHelm/${chart}-${produce#v}.tgz" ]; then
+        echo "$baseHelm/${chart}-${produce#v}.tgz already exists, bump the chart version by hand first";
+        exit 1;
+    fi
+done
+
 cd /home/scholtz/AlgorandNodes/docker/indexer/mainnet
 
 f1base="compose-indexer-${base}.sh"
@@ -73,17 +81,12 @@ sed -i "s~$base~$produce~g" $f1
 ################### HELM CHARTS (voimain-indexer, algorand-indexer)
 # chart version and appVersion follow the indexer version, the indexer image tag is bumped
 # and the follower node image tag follows the current relay/node version
-baseHelm=/home/scholtz/AlgorandNodes/helm
 relayVersion=$(cat /home/scholtz/AlgorandNodes/docker/current-relay-version.txt)
 if [ "$relayVersion" == "" ]; then
     echo "failed to read current relay version";
     exit 1;
 fi
 for chart in voimain-indexer algorand-indexer; do
-    if [ -f "$baseHelm/${chart}-${produce#v}.tgz" ]; then
-        echo "$baseHelm/${chart}-${produce#v}.tgz already exists, bump the chart version by hand first";
-        exit 1;
-    fi
     cd $baseHelm/$chart || exit 1
     sed -i "s~^version: .*~version: ${produce#v}~" Chart.yaml
     sed -i "s~^appVersion: .*~appVersion: '${produce#v}'~" Chart.yaml

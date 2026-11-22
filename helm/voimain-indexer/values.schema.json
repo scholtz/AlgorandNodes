@@ -468,7 +468,7 @@
                     "default": [
                         "/bin/bash",
                         "-ec",
-                        "[ -f data/config.json ] || cp config.json data/config.json\n[ -f data/genesis.json ] || cp voimain/genesis.json data/genesis.json\ntrap 'goal node stop; exit 0' TERM INT\ngoal node start\nwhile :; do date; goal node status; sleep 600 & wait $!; done\n"
+                        "[ -f data/config.json ] || cp config.json data/config.json\n[ -f data/genesis.json ] || cp voimain/genesis.json data/genesis.json\ntrap 'goal node stop || true; exit 0' TERM INT\ngoal node start\nwhile :; do date; goal node status || true; sleep 600 & wait $!; done\n"
                     ],
                     "items": {
                         "type": "string"

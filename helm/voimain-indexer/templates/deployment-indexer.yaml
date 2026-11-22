@@ -45,6 +45,11 @@ spec:
             - containerPort: {{ .Values.serviceIndexer.port.target }}
               protocol: TCP
           {{- if not .Values.debug }}
+          startupProbe:
+            tcpSocket:
+              port: {{ .Values.serviceIndexer.port.target }}
+            periodSeconds: 10
+            failureThreshold: 90
           readinessProbe:
             tcpSocket:
               port: {{ .Values.serviceIndexer.port.target }}
