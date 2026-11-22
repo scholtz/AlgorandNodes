@@ -1,0 +1,25 @@
+{{- if .Values.pvRoot.hostPath }}
+{{- $_ := required "nodeName must be set when pvRoot.hostPath is used" .Values.nodeName }}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Values.prefix }}{{ .Values.pvRoot.name }}
+spec:
+  {{- if .Values.nodeName }}
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - {{ .Values.nodeName }}
+  {{- end }}
+  storageClassName: {{ .Values.pvcRoot.storageClassName | quote }}
+  capacity:
+    storage: {{ .Values.pvcRoot.resources.requests.storage }}
+  accessModes:
+    - {{ .Values.pvcRoot.accessMode }}
+  hostPath:
+    path: {{ .Values.pvRoot.hostPath }}
+{{- end }}

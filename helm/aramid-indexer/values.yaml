@@ -191,7 +191,7 @@ deploymentFollowerNode:
   ## @param deploymentFollowerNode.image Image name
   image: "scholtz2/aramid-algo-follow-node"
   ## @param deploymentFollowerNode.tag Image tag
-  tag: "v4.3.0-stable"
+  tag: "v5.1.1-stable"
   ## @param deploymentFollowerNode.imagePullPolicy Image pull policy
   imagePullPolicy: Always
   ## @param deploymentFollowerNode.command Optional command overriding the image entrypoint
@@ -256,7 +256,7 @@ deploymentIndexer:
   ## @param deploymentIndexer.image Image name
   image: "scholtz2/aramid-indexer"
   ## @param deploymentIndexer.tag Image tag
-  tag: "v3.9.0-stable"
+  tag: "v3.11.1-stable"
   ## @param deploymentIndexer.imagePullPolicy Image pull policy
   imagePullPolicy: IfNotPresent
   ## @param deploymentIndexer.genesis Path to the genesis file of the chain inside the indexer image

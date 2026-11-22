@@ -1,0 +1,13 @@
+apiVersion: v2
+name: voimain-relay
+description: VOI relay node for voimain-1.0 blockchain.
+
+# Application chart deploying one VOI relay (non-archival by default) built from the scholtz2/algorand-relay-voimain image.
+type: application
+
+# Chart version, incremented with every change of the chart or its templates.
+# The relay update script sets it to the node version, or to the next patch when that would not increase it.
+version: 5.1.1
+
+# Version of the node being deployed.
+appVersion: "5.1.1"

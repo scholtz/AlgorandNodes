@@ -72,7 +72,7 @@ f1=deployment.yaml
 sed -i "s~$base~$produce~g" $f1
 
 
-################### HELM CHARTS (voimain-indexer, algorand-indexer)
+################### HELM CHARTS (voimain-indexer, algorand-indexer; aramid-indexer is handled by update-aramid-indexer-chart.sh)
 # chart version and appVersion follow the indexer version, the indexer image tag is bumped
 # and the follower node image tag follows the current relay/node version
 relayVersion=$(cat /home/scholtz/AlgorandNodes/docker/current-relay-version.txt)
@@ -96,7 +96,7 @@ for chart in voimain-indexer algorand-indexer; do
     sed -i "s~^version: .*~version: ${chartVersion}~" Chart.yaml
     sed -i "s~^appVersion: .*~appVersion: '${produce#v}'~" Chart.yaml
     sed -i "s~$base~$produce~g" values.yaml
-    sed -i "/^deploymentFollowerNode:/,/^## @section Deployment for conduit/ s~tag: \"[0-9][0-9.]*-stable\"~tag: \"${relayVersion}-stable\"~" values.yaml
+    sed -i "/^deploymentFollowerNode:/,/^## @section Deployment for conduit/ s~tag: \"\(v\?\)[0-9][0-9.]*-stable\"~tag: \"\1${relayVersion}-stable\"~" values.yaml
 done
 
 cd $baseHelm || exit 1

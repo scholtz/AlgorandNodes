@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.prefix }}{{ .Values.serviceAlgodProtocol.name }}
+spec:
+  type: {{ .Values.serviceAlgodProtocol.type }}
+  selector:
+    {{ .Values.deployment.label.key }}: {{ .Values.prefix }}{{ .Values.deployment.label.value }}
+  ports:
+    - name: algod-port
+      protocol: TCP
+      appProtocol: http
+      port: {{ .Values.serviceAlgodProtocol.port.service }}
+      {{- if and (or (eq .Values.serviceAlgodProtocol.type "NodePort") (eq .Values.serviceAlgodProtocol.type "LoadBalancer")) (not (empty .Values.serviceAlgodProtocol.port.node)) }}
+      nodePort: {{ .Values.serviceAlgodProtocol.port.node }}
+      {{- end }}
+      targetPort: {{ .Values.serviceAlgodProtocol.port.target }}

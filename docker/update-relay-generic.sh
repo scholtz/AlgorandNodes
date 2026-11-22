@@ -444,6 +444,23 @@ sed -i "s~$base~$produce~g" $f1
 f1=values.yaml
 sed -i "s~$base~$produce~g" $f1
 
+cd $baseHelm/voimain-relay
+# chart version follows the node version but must always increase, also after hand-bumped chart-only fixes
+cur=$(awk '/^version:/{print $2}' Chart.yaml)
+top=$(printf '%s
+%s
+' "$cur" "$produce" | sort -V | tail -1)
+if [ "$top" == "$produce" ] && [ "$cur" != "$produce" ]; then
+    chartVersion=$produce
+else
+    chartVersion="${cur%.*}.$((${cur##*.}+1))"
+fi
+sed -i "s~^version: .*~version: ${chartVersion}~" Chart.yaml
+sed -i "s~^appVersion: .*~appVersion: \"${produce}\"~" Chart.yaml
+f1=values.yaml
+sed -i "s~$base~$produce~g" $f1
+sed -i "s~$base~$produce~g" values.schema.json
+
 cd $baseHelm/
 
 helm package algorand-relay/
@@ -451,6 +468,7 @@ helm package algorand-participation/
 helm package aramid-relay/
 helm package aramid-participation/
 helm package voimain-participation/
+helm package voimain-relay/
 helm repo index --merge index.yaml --url https://scholtz.github.io/AlgorandNodes/helm/ .
 
 ################### FINISH
