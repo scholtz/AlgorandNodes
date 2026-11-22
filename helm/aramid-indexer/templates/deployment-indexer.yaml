@@ -11,7 +11,7 @@ spec:
     metadata:
       labels:
         {{ .Values.deploymentIndexer.label.key }}: {{ .Values.prefix }}{{ .Values.deploymentIndexer.label.value }}
-        {{ .Values.deploymentIndexer.label2.key }}: {{ .Values.deploymentIndexer.label2.value }}
+        {{ .Values.deploymentIndexer.label2.key }}: {{ .Values.prefix }}{{ .Values.deploymentIndexer.label2.value }}
       annotations:
         checksum/secret: {{ include (print $.Template.BasePath "/secret-indexer.yaml") . | sha256sum }}
     spec:

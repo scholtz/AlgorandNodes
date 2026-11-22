@@ -5,7 +5,7 @@ metadata:
 spec:
   type: {{ .Values.serviceIndexer.type }}
   selector:
-    {{ .Values.deploymentIndexer.label2.key }}: {{ .Values.deploymentIndexer.label2.value }}
+    {{ .Values.deploymentIndexer.label2.key }}: {{ .Values.prefix }}{{ .Values.deploymentIndexer.label2.value }}
   ports:
     - name: indexer-http
       protocol: TCP

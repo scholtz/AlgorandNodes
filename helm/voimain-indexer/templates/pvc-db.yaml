@@ -3,6 +3,9 @@ kind: PersistentVolumeClaim
 metadata:
   name: {{ .Values.prefix }}{{ .Values.pvcDB.name }}
 spec:
+  {{- if .Values.pvDB.hostPath }}
+  volumeName: {{ .Values.prefix }}{{ .Values.pvDB.name }}
+  {{- end }}
   storageClassName: {{ .Values.pvcDB.storageClassName }}
   accessModes:
     - {{ .Values.pvcDB.accessMode }}

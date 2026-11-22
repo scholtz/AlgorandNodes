@@ -3,6 +3,9 @@ kind: PersistentVolumeClaim
 metadata:
   name: {{ .Values.prefix }}{{ .Values.pvcFollowNode.name }}
 spec:
+  {{- if .Values.pvFollowNode.hostPath }}
+  volumeName: {{ .Values.prefix }}{{ .Values.pvFollowNode.name }}
+  {{- end }}
   storageClassName: {{ .Values.pvcFollowNode.storageClassName }}
   accessModes:
     - {{ .Values.pvcFollowNode.accessMode }}

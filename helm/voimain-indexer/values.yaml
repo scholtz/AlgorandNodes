@@ -201,8 +201,9 @@ deploymentFollowerNode:
     - |
       [ -f data/config.json ] || cp config.json data/config.json
       [ -f data/genesis.json ] || cp voimain/genesis.json data/genesis.json
+      trap 'goal node stop; exit 0' TERM INT
       goal node start
-      while :; do date; goal node status; sleep 600; done
+      while :; do date; goal node status; sleep 600 & wait $!; done
   resources:
     requests:
       ## @param deploymentFollowerNode.resources.requests.memory Requested memory
