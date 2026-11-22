@@ -88,7 +88,7 @@ deploymentDB:
   ## @param deploymentDB.image Image name
   image: postgres
   ## @param deploymentDB.tag Image tag
-  tag: 14
+  tag: "14"
   ## @param deploymentDB.imagePullPolicy Image pull policy
   imagePullPolicy: IfNotPresent
   resources:

@@ -188,9 +188,9 @@
                     "default": "postgres"
                 },
                 "tag": {
-                    "type": "number",
+                    "type": "string",
                     "description": "Image tag",
-                    "default": 14
+                    "default": "14"
                 },
                 "imagePullPolicy": {
                     "type": "string",

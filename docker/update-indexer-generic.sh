@@ -50,8 +50,8 @@ fi
 
 baseHelm=/home/scholtz/AlgorandNodes/helm
 for chart in voimain-indexer algorand-indexer; do
-    if [ -f "$baseHelm/${chart}-${produce#v}.tgz" ]; then
-        echo "$baseHelm/${chart}-${produce#v}.tgz already exists, bump the chart version by hand first";
+    if grep -q "${chart}-${produce#v}.tgz" "$baseHelm/index.yaml"; then
+        echo "${chart}-${produce#v}.tgz is already published, bump the chart version by hand first";
         exit 1;
     fi
 done
@@ -91,7 +91,7 @@ for chart in voimain-indexer algorand-indexer; do
     sed -i "s~^version: .*~version: ${produce#v}~" Chart.yaml
     sed -i "s~^appVersion: .*~appVersion: '${produce#v}'~" Chart.yaml
     sed -i "s~$base~$produce~g" values.yaml
-    sed -i "s~tag: \"[0-9][0-9.]*-stable\"~tag: \"${relayVersion}-stable\"~" values.yaml
+    sed -i "/^deploymentFollowerNode:/,/^## @section Deployment for conduit/ s~tag: \"[0-9][0-9.]*-stable\"~tag: \"${relayVersion}-stable\"~" values.yaml
 done
 
 cd $baseHelm || exit 1

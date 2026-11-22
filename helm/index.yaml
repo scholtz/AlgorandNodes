@@ -3,10 +3,10 @@ entries:
   algorand-indexer:
   - apiVersion: v2
     appVersion: 3.11.1
-    created: "2026-11-22T19:07:26.583964357Z"
+    created: "2026-11-22T19:10:28.782290268Z"
     description: Algorand indexer (follower node, conduit, postgres and indexer API)
       for the Algorand mainnet blockchain.
-    digest: 05de68d0cbc44a86d2dbe134e2cb2a4144f279a5afbb0388077f456aabce2f1b
+    digest: 91a69175c6d6c149e384328e3b979614ee0f01e5591d0524a01fb95ddd5bdab9
     name: algorand-indexer
     type: application
     urls:
@@ -107,9 +107,9 @@ entries:
   aramid-indexer:
   - apiVersion: v2
     appVersion: 3.9.0
-    created: "2026-11-22T19:07:26.628711901Z"
+    created: "2026-11-22T19:10:28.828170464Z"
     description: Aramid indexer node for aramidmain-1.0 blockchain.
-    digest: 82de8d9026ab6ae325308bc5b561eb8b03b018dce0da07725c6e2bdf4f7fefc8
+    digest: e0bc77fa776e236baaeea4c275ac5257b5c098713a6c673ed91ceba0affd81d3
     name: aramid-indexer
     type: application
     urls:
@@ -340,10 +340,10 @@ entries:
   voimain-indexer:
   - apiVersion: v2
     appVersion: 3.11.1
-    created: "2026-11-22T19:07:26.717331616Z"
+    created: "2026-11-22T19:10:28.924088781Z"
     description: Voi indexer (follower node, conduit, postgres and indexer API) for
       the Voi mainnet blockchain.
-    digest: 9a7fcdc2fe987769fff2ee8fa92bdebfcfb65bacdf8bdb587030eb24cce17c7e
+    digest: c599373b39423921af5c13c9ea8fcd36c231c0af56646953a208fed79d435b7a
     name: voimain-indexer
     type: application
     urls:
@@ -430,4 +430,4 @@ entries:
     urls:
     - https://scholtz.github.io/AlgorandNodes/helm/voimain-participation-3.26.0.tgz
     version: 3.26.0
-generated: "2026-11-22T19:07:26.578525339Z"
+generated: "2026-11-22T19:10:28.777170495Z"
