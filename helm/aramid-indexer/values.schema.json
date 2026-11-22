@@ -2,20 +2,62 @@
     "title": "Chart Values",
     "type": "object",
     "properties": {
-        "replicaCount": {
-            "type": "number",
-            "description": "Deployment replica count",
-            "default": 1
-        },
         "debug": {
             "type": "boolean",
-            "description": "Starts the image in bash mode and turns off the liveness probes",
+            "description": "Starts the containers in idle bash mode and turns off the probes",
             "default": false
         },
         "prefix": {
             "type": "string",
             "description": "Prefix identifier for the node, deployment, ingress, or other resources",
             "default": "i-1-"
+        },
+        "nodeName": {
+            "type": "string",
+            "description": "Hostname of the node the optional hostPath persistent volumes are bound to",
+            "default": ""
+        },
+        "imagePullSecrets": {
+            "type": "array",
+            "description": "Image pull secrets applied to all pods",
+            "default": [],
+            "items": {}
+        },
+        "nodeSelector": {
+            "type": "object",
+            "description": "Node selector applied to all pods",
+            "default": {}
+        },
+        "tolerations": {
+            "type": "array",
+            "description": "Tolerations applied to all pods",
+            "default": [],
+            "items": {}
+        },
+        "affinity": {
+            "type": "object",
+            "description": "Affinity applied to all pods",
+            "default": {}
+        },
+        "initContainer": {
+            "type": "object",
+            "properties": {
+                "image": {
+                    "type": "string",
+                    "description": "Image of the init container (needs sh and nc)",
+                    "default": "busybox"
+                },
+                "tag": {
+                    "type": "string",
+                    "description": "Tag of the init container image",
+                    "default": "1.37"
+                },
+                "imagePullPolicy": {
+                    "type": "string",
+                    "description": "Image pull policy of the init container",
+                    "default": "IfNotPresent"
+                }
+            }
         },
         "db": {
             "type": "object",
@@ -154,11 +196,6 @@
                     "type": "string",
                     "description": "Image pull policy",
                     "default": "IfNotPresent"
-                },
-                "secretName": {
-                    "type": "string",
-                    "description": "Secret name",
-                    "default": "indexer-secret"
                 },
                 "resources": {
                     "type": "object",
@@ -425,6 +462,12 @@
                     "description": "Image pull policy",
                     "default": "Always"
                 },
+                "command": {
+                    "type": "array",
+                    "description": "Optional command overriding the image entrypoint",
+                    "default": [],
+                    "items": {}
+                },
                 "resources": {
                     "type": "object",
                     "properties": {
@@ -499,11 +542,6 @@
                     "type": "string",
                     "description": "Image pull policy",
                     "default": "IfNotPresent"
-                },
-                "secretName": {
-                    "type": "string",
-                    "description": "Secret name",
-                    "default": "indexer-secret"
                 },
                 "mountPath": {
                     "type": "string",
@@ -605,10 +643,10 @@
                     "description": "Image pull policy",
                     "default": "IfNotPresent"
                 },
-                "secretName": {
+                "genesis": {
                     "type": "string",
-                    "description": "Secret name",
-                    "default": "indexer-secret"
+                    "description": "Path to the genesis file of the chain inside the indexer image",
+                    "default": "/app/genesis/aramidmain/genesis.json"
                 },
                 "resources": {
                     "type": "object",
@@ -674,6 +712,11 @@
                     "type": "string",
                     "description": "Ingress class name",
                     "default": "nginx"
+                },
+                "annotations": {
+                    "type": "object",
+                    "description": "Additional ingress annotations",
+                    "default": {}
                 }
             }
         }

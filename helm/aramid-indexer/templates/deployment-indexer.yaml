@@ -12,52 +12,50 @@ spec:
       labels:
         {{ .Values.deploymentIndexer.label.key }}: {{ .Values.prefix }}{{ .Values.deploymentIndexer.label.value }}
         {{ .Values.deploymentIndexer.label2.key }}: {{ .Values.deploymentIndexer.label2.value }}
+      annotations:
+        checksum/secret: {{ include (print $.Template.BasePath "/secret-indexer.yaml") . | sha256sum }}
     spec:
       securityContext:
         runAsUser: 1000
         runAsGroup: 1000
         fsGroup: 1000
-      terminationGracePeriodSeconds: 3
+        seccompProfile:
+          type: RuntimeDefault
+      terminationGracePeriodSeconds: 10
+      {{- include "indexer.scheduling" . | nindent 6 }}
       initContainers:
-        - name: wait-for-db-before-starup
-          image: busybox
-          command:
-            [
-              'sh',
-              '-c',
-              'echo -e "Checking for the availability of DB Server deployment"; while ! nc -z {{ .Values.prefix }}{{ .Values.serviceDB.name }} 5432; do sleep 1; printf "-"; done; echo -e "  >> DB Server has started";',
-            ]
-
+        {{- include "indexer.waitFor" (dict "root" . "title" "DB Server" "host" (printf "%s%s" .Values.prefix .Values.serviceDB.name) "port" .Values.serviceDB.port.service) | nindent 8 }}
       containers:
         - name: {{ .Values.prefix }}indexer
           image: {{ .Values.deploymentIndexer.image }}:{{ .Values.deploymentIndexer.tag }}
           imagePullPolicy: {{ .Values.deploymentIndexer.imagePullPolicy }}
-          # command: ['/bin/bash', '-ec', 'while :; do date; sleep 60 ; done']
-          #command: ['/bin/bash', '-c', 'algorand-indexer daemon']
-          # command: [
-          #     '/bin/bash',
-          #     '-ec',
-          #     'date;
-          #     cp -f /app/genesis/aramidmain/consensus.json /app/consensus.json
-          #     algorand-indexer daemon',
-          #   ]
-
+          {{- if .Values.debug }}
+          command: ['/bin/bash', '-ec', 'while :; do date; sleep 60 ; done']
+          {{- end }}
+          resources:
+            requests:
+              memory: {{ .Values.deploymentIndexer.resources.requests.memory }}
+              cpu: {{ .Values.deploymentIndexer.resources.requests.cpu }}
+            limits:
+              memory: {{ .Values.deploymentIndexer.resources.limits.memory }}
+              cpu: {{ .Values.deploymentIndexer.resources.limits.cpu }}
           ports:
-            - containerPort: 8980
+            - containerPort: {{ .Values.serviceIndexer.port.target }}
               protocol: TCP
+          {{- if not .Values.debug }}
           readinessProbe:
             tcpSocket:
-              port: 8980
+              port: {{ .Values.serviceIndexer.port.target }}
             initialDelaySeconds: 10
             timeoutSeconds: 5
             failureThreshold: 2
           livenessProbe:
             tcpSocket:
-              port: 8980
+              port: {{ .Values.serviceIndexer.port.target }}
             initialDelaySeconds: 20
             timeoutSeconds: 5
             failureThreshold: 2
-            terminationGracePeriodSeconds: 1
+          {{- end }}
           env:
             - name: INDEXER_POSTGRES_CONNECTION_STRING
               valueFrom:
@@ -75,7 +73,7 @@ spec:
                   name: {{ .Values.prefix }}{{ .Values.secretIndexer.name }}
                   key: INDEXER_API_TOKEN
             - name: INDEXER_GENESIS
-              value: '/app/genesis/aramidmain/genesis.json'
+              value: {{ .Values.deploymentIndexer.genesis | quote }}
             - name: INDEXER_DEV_MODE
               value: '0'
             - name: INDEXER_METRICS_MODE
@@ -85,5 +83,4 @@ spec:
             - name: INDEXER_DATA
               value: '/data/data'
           securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
+            {{- include "indexer.containerSecurity" 1000 | nindent 12 }}

@@ -3,14 +3,35 @@
 # Declare variables to be passed into your templates.
 
 ## @section Global settings
-## @param replicaCount Deployment replica count
-replicaCount: 1
-
-## @param debug Starts the image in bash mode and turns off the liveness probes
+## @param debug Starts the containers in idle bash mode and turns off the probes
 debug: false
 
 ## @param prefix Prefix identifier for the node, deployment, ingress, or other resources
 prefix: "i-1-"
+
+## @param nodeName Hostname of the node the optional hostPath persistent volumes are bound to
+nodeName: ""
+
+## @param imagePullSecrets Image pull secrets applied to all pods
+imagePullSecrets: []
+
+## @param nodeSelector Node selector applied to all pods
+nodeSelector: {}
+
+## @param tolerations Tolerations applied to all pods
+tolerations: []
+
+## @param affinity Affinity applied to all pods
+affinity: {}
+
+## @section Init container which waits for dependencies
+initContainer:
+  ## @param initContainer.image Image of the init container (needs sh and nc)
+  image: busybox
+  ## @param initContainer.tag Tag of the init container image
+  tag: "1.37"
+  ## @param initContainer.imagePullPolicy Image pull policy of the init container
+  imagePullPolicy: IfNotPresent
 
 ## @section Database configuration
 db:
@@ -70,8 +91,6 @@ deploymentDB:
   tag: 14
   ## @param deploymentDB.imagePullPolicy Image pull policy
   imagePullPolicy: IfNotPresent
-  ## @param deploymentDB.secretName Secret name
-  secretName: "indexer-secret"
   resources:
     requests:
       ## @param deploymentDB.resources.requests.memory Requested memory
@@ -175,6 +194,8 @@ deploymentFollowerNode:
   tag: "v4.3.0-stable"
   ## @param deploymentFollowerNode.imagePullPolicy Image pull policy
   imagePullPolicy: Always
+  ## @param deploymentFollowerNode.command Optional command overriding the image entrypoint
+  command: []
   resources:
     requests:
       ## @param deploymentFollowerNode.resources.requests.memory Requested memory
@@ -202,8 +223,6 @@ deploymentConduit:
   tag: "v1.9.0-stable"
   ## @param deploymentConduit.imagePullPolicy Image pull policy
   imagePullPolicy: IfNotPresent
-  ## @param deploymentConduit.secretName Secret name
-  secretName: "indexer-secret"
   ## @param deploymentConduit.mountPath Mount path
   mountPath: /data/data
   resources:
@@ -240,8 +259,8 @@ deploymentIndexer:
   tag: "v3.9.0-stable"
   ## @param deploymentIndexer.imagePullPolicy Image pull policy
   imagePullPolicy: IfNotPresent
-  ## @param deploymentIndexer.secretName Secret name
-  secretName: "indexer-secret"
+  ## @param deploymentIndexer.genesis Path to the genesis file of the chain inside the indexer image
+  genesis: "/app/genesis/aramidmain/genesis.json"
   resources:
     requests:
       ## @param deploymentIndexer.resources.requests.memory Requested memory
@@ -266,3 +285,5 @@ ingress:
   clusterIssuer: "letsencrypt"
   ## @param ingress.ingressClassName Ingress class name
   ingressClassName: "nginx"
+  ## @param ingress.annotations Additional ingress annotations
+  annotations: {}

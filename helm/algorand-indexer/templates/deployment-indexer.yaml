@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.prefix }}{{ .Values.deploymentIndexer.name }}
+spec:
+  replicas: {{ .Values.deploymentIndexer.replicas }}
+  selector:
+    matchLabels:
+      {{ .Values.deploymentIndexer.label.key }}: {{ .Values.prefix }}{{ .Values.deploymentIndexer.label.value }}
+  template:
+    metadata:
+      labels:
+        {{ .Values.deploymentIndexer.label.key }}: {{ .Values.prefix }}{{ .Values.deploymentIndexer.label.value }}
+        {{ .Values.deploymentIndexer.label2.key }}: {{ .Values.deploymentIndexer.label2.value }}
+      annotations:
+        checksum/secret: {{ include (print $.Template.BasePath "/secret-indexer.yaml") . | sha256sum }}
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      terminationGracePeriodSeconds: 10
+      {{- include "indexer.scheduling" . | nindent 6 }}
+      initContainers:
+        {{- include "indexer.waitFor" (dict "root" . "title" "DB Server" "host" (printf "%s%s" .Values.prefix .Values.serviceDB.name) "port" .Values.serviceDB.port.service) | nindent 8 }}
+      containers:
+        - name: {{ .Values.prefix }}indexer
+          image: {{ .Values.deploymentIndexer.image }}:{{ .Values.deploymentIndexer.tag }}
+          imagePullPolicy: {{ .Values.deploymentIndexer.imagePullPolicy }}
+          {{- if .Values.debug }}
+          command: ['/bin/bash', '-ec', 'while :; do date; sleep 60 ; done']
+          {{- end }}
+          resources:
+            requests:
+              memory: {{ .Values.deploymentIndexer.resources.requests.memory }}
+              cpu: {{ .Values.deploymentIndexer.resources.requests.cpu }}
+            limits:
+              memory: {{ .Values.deploymentIndexer.resources.limits.memory }}
+              cpu: {{ .Values.deploymentIndexer.resources.limits.cpu }}
+          ports:
+            - containerPort: {{ .Values.serviceIndexer.port.target }}
+              protocol: TCP
+          {{- if not .Values.debug }}
+          readinessProbe:
+            tcpSocket:
+              port: {{ .Values.serviceIndexer.port.target }}
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 2
+          livenessProbe:
+            tcpSocket:
+              port: {{ .Values.serviceIndexer.port.target }}
+            initialDelaySeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 2
+          {{- end }}
+          env:
+            - name: INDEXER_POSTGRES_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.prefix }}{{ .Values.secretIndexer.name }}
+                  key: INDEXER_POSTGRES_CONNECTION_STRING
+            - name: INDEXER_ALGOD_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.prefix }}{{ .Values.secretIndexer.name }}
+                  key: INDEXER_ALGOD_TOKEN
+            - name: INDEXER_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.prefix }}{{ .Values.secretIndexer.name }}
+                  key: INDEXER_API_TOKEN
+            - name: INDEXER_GENESIS
+              value: {{ .Values.deploymentIndexer.genesis | quote }}
+            - name: INDEXER_DEV_MODE
+              value: '0'
+            - name: INDEXER_METRICS_MODE
+              value: '1'
+            - name: INDEXER_ENABLE_ALL_PARAMETERS
+              value: '1'
+            - name: INDEXER_DATA
+              value: '/data/data'
+          securityContext:
+            {{- include "indexer.containerSecurity" 1000 | nindent 12 }}

@@ -7,9 +7,8 @@ spec:
   selector:
     {{ .Values.deploymentDB.label.key }}: {{ .Values.prefix }}{{ .Values.deploymentDB.label.value }}
   ports:
-    - name: algod-port
+    - name: postgres
       protocol: TCP
-      appProtocol: http
       port: {{ .Values.serviceDB.port.service }}
       {{- if and (or (eq .Values.serviceDB.type "NodePort") (eq .Values.serviceDB.type "LoadBalancer")) (not (empty .Values.serviceDB.port.node)) }}
       nodePort: {{ .Values.serviceDB.port.node }}

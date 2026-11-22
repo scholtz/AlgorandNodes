@@ -12,7 +12,7 @@ Infrastructure repo for running Algorand-family nodes (Algorand mainnet/testnet,
   - `current-relay-version.txt`, `current-indexer-version.txt` – current released version; the update scripts read and write them.
   - `update-relay-generic.sh`, `update-indexer-generic.sh` – release automation (see below).
 - `kubernetes/` – plain manifests by role/network/site (e.g. `algod-relay/mainnet-relay/de-1-mainnet-relay/g1-deployment.yaml`). `upgrade-*.sh` apply deployments one at a time and wait for rollout.
-- `helm/` – charts: `algorand-relay`, `algorand-participation`, `aramid-relay`, `aramid-participation`, `voimain-participation`, `aramid-indexer`. Packaged `.tgz` files, `index.yaml` and `pubkey.asc` are generated and published via GitHub Pages (`https://scholtz.github.io/AlgorandNodes/helm/`).
+- `helm/` – charts: `algorand-relay`, `algorand-participation`, `aramid-relay`, `aramid-participation`, `voimain-participation`, `aramid-indexer`, `voimain-indexer`, `algorand-indexer`. The three indexer charts share identical templates (postgres, follower node, conduit, indexer, ingress) and differ only in `values.yaml`, `Chart.yaml` and the generated README/schema, so apply template fixes to all three. Validate with `docker run --rm -v <abs path>/helm:/c -w /c alpine/helm:3.16.4 lint <chart>`; regenerate `values.schema.json` with the readme-generator command in `helm/reindex.sh`; after `helm package` use `helm repo index --merge index.yaml` so existing entries keep their timestamps. Packaged `.tgz` files, `index.yaml` and `pubkey.asc` are generated and published via GitHub Pages (`https://scholtz.github.io/AlgorandNodes/helm/`).
 
 ## Version-per-file convention
 

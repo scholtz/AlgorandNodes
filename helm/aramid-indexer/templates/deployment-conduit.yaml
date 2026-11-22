@@ -1,4 +1,3 @@
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,54 +13,45 @@ spec:
     metadata:
       labels:
         {{ .Values.deploymentConduit.label.key }}: {{ .Values.prefix }}{{ .Values.deploymentConduit.label.value }}
+      annotations:
+        checksum/conduit-config: {{ include (print $.Template.BasePath "/secret-conduit.yaml") . | sha256sum }}
     spec:
       securityContext:
         runAsUser: 1000
         runAsGroup: 1000
         fsGroup: 1000
-      terminationGracePeriodSeconds: 3
+        seccompProfile:
+          type: RuntimeDefault
+      terminationGracePeriodSeconds: 10
+      {{- include "indexer.scheduling" . | nindent 6 }}
       initContainers:
-        - name: wait-for-db-before-starup
-          image: busybox
-          command:
-            [
-              'sh',
-              '-c',
-              'echo -e "Checking for the availability of Follower Node deployment at {{ .Values.prefix }}{{ .Values.serviceFollowerNode.name }}"; while ! nc -z {{ .Values.prefix }}{{ .Values.serviceFollowerNode.name }} 8080; do sleep 1; printf "-"; done; echo -e "  >> Follower node has started";',
-            ]
+        {{- include "indexer.waitFor" (dict "root" . "title" "Follower Node" "host" (printf "%s%s" .Values.prefix .Values.serviceFollowerNode.name) "port" .Values.serviceFollowerNode.port.service) | nindent 8 }}
       containers:
         - name: {{ .Values.prefix }}conduit
           image: {{ .Values.deploymentConduit.image }}:{{ .Values.deploymentConduit.tag }}
           imagePullPolicy: {{ .Values.deploymentConduit.imagePullPolicy }}
+          {{- if .Values.debug }}
+          command: ['/bin/bash', '-ec', 'while :; do date; sleep 60 ; done']
+          {{- end }}
           resources:
             requests:
               memory: {{ .Values.deploymentConduit.resources.requests.memory }}
-              cpu:  {{ .Values.deploymentConduit.resources.requests.cpu }}
+              cpu: {{ .Values.deploymentConduit.resources.requests.cpu }}
             limits:
               memory: {{ .Values.deploymentConduit.resources.limits.memory }}
               cpu: {{ .Values.deploymentConduit.resources.limits.cpu }}
-          # command:
-          #   [
-          #     "/bin/bash",
-          #     "-ec",
-          #     "date; sleep 10; date; conduit; sleep 100 ; date; ",
-          #   ]
-          #while ! timeout 1 bash -c "echo > /dev/tcp/localhost/8080";  do sleep 1 && echo -n .; done
-          # command: ['/bin/bash', '-ec', 'while :; do date; sleep 60 ; done']
           securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
+            {{- include "indexer.containerSecurity" 1000 | nindent 12 }}
           volumeMounts:
-            - name: {{ .Values.prefix }}{{ .Values.secretConduit.name }}
+            - name: conduit-config
               mountPath: {{ .Values.deploymentConduit.mountPath }}/conduit.yml
               subPath: conduit.yml
-            - name: {{ .Values.prefix }}aramid-conduit-pvc
+            - name: conduit-data
               mountPath: {{ .Values.deploymentConduit.mountPath }}
-
       volumes:
-        - name: {{ .Values.prefix }}{{ .Values.secretConduit.name }}
+        - name: conduit-config
           secret:
             secretName: {{ .Values.prefix }}{{ .Values.secretConduit.name }}
-        - name: {{ .Values.prefix }}aramid-conduit-pvc
+        - name: conduit-data
           persistentVolumeClaim:
-            claimName: {{ .Values.prefix }}aramid-conduit-pvc
+            claimName: {{ .Values.prefix }}{{ .Values.pvcConduit.name }}

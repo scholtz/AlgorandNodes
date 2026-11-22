@@ -23,4 +23,12 @@ docker run -it -v "$(pwd)/aramid-indexer:/app/data" scholtz2/readme-generator-fo
 
 helm package aramid-indexer/
 
+docker run -it -v "$(pwd)/voimain-indexer:/app/data" scholtz2/readme-generator-for-helm:2.7.2 readme-generator -v data/values.yaml -s data/values.schema.json
+
+helm package voimain-indexer/
+
+docker run -it -v "$(pwd)/algorand-indexer:/app/data" scholtz2/readme-generator-for-helm:2.7.2 readme-generator -v data/values.yaml -s data/values.schema.json
+
+helm package algorand-indexer/
+
 helm repo index --url https://scholtz.github.io/AlgorandNodes/helm/ .

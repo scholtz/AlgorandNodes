@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.prefix }}{{ .Values.deploymentConduit.name }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{ .Values.deploymentConduit.label.key }}: {{ .Values.prefix }}{{ .Values.deploymentConduit.label.value }}
+  template:
+    metadata:
+      labels:
+        {{ .Values.deploymentConduit.label.key }}: {{ .Values.prefix }}{{ .Values.deploymentConduit.label.value }}
+      annotations:
+        checksum/conduit-config: {{ include (print $.Template.BasePath "/secret-conduit.yaml") . | sha256sum }}
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      terminationGracePeriodSeconds: 10
+      {{- include "indexer.scheduling" . | nindent 6 }}
+      initContainers:
+        {{- include "indexer.waitFor" (dict "root" . "title" "Follower Node" "host" (printf "%s%s" .Values.prefix .Values.serviceFollowerNode.name) "port" .Values.serviceFollowerNode.port.service) | nindent 8 }}
+      containers:
+        - name: {{ .Values.prefix }}conduit
+          image: {{ .Values.deploymentConduit.image }}:{{ .Values.deploymentConduit.tag }}
+          imagePullPolicy: {{ .Values.deploymentConduit.imagePullPolicy }}
+          {{- if .Values.debug }}
+          command: ['/bin/bash', '-ec', 'while :; do date; sleep 60 ; done']
+          {{- end }}
+          resources:
+            requests:
+              memory: {{ .Values.deploymentConduit.resources.requests.memory }}
+              cpu: {{ .Values.deploymentConduit.resources.requests.cpu }}
+            limits:
+              memory: {{ .Values.deploymentConduit.resources.limits.memory }}
+              cpu: {{ .Values.deploymentConduit.resources.limits.cpu }}
+          securityContext:
+            {{- include "indexer.containerSecurity" 1000 | nindent 12 }}
+          volumeMounts:
+            - name: conduit-config
+              mountPath: {{ .Values.deploymentConduit.mountPath }}/conduit.yml
+              subPath: conduit.yml
+            - name: conduit-data
+              mountPath: {{ .Values.deploymentConduit.mountPath }}
+      volumes:
+        - name: conduit-config
+          secret:
+            secretName: {{ .Values.prefix }}{{ .Values.secretConduit.name }}
+        - name: conduit-data
+          persistentVolumeClaim:
+            claimName: {{ .Values.prefix }}{{ .Values.pvcConduit.name }}

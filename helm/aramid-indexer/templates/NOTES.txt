@@ -1,1 +1,16 @@
-Aramid Indexer Notes
+{{ .Chart.Name }} {{ .Chart.Version }} has been installed as release "{{ .Release.Name }}".
+
+Components (name prefix "{{ .Values.prefix }}"): postgres DB, follower node, conduit and {{ .Values.deploymentIndexer.replicas }} indexer replica(s).
+
+Indexer API service: {{ .Values.prefix }}{{ .Values.serviceIndexer.name }}:{{ .Values.serviceIndexer.port.service }}
+{{- if and .Values.ingress.enabled .Values.ingress.host }}
+Indexer API URL: https://{{ .Values.ingress.host }}
+{{- end }}
+
+The initial sync can take a long time. Check progress with:
+  kubectl logs -n {{ .Release.Namespace }} deploy/{{ .Values.prefix }}{{ .Values.deploymentConduit.name }}
+{{- if or (eq .Values.db.password "postgresPassword") (eq .Values.secretIndexer.indexerToken (repeat 64 "a")) (eq .Values.secretIndexer.algodToken (repeat 64 "a")) }}
+
+WARNING: default database password and/or API tokens are in use.
+Override db.password, secretIndexer.algodToken and secretIndexer.indexerToken before exposing this release.
+{{- end }}
