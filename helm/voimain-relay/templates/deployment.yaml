@@ -14,7 +14,7 @@ spec:
       labels:
         {{ .Values.deployment.label.key }}: {{ .Values.prefix }}{{ .Values.deployment.label.value }}
         {{- if .Values.deployment.label2.key }}
-        {{ .Values.deployment.label2.key }}: {{ .Values.prefix }}{{ .Values.deployment.label2.value }}
+        {{ .Values.deployment.label2.key }}: {{ .Values.deployment.label2.value }}
         {{- end }}
     spec:
       {{- include "relay.scheduling" . | nindent 6 }}
@@ -69,6 +69,13 @@ spec:
             timeoutSeconds: 20
             failureThreshold: 10
           {{- end }}
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - /bin/bash
+                  - -c
+                  - goal node stop || true
           ports:
             - name: gossip
               containerPort: {{ .Values.serviceAVMProtocol.port.target }}
