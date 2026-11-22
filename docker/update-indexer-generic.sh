@@ -49,12 +49,6 @@ if [ $error_code_int -ne 0 ]; then
 fi
 
 baseHelm=/home/scholtz/AlgorandNodes/helm
-for chart in voimain-indexer algorand-indexer; do
-    if grep -q "${chart}-${produce#v}.tgz" "$baseHelm/index.yaml"; then
-        echo "${chart}-${produce#v}.tgz is already published, bump the chart version by hand first";
-        exit 1;
-    fi
-done
 
 cd /home/scholtz/AlgorandNodes/docker/indexer/mainnet
 
@@ -88,7 +82,18 @@ if [ "$relayVersion" == "" ]; then
 fi
 for chart in voimain-indexer algorand-indexer; do
     cd $baseHelm/$chart || exit 1
-    sed -i "s~^version: .*~version: ${produce#v}~" Chart.yaml
+    # chart version follows the indexer version but must always increase, also after hand-bumped chart-only fixes
+    cur=$(awk '/^version:/{print $2}' Chart.yaml)
+    newv=${produce#v}
+    top=$(printf '%s
+%s
+' "$cur" "$newv" | sort -V | tail -1)
+    if [ "$top" == "$newv" ] && [ "$cur" != "$newv" ]; then
+        chartVersion=$newv
+    else
+        chartVersion="${cur%.*}.$((${cur##*.}+1))"
+    fi
+    sed -i "s~^version: .*~version: ${chartVersion}~" Chart.yaml
     sed -i "s~^appVersion: .*~appVersion: '${produce#v}'~" Chart.yaml
     sed -i "s~$base~$produce~g" values.yaml
     sed -i "/^deploymentFollowerNode:/,/^## @section Deployment for conduit/ s~tag: \"[0-9][0-9.]*-stable\"~tag: \"${relayVersion}-stable\"~" values.yaml
