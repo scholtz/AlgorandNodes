@@ -34,9 +34,9 @@
                             "default": 5010
                         },
                         "node": {
-                            "type": "number",
+                            "type": "string",
                             "description": "Node port. Used only with NodePort or LoadBalancer service type",
-                            "default": 30010
+                            "default": ""
                         },
                         "target": {
                             "type": "number",
@@ -251,6 +251,11 @@
                     "type": "number",
                     "description": "Time given to the node to stop cleanly",
                     "default": 30
+                },
+                "startupFailureThreshold": {
+                    "type": "number",
+                    "description": "Failed startup probes (10s apart) allowed before the node is restarted. A first sync from genesis can take many hours",
+                    "default": 8640
                 },
                 "livenessFailureThreshold": {
                     "type": "number",

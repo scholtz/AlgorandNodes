@@ -20,7 +20,7 @@ serviceAVMProtocol:
     ## @param serviceAVMProtocol.port.service Service port
     service: 5010
     ## @param serviceAVMProtocol.port.node Node port. Used only with NodePort or LoadBalancer service type
-    node: 30010
+    node: ""
     ## @param serviceAVMProtocol.port.target Target port. Must match NetAddress in the node config.json
     target: 5010
 
@@ -115,6 +115,8 @@ deployment:
   imagePullPolicy: IfNotPresent
   ## @param deployment.terminationGracePeriodSeconds Time given to the node to stop cleanly
   terminationGracePeriodSeconds: 30
+  ## @param deployment.startupFailureThreshold Failed startup probes (10s apart) allowed before the node is restarted. A first sync from genesis can take many hours
+  startupFailureThreshold: 8640
   ## @param deployment.livenessFailureThreshold Failed liveness probes (10s apart) before the node is restarted. Keep high, a catching up node is not healthy but must not be killed
   livenessFailureThreshold: 360
   resources:

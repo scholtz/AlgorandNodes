@@ -459,6 +459,7 @@ sed -i "s~^version: .*~version: ${chartVersion}~" Chart.yaml
 sed -i "s~^appVersion: .*~appVersion: \"${produce}\"~" Chart.yaml
 f1=values.yaml
 sed -i "s~$base~$produce~g" $f1
+sed -i "s~$base~$produce~g" values.schema.json
 
 cd $baseHelm/
 

@@ -18,9 +18,12 @@ fi
 cd $baseHelm/aramid-indexer || exit 1
 cur=$(awk '/^version:/{print $2}' Chart.yaml)
 curApp=$(awk '/^appVersion:/{print $2}' Chart.yaml | tr -d "'\"")
-# a previous run may have failed after editing the chart: edited but uncommitted means resume at packaging
-dirty=$(git -C $mainDir status --porcelain -- helm/aramid-indexer)
-if [ "$curApp" == "$newv" ] && [ "$dirty" == "" ]; then
+chartVersion=$cur
+if [ "$curApp" == "$newv" ] && [ -f "$baseHelm/aramid-indexer-${cur}.tgz" ]; then
+    # already released; only retry a push which may have failed earlier
+    if [ "$(git -C $mainDir log --oneline @{u}.. 2>/dev/null)" != "" ]; then
+        git -C $mainDir push || { echo "git push failed"; exit 1; }
+    fi
     echo "aramid-indexer chart already at $newv";
     exit 0;
 fi
@@ -50,12 +53,15 @@ sed -i "s~tag: \"v$curApp-stable\"~tag: \"v${newv}-stable\"~" values.yaml
 sed -i "/^deploymentFollowerNode:/,/^## @section Deployment for conduit/ s~tag: \"\(v\?\)[0-9][0-9.]*-stable\"~tag: \"\1${relayVersion}-stable\"~" values.yaml
 fi
 chartVersion=$(awk '/^version:/{print $2}' Chart.yaml)
+# abort when the edits did not take effect (e.g. values.yaml drifted from Chart.yaml)
+grep -q "tag: \"v${newv}-stable\"" values.yaml || { echo "indexer tag was not updated in values.yaml"; exit 1; }
+grep -q "tag: \"v${relayVersion}-stable\"" values.yaml || { echo "follower tag was not updated in values.yaml"; exit 1; }
 
 cd $baseHelm || exit 1
 helm package aramid-indexer/ || exit 1
 helm repo index --merge index.yaml --url https://scholtz.github.io/AlgorandNodes/helm/ . || exit 1
 
 cd $mainDir || exit 1
-git add .
+git add helm
 git commit -m "cicd update aramid-indexer chart to ${chartVersion}" || exit 1
 git push || { echo "git push failed"; exit 1; }

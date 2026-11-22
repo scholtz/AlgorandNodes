@@ -48,7 +48,7 @@ spec:
             initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 10
-            failureThreshold: 1000
+            failureThreshold: {{ .Values.deployment.startupFailureThreshold }}
           readinessProbe:
             exec:
               command:
